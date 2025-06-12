@@ -1,0 +1,472 @@
+.slider-wrap{
+    .slick-initialized{
+        .slick-slide{
+            margin-right: 10px;
+        }
+    }
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.modal-content {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
+}
+
+// Enhanced Quiz/Exam Section Styles
+.quiz-exam-section {
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .quiz-section, .exam-section {
+    h6 {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+  }
+
+  // Exam Dropdown Styles
+  .exam-dropdown {
+    .btn-warning {
+      background-color: #ffc107;
+      border-color: #ffc107;
+      color: #000;
+      font-weight: 500;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #e0a800;
+        border-color: #d39e00;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+      }
+
+      .fas.fa-chevron-down {
+        transition: transform 0.3s ease;
+      }
+
+      &[aria-expanded="true"] .fas.fa-chevron-down {
+        transform: rotate(180deg);
+      }
+    }
+
+    .exam-dropdown-menu {
+      border: 1px solid #e9ecef;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+      padding: 0.5rem 0;
+      margin-top: 0.25rem;
+      max-height: 80vh;
+      overflow-y: auto;
+
+      .exam-dropdown-item {
+        padding: 1rem 1.25rem;
+        border: none;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background-color: #f8f9fa;
+        }
+
+        &:focus {
+          background-color: #e9ecef;
+        }
+
+        .exam-header {
+          transition: all 0.3s ease;
+          border-radius: 0.5rem;
+          padding: 0.5rem;
+
+          &:hover {
+            background-color: #f8f9fa;
+            transform: translateX(5px);
+          }
+        }
+
+        .exam-title {
+          font-weight: 600;
+          color: #212529;
+          font-size: 0.95rem;
+        }
+
+        .exam-info {
+          .exam-details {
+            margin-top: 0.5rem;
+            
+            small {
+              font-size: 0.8rem;
+              line-height: 1.4;
+            }
+          }
+        }
+
+        .exam-action {
+          i {
+            transition: all 0.3s ease;
+          }
+        }
+
+        &:hover .exam-action i {
+          transform: scale(1.1);
+        }
+
+        // Exam Content Styling
+        .exam-content {
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          border: 1px solid #dee2e6;
+          max-height: 60vh;
+          overflow-y: auto;
+
+          .exam-section {
+            h6 {
+              font-weight: 600;
+              font-size: 1rem;
+              border-bottom: 2px solid currentColor;
+              padding-bottom: 0.5rem;
+              margin-bottom: 1rem;
+
+              &.text-primary {
+                border-color: #0d6efd;
+              }
+
+              &.text-success {
+                border-color: #198754;
+              }
+
+              &.text-warning {
+                border-color: #ffc107;
+              }
+            }
+
+            .questions-list {
+              .question-item {
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+                &:hover {
+                  transform: translateY(-2px);
+                  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+                }
+
+                p {
+                  font-size: 0.9rem;
+                  line-height: 1.5;
+                  margin-bottom: 0.5rem;
+
+                  strong {
+                    color: #495057;
+                  }
+                }
+
+                .options-list {
+                  .option-item {
+                    padding: 0.25rem 0;
+                    font-size: 0.85rem;
+
+                    span {
+                      color: #6c757d;
+                      transition: color 0.3s ease;
+                    }
+
+                    &:hover span {
+                      color: #495057;
+                    }
+                  }
+                }
+
+                small {
+                  font-size: 0.75rem;
+                  color: #6c757d;
+                }
+              }
+            }
+          }
+
+          // Custom scrollbar for exam content
+          &::-webkit-scrollbar {
+            width: 6px;
+          }
+
+          &::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+          }
+
+          &::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+
+            &:hover {
+              background: #a8a8a8;
+            }
+          }
+        }
+      }
+
+      // Custom scrollbar for dropdown menu
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+
+        &:hover {
+          background: #a8a8a8;
+        }
+      }
+    }
+  }
+
+  .quiz-item, .exam-item {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef !important;
+    background: #fff;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+      border-color: #007bff !important;
+    }
+
+    &.border-warning {
+      border-color: #ffc107 !important;
+      
+      &:hover {
+        border-color: #e0a800 !important;
+        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2) !important;
+      }
+    }
+
+    &.border-success {
+      &:hover {
+        border-color: #198754 !important;
+        box-shadow: 0 4px 12px rgba(25, 135, 84, 0.2) !important;
+      }
+    }
+  }
+
+  .quiz-info, .exam-info {
+    h6 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    small {
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+  }
+
+  .quiz-action, .exam-action {
+    i {
+      transition: all 0.3s ease;
+    }
+  }
+
+  .quiz-item:hover .quiz-action i,
+  .exam-item:hover .exam-action i {
+    transform: scale(1.1);
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+
+    &.badge-sm {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.4rem;
+    }
+  }
+
+  .progress-info {
+    background-color: #f8f9fa !important;
+    border: 1px solid #e9ecef;
+    
+    small {
+      font-size: 0.8rem;
+    }
+  }
+}
+
+// Hover effects
+.hover-shadow {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+// Badge colors
+.badge {
+  &.bg-info {
+    background-color: #0dcaf0 !important;
+  }
+
+  &.bg-primary {
+    background-color: #0d6efd !important;
+  }
+
+  &.bg-success {
+    background-color: #198754 !important;
+  }
+
+  &.badge-warning {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+  }
+
+  &.badge-primary {
+    background-color: #0d6efd !important;
+    color: #fff !important;
+  }
+}
+
+// Icon styling
+.fas {
+  &.fa-brain {
+    color: #6f42c1;
+  }
+
+  &.fa-question-circle {
+    color: #0d6efd;
+  }
+
+  &.fa-graduation-cap {
+    color: #198754;
+  }
+
+  &.fa-star {
+    color: #ffc107;
+  }
+
+  &.fa-play-circle {
+    &.text-primary {
+      color: #0d6efd !important;
+    }
+
+    &.text-success {
+      color: #198754 !important;
+    }
+
+    &.text-warning {
+      color: #ffc107 !important;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .quiz-exam-section {
+    .quiz-item, .exam-item {
+      padding: 1rem !important;
+    }
+
+    .quiz-info h6, .exam-info h6 {
+      font-size: 0.9rem;
+    }
+
+    .quiz-action, .exam-action {
+      i {
+        font-size: 1.2rem !important;
+      }
+    }
+
+    // Mobile dropdown adjustments
+    .exam-dropdown {
+      .btn-warning {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+      }
+
+      .exam-dropdown-menu {
+        .exam-dropdown-item {
+          padding: 0.8rem 1rem;
+
+          .exam-title {
+            font-size: 0.85rem;
+          }
+
+          .exam-details small {
+            font-size: 0.75rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Animation for static exam highlight
+.exam-item.border-warning {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 193, 7, 0.1), transparent);
+    transition: left 0.5s;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+}
+
+// Enhanced text styling
+.text-dark {
+  color: #212529 !important;
+}
+
+.text-muted {
+  color: #6c757d !important;
+}
+
+// Card enhancements
+.card {
+  border-radius: 0.75rem;
+  border: 1px solid #e9ecef;
+
+  .card-body {
+    border-radius: 0.75rem;
+  }
+}
+
+// Smooth transitions for all interactive elements
+* {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}

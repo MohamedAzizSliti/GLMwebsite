@@ -1,0 +1,212 @@
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-bar breadcrumb-bg-01 text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-12">
+                    <h2 class="breadcrumb-title mb-2">Devenir un étudiant</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center mb-0">
+                            <li class="breadcrumb-item"><a [routerLink]="routes.index"><i class="isax isax-home5"></i></a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Devenir un étudiant</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Breadcrumb -->
+
+    <!-- How It Works for Student -->
+    <section class="section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 mx-auto">
+            <div class="section-header text-center wow fadeInUp" data-wow-delay="0.1s">
+              <h2 class="mb-2">Comment ça fonctionne</h2>
+              <p>Suivez ces étapes simples pour découvrir, acheter et suivre des cours en ligne selon votre rythme.</p>
+            </div>
+          </div>
+        </div>
+        <div class="row g-4 justify-content-center">
+          <div class="col-lg-4 col-md-6">
+            <div class="card work-card d-flex mb-0 wow fadeInUp" data-wow-delay="0.2s">
+              <div class="card-body flex-fill">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                            <span class="work-icon bg-primary-transparent d-flex align-items-center justify-content-center">
+                                <i class="isax isax-user-add5 fs-48"></i>
+                            </span>
+                  <h3 class="display-3">01</h3>
+                </div>
+                <div class="card-content">
+                  <h5 class="mb-2">Créez votre compte</h5>
+                  <p>Inscrivez-vous en tant qu'étudiant pour accéder à l'ensemble des cours disponibles sur la plateforme.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="card work-card d-flex mb-0 wow fadeInUp" data-wow-delay="0.3s">
+              <div class="card-body flex-fill">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                            <span class="work-icon bg-primary-transparent d-flex align-items-center justify-content-center">
+                                <i class="isax isax-search-normal-15 fs-48"></i>
+                            </span>
+                  <h3 class="display-3">02</h3>
+                </div>
+                <div class="card-content">
+                  <h5 class="mb-2">Explorez les cours</h5>
+                  <p>Parcourez les catégories, consultez les descriptions, lisez les avis, et choisissez les cours qui correspondent à vos objectifs.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="card work-card d-flex mb-0 wow fadeInUp" data-wow-delay="0.4s">
+              <div class="card-body flex-fill">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                            <span class="work-icon bg-primary-transparent d-flex align-items-center justify-content-center">
+                                <i class="isax isax-play-circle5 fs-48"></i>
+                            </span>
+                  <h3 class="display-3">03</h3>
+                </div>
+                <div class="card-content">
+                  <h5 class="mb-2">Apprenez à votre rythme</h5>
+                  <p>Accédez aux vidéos, quiz, examens et suivez votre progression depuis votre espace personnel sécurisé.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- /How It Works for Student -->
+
+
+    <section>
+      <div class="main-wrapper authentication-wrapper">
+        <div class="container-fuild">
+
+          <!-- Register -->
+          <div class="w-100 overflow-hidden position-relative flex-wrap d-block vh-100">
+            <div class="row justify-content-center align-items-center vh-100 overflow-auto flex-wrap ">
+              <div class="col-xxl-4 col-lg-6 col-md-6 col-11 mx-auto">
+
+                <div class="card authentication-card">
+                  <div class="card-header">
+                    <div class="text-center">
+                      <h5 class="mb-1">Créer un compte</h5>
+                      <p>Pour commencer à lire des cours</p>
+                    </div>
+                  </div>
+
+                  <div class="card-body">
+
+                      <div class="mb-3">
+                        <label class="form-label">Nom</label>
+                        <div class="input-icon">
+                                        <span class="input-icon-addon">
+                                            <i class="isax isax-user"></i>
+                                        </span>
+                          <input type="text" class="form-control form-control-lg" [(ngModel)]="user.name" placeholder="Veuillez entrez votre nom complet">
+                        </div>
+                      </div>
+                    <div class="mb-3">
+                      <label class="form-label">Tél</label>
+                      <div class="input-icon">
+                                        <span class="input-icon-addon">
+                                            <i class="isax isax-call-calling"></i>
+                                        </span>
+                        <input type="text" class="form-control form-control-lg" [(ngModel)]="user.phone" placeholder="Veuillez entrez votre numéro de téléphone">
+                      </div>
+                    </div>
+                      <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <div class="input-icon">
+                                        <span class="input-icon-addon">
+                                            <i class="isax isax-message"></i>
+                                        </span>
+                          <input type="email" class="form-control form-control-lg"  [(ngModel)]="user.email" placeholder="Veuillez entrez votre mail">
+                        </div>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <div class="pass-group input-icon">
+                                        <span class="input-icon-addon">
+                                            <i class="isax isax-lock"></i>
+                                          </span>
+                          <input
+                            [type]="password[0] ? 'text' : 'password'"
+                            class="pass-input form-control"
+                            [(ngModel)]="user.password"
+                            placeholder="Veuillez entrez votre mot de passe"
+                          />
+                          <span
+                            class="isax toggle-password"
+                            [ngClass]="password[0] ? 'isax-eye' : 'isax-eye-slash'"
+                            (click)="togglePassword(0)"
+
+                            (keydown.enter)="togglePassword(0)"
+                            tabindex="0"
+                          ></span>
+                        </div>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Confirmation Mot de passe</label>
+                        <div class="pass-group input-icon">
+                                        <span class="input-icon-addon">
+                                            <i class="isax isax-lock"></i>
+                                          </span>
+                          <input
+                            [type]="password[1] ? 'text' : 'password'"
+                            [(ngModel)]="user.password_confirmation"
+                            class="pass-input form-control"
+                            placeholder="Confirmez le mot de passe"
+                          />
+                          <span
+                            class="isax toggle-password"
+                            [ngClass]="password[1] ? 'isax-eye' : 'isax-eye-slash'"
+                            (click)="togglePassword(1)"
+                            (keydown.enter)="togglePassword(1)"
+                            tabindex="0"
+                          ></span>
+                        </div>
+                      </div>
+                      <div class="mt-3 mb-3">
+                        <div class="d-flex">
+                          <div class="form-check d-flex align-items-center mb-2">
+                            <input class="form-check-input mt-0" type="checkbox" value="" id="agree">
+                            <label class="form-check-label ms-2 text-gray-9 fs-14" for="agree">
+                              J’accepte les conditions <a [routerLink]="routes.termsConditions" class="link-primary fw-medium">générales d’utilisation.</a>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mb-3">
+<!--                        <a [routerLink]="routes.login" class="btn btn-xl btn-primary d-flex align-items-center justify-content-center w-100">Inscrire<i class="isax isax-arrow-right-3 ms-2"></i></a>-->
+                        <a  (click)="signup()" class="btn btn-xl btn-primary d-flex align-items-center justify-content-center w-100">Inscrire<i class="isax isax-arrow-right-3 ms-2"></i></a>
+                      </div>
+<!--                      <div class="login-or mb-3">-->
+<!--                        <span class="span-or">Or</span>-->
+<!--                      </div>-->
+<!--                      <div class="d-flex align-items-center mb-3">-->
+<!--                        <a href="javascript:void(0);" class="btn btn-light flex-fill d-flex align-items-center justify-content-center me-2">-->
+<!--                          <img src="assets/img/icons/google-icon.svg" class="me-2" alt="Img">Google-->
+<!--                        </a>-->
+<!--                        <a href="javascript:void(0);" class="btn btn-light flex-fill d-flex align-items-center justify-content-center">-->
+<!--                          <img src="assets/img/icons/fb-icon.svg" class="me-2" alt="Img">Facebook-->
+<!--                        </a>-->
+<!--                      </div>-->
+                      <div class="d-flex justify-content-center">
+                        <p class="fs-14">Vous avez déjà un compte ? <a [routerLink]="routes.login" class="link-primary fw-medium">Se connecter</a></p>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /Register -->
+        </div>
+      </div>
+    </section>
+
+

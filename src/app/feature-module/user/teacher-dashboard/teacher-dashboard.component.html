@@ -1,0 +1,243 @@
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-bar breadcrumb-bg-04 text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-12">
+                    <h2 class="breadcrumb-title mb-2">Dashboard Enseignant</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center mb-0">
+                            <li class="breadcrumb-item"><a [routerLink]="routes.index"><i class="isax isax-home5"></i></a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Dashboard Enseignant</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Breadcrumb -->
+
+   <!-- Page Wrapper -->
+   <div class="content content-two">
+    <div class="container">
+
+        <div class="row">
+
+            <!-- Sidebar -->
+            <div class="col-xl-3 col-lg-4">
+                <app-user-dashboard/>
+            </div>
+            <!-- /Sidebar -->
+
+            <!-- Teacher Dashboard -->
+            <div class="col-xl-9 col-lg-8">
+                <!-- Teacher Stats Cards -->
+                <div class="row">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card shadow-none">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <span class="avatar avatar-xl rounded-circle bg-primary me-3">
+                                        <i class="isax isax-people fs-36"></i>
+                                    </span>
+                                    <div>
+                                        <h3>{{teacherData.totalStudents}}</h3>
+                                        <p>Total Étudiants</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card shadow-none">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <span class="avatar avatar-xl rounded-circle bg-success me-3">
+                                        <i class="isax isax-book-15 fs-36"></i>
+                                    </span>
+                                    <div>
+                                        <h3>{{teacherData.activeCourses}}</h3>
+                                        <p>Cours Actifs</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card shadow-none">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <span class="avatar avatar-xl rounded-circle bg-warning me-3">
+                                        <i class="isax isax-tick-circle fs-36"></i>
+                                    </span>
+                                    <div>
+                                        <h3>{{teacherData.completedCourses}}</h3>
+                                        <p>Cours Terminés</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card shadow-none">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <span class="avatar avatar-xl rounded-circle bg-info me-3">
+                                        <i class="isax isax-money-send5 fs-36"></i>
+                                    </span>
+                                    <div>
+                                        <h3>{{teacherData.totalRevenue}} <small>TND</small></h3>
+                                        <p>Revenus Total</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher Content Row -->
+                <div class="row">
+                    <!-- Student Progress Section -->
+                    <div class="col-xl-6 d-flex">
+                        <div class="card shadow-none flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h6 class="fw-bold">Avancement des Étudiants</h6>
+                                    <span class="badge badge-soft-primary">{{teacherData.studentProgress.length}} étudiants</span>
+                                </div>
+                                
+                                <div class="student-progress-list">
+                                    <div *ngFor="let student of teacherData.studentProgress" class="student-item mb-3">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <img [src]="student.avatar" class="avatar avatar-sm rounded-circle me-3" alt="Student">
+                                            <div class="flex-fill">
+                                                <h6 class="mb-0 fs-14">{{student.name}}</h6>
+                                                <p class="text-muted mb-0 fs-12">{{student.course}}</p>
+                                            </div>
+                                            <span class="badge" 
+                                                  [class]="student.progress >= 80 ? 'badge-success' : student.progress >= 60 ? 'badge-warning' : 'badge-danger'">
+                                                {{student.progress}}%
+                                            </span>
+                                        </div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar" 
+                                                 [class]="student.progress >= 80 ? 'bg-success' : student.progress >= 60 ? 'bg-warning' : 'bg-danger'"
+                                                 [style.width.%]="student.progress">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course Progress Section -->
+                    <div class="col-xl-6 d-flex">
+                        <div class="card shadow-none flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h6 class="fw-bold">Avancement des Cours</h6>
+                                    <span class="badge badge-soft-info">{{teacherData.courseProgress.length}} cours</span>
+                                </div>
+                                
+                                <div class="course-progress-list">
+                                    <div *ngFor="let course of teacherData.courseProgress" class="course-item mb-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="mb-0 fs-14">{{course.course}}</h6>
+                                            <span class="text-muted fs-12">{{course.totalStudents}} étudiants</span>
+                                        </div>
+                                        
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-4">
+                                                <div class="text-center p-2 bg-success-light rounded">
+                                                    <div class="fs-16 fw-bold text-success">{{course.completed}}</div>
+                                                    <div class="fs-11 text-muted">Terminé</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="text-center p-2 bg-warning-light rounded">
+                                                    <div class="fs-16 fw-bold text-warning">{{course.inProgress}}</div>
+                                                    <div class="fs-11 text-muted">En cours</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="text-center p-2 bg-danger-light rounded">
+                                                    <div class="fs-16 fw-bold text-danger">{{course.notStarted}}</div>
+                                                    <div class="fs-11 text-muted">Non commencé</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar bg-success" 
+                                                 [style.width.%]="(course.completed / course.totalStudents) * 100">
+                                            </div>
+                                            <div class="progress-bar bg-warning" 
+                                                 [style.width.%]="(course.inProgress / course.totalStudents) * 100">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Courses Section -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card shadow-none">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h6 class="fw-bold">Derniers Cours Créés</h6>
+                                    <span class="badge badge-soft-secondary">{{teacherData.recentCourses.length}} cours</span>
+                                </div>
+                                
+                                <div class="row">
+                                    <div *ngFor="let course of teacherData.recentCourses" class="col-xl-4 col-md-6 mb-3">
+                                        <div class="card border">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <img [src]="course.image" class="avatar avatar-lg rounded me-3" alt="Course">
+                                                    <div class="flex-fill">
+                                                        <h6 class="mb-1 fs-14">{{course.title}}</h6>
+                                                        <span class="badge badge-soft-info badge-xs">{{course.category}}</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row g-2 mb-3">
+                                                    <div class="col-6">
+                                                        <div class="text-center">
+                                                            <div class="fs-18 fw-bold text-primary">{{course.students}}</div>
+                                                            <div class="fs-12 text-muted">Étudiants</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="text-center">
+                                                            <div class="fs-18 fw-bold text-success">{{course.completion}}%</div>
+                                                            <div class="fs-12 text-muted">Completion</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="progress mb-2" style="height: 6px;">
+                                                    <div class="progress-bar bg-success" [style.width.%]="course.completion"></div>
+                                                </div>
+                                                
+                                                <p class="fs-12 text-muted mb-0">
+                                                    <i class="isax isax-calendar-25 me-1"></i>
+                                                    Créé le {{course.createdAt | date:'dd/MM/yyyy'}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- /Page Wrapper --> 

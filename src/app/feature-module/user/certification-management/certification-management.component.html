@@ -1,0 +1,354 @@
+<!-- Congratulations Modal -->
+<div class="modal fade" id="congratulationsModal" tabindex="-1" aria-labelledby="congratulationsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <!-- Animated Background -->
+            <div class="modal-header bg-gradient-success text-white text-center border-0 position-relative overflow-hidden">
+                <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); opacity: 0.9;"></div>
+                <div class="w-100 position-relative">
+                    <h4 class="modal-title fw-bold mb-0" id="congratulationsModalLabel">
+                        🎉 Félicitations ! Vous avez réussi ! 🎉
+                    </h4>
+                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+            
+            <div class="modal-body p-4 text-center">
+                <!-- Celebration Icons -->
+                <div class="mb-4">
+                    <span class="fs-1 me-2">🏆</span>
+                    <span class="fs-1 me-2">🎓</span>
+                    <span class="fs-1 me-2">⭐</span>
+                    <span class="fs-1 me-2">🌟</span>
+                    <span class="fs-1">🎊</span>
+                </div>
+                
+                <!-- Success Message -->
+                <h3 class="text-success fw-bold mb-3">
+                    🎯 Mission Accomplie ! 🎯
+                </h3>
+                
+                <div class="alert alert-success border-0 shadow-sm mb-4">
+                    <div class="d-flex align-items-center justify-content-center mb-2">
+                        <span class="fs-4 me-2">✅</span>
+                        <strong>Votre certification a été validée avec succès !</strong>
+                    </div>
+                    <p class="mb-0 text-muted">
+                        🚀 Vous faites maintenant partie de l'élite des apprenants certifiés ! 
+                        Votre dévouement et votre persévérance ont porté leurs fruits. 💪
+                    </p>
+                </div>
+
+                <!-- Achievement Stats -->
+                <div class="row mb-4">
+                    <div class="col-4">
+                        <div class="text-center">
+                            <div class="fs-2 text-primary">📚</div>
+                            <small class="text-muted">Cours Complété</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center">
+                            <div class="fs-2 text-warning">🏅</div>
+                            <small class="text-muted">Score Excellent</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center">
+                            <div class="fs-2 text-success">🎖️</div>
+                            <small class="text-muted">Certifié Officiel</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback Section -->
+                <div class="card border-0 bg-light">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary mb-3">
+                            💭 Partagez votre expérience ! 💭
+                        </h5>
+                        <p class="text-muted mb-3">
+                            🌈 Votre avis nous aide à améliorer l'expérience d'apprentissage pour tous ! 
+                        </p>
+                        
+                        <!-- Rating Stars -->
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">⭐ Évaluez votre expérience :</label>
+                            <div class="d-flex justify-content-center gap-1">
+                                <button type="button" class="btn btn-outline-warning btn-sm" 
+                                        *ngFor="let star of [1,2,3,4,5]; let i = index"
+                                        [class.btn-warning]="userFeedback.rating >= star"
+                                        (click)="setRating(star)">
+                                    ⭐
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Feedback Textarea -->
+                        <div class="mb-3">
+                            <label for="feedbackText" class="form-label fw-medium">
+                                📝 Vos commentaires (optionnel) :
+                            </label>
+                            <textarea 
+                                class="form-control border-0 shadow-sm" 
+                                id="feedbackText" 
+                                rows="3" 
+                                [(ngModel)]="userFeedback.comment"
+                                placeholder="🎯 Partagez ce que vous avez le plus apprécié, vos suggestions d'amélioration, ou tout autre commentaire... ✨">
+                            </textarea>
+                        </div>
+
+                        <!-- Quick Feedback Buttons -->
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">🚀 Réaction rapide :</label>
+                            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                <button type="button" 
+                                        class="btn btn-outline-primary btn-sm"
+                                        [class.btn-primary]="userFeedback.quickReaction === 'excellent'"
+                                        (click)="setQuickReaction('excellent')">
+                                    🔥 Excellent !
+                                </button>
+                                <button type="button" 
+                                        class="btn btn-outline-success btn-sm"
+                                        [class.btn-success]="userFeedback.quickReaction === 'helpful'"
+                                        (click)="setQuickReaction('helpful')">
+                                    💡 Très utile
+                                </button>
+                                <button type="button" 
+                                        class="btn btn-outline-info btn-sm"
+                                        [class.btn-info]="userFeedback.quickReaction === 'challenging'"
+                                        (click)="setQuickReaction('challenging')">
+                                    🎯 Stimulant
+                                </button>
+                                <button type="button" 
+                                        class="btn btn-outline-warning btn-sm"
+                                        [class.btn-warning]="userFeedback.quickReaction === 'recommend'"
+                                        (click)="setQuickReaction('recommend')">
+                                    👥 Je recommande
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer border-0 bg-light">
+                <div class="w-100 d-flex justify-content-between align-items-center">
+                    <button type="button" class="btn btn-outline-primary" (click)="printMyCertificate()">
+                        🖨️ Imprimer mon certificat
+                    </button>
+                    <button type="button" class="btn btn-success px-4" (click)="submitFeedback()">
+                        🚀 Envoyer mon feedback
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb-bar breadcrumb-bg-04 text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-12">
+                <h2 class="breadcrumb-title mb-2">Gestion des Certifications</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center mb-0">
+                        <li class="breadcrumb-item"><a [routerLink]="routes.index"><i class="isax isax-home5"></i></a></li>
+                        <li class="breadcrumb-item"><a [routerLink]="routes.teacherDashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Gestion des Certifications</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Breadcrumb -->
+
+<!-- Page Wrapper -->
+<div class="container-fluid px-4">
+    <div class="row">
+        <!-- Full Width Certification Management Content -->
+        <div class="col-12">
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow-none">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <h4 class="mb-1">Gestion des Certifications</h4>
+                                    <p class="text-muted mb-0">Gérez les certifications de vos étudiants</p>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-primary me-2">{{totalStudents}} Étudiants</span>
+                                    <span class="badge bg-success">{{certifiedStudents}} Certifiés</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6">
+                    <div class="card shadow-none">
+                        <div class="card-body text-center">
+                            <div class="d-flex align-items-center justify-content-center mb-2">
+                                <span class="avatar avatar-lg rounded-circle bg-primary me-3">
+                                    <i class="isax isax-people fs-24"></i>
+                                </span>
+                            </div>
+                            <h4>{{totalStudents}}</h4>
+                            <p class="text-muted mb-0">Total Étudiants</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card shadow-none">
+                        <div class="card-body text-center">
+                            <div class="d-flex align-items-center justify-content-center mb-2">
+                                <span class="avatar avatar-lg rounded-circle bg-success me-3">
+                                    <i class="isax isax-award fs-24"></i>
+                                </span>
+                            </div>
+                            <h4>{{certifiedStudents}}</h4>
+                            <p class="text-muted mb-0">Certifiés</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card shadow-none">
+                        <div class="card-body text-center">
+                            <div class="d-flex align-items-center justify-content-center mb-2">
+                                <span class="avatar avatar-lg rounded-circle bg-warning me-3">
+                                    <i class="isax isax-clock fs-24"></i>
+                                </span>
+                            </div>
+                            <h4>{{eligibleStudents}}</h4>
+                            <p class="text-muted mb-0">En Attente</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card shadow-none">
+                        <div class="card-body text-center">
+                            <div class="d-flex align-items-center justify-content-center mb-2">
+                                <span class="avatar avatar-lg rounded-circle bg-danger me-3">
+                                    <i class="isax isax-close-circle fs-24"></i>
+                                </span>
+                            </div>
+                            <h4>{{nonEligibleStudents}}</h4>
+                            <p class="text-muted mb-0">Non Éligibles</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certification Table -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-none">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Liste des Certifications</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th style="min-width: 180px;">Étudiant</th>
+                                            <th style="min-width: 200px;">Email</th>
+                                            <th style="min-width: 150px;">Cours</th>
+                                            <th style="min-width: 140px;">Quiz complétés</th>
+                                            <th style="min-width: 120px;">Score moyen</th>
+                                            <th style="min-width: 150px;">Certification</th>
+                                            <th style="min-width: 180px;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let student of studentCertifications; trackBy: trackByEmail">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar avatar-sm rounded-circle bg-primary me-2 d-flex align-items-center justify-content-center">
+                                                        <span class="text-white fs-12">{{student.studentName.charAt(0)}}</span>
+                                                    </div>
+                                                    <span class="fw-medium">{{student.studentName}}</span>
+                                                </div>
+                                            </td>
+                                            <td>{{student.email}}</td>
+                                            <td>
+                                                <span class="badge bg-light text-dark">{{student.courseName}}</span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="me-2">{{student.quizzesCompleted}}/{{student.totalQuizzes}}</span>
+                                                    <div class="progress" style="width: 60px; height: 6px;">
+                                                        <div class="progress-bar" 
+                                                             [class]="getProgressPercentage(student) === 100 ? 'bg-success' : 'bg-warning'"
+                                                             [style.width.%]="getProgressPercentage(student)">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span [class]="student.averageScore >= 80 ? 'text-success fw-bold' : student.averageScore >= 60 ? 'text-warning fw-bold' : 'text-danger fw-bold'">
+                                                    {{student.averageScore}}%
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span [class]="getStatusBadgeClass(student)">
+                                                    {{getStatusText(student)}}
+                                                </span>
+                                                <div *ngIf="student.isCertified && student.certificationDate" class="small text-muted mt-1">
+                                                    {{student.certificationDate | date:'dd/MM/yyyy'}}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <!-- Actions for eligible students (not certified but completed all quizzes with good score) -->
+                                                <div *ngIf="isEligibleForCertification(student)" class="d-flex gap-1">
+                                                    <button (click)="validateCertification(student)" 
+                                                            class="btn btn-sm btn-success" 
+                                                            title="Valider la certification">
+                                                        <i class="isax isax-tick-circle"></i> Valider
+                                                    </button>
+                                                    <button (click)="viewCertificationDetails(student)" 
+                                                            class="btn btn-sm btn-info" 
+                                                            title="Voir les détails">
+                                                        <i class="isax isax-eye"></i>
+                                                    </button>
+                                                </div>
+
+                                                <!-- Actions for certified students -->
+                                                <div *ngIf="student.isCertified" class="d-flex gap-1">
+                                                    <button (click)="downloadCertificationPdf(student)" 
+                                                            class="btn btn-sm btn-primary" 
+                                                            title="Télécharger le certificat">
+                                                        <i class="isax isax-document-download"></i> PDF
+                                                    </button>
+                                                    <button (click)="viewCertificationDetails(student)" 
+                                                            class="btn btn-sm btn-info" 
+                                                            title="Voir les détails">
+                                                        <i class="isax isax-eye"></i>
+                                                    </button>
+                                                </div>
+
+                                                <!-- No actions for non-eligible students -->
+                                                <span *ngIf="!student.isCertified && !isEligibleForCertification(student)" 
+                                                      class="text-muted">
+                                                    -
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Wrapper --> 

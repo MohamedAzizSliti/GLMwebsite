@@ -1,0 +1,102 @@
+<div class="chat-container">
+  <div class="chat-header">
+    <div class="header-content">
+      <i class="fas fa-robot"></i>
+      <h3>Assistant d'Apprentissage</h3>
+      <span class="status-indicator"></span>
+    </div>
+  </div>
+
+  <div class="chat-messages">
+    <!-- Chat Messages -->
+    <div *ngFor="let message of messages" class="message-wrapper" 
+         [ngClass]="{'bot-message': message.isBot, 'user-message': !message.isBot, 'recommendation-message': message.isRecommendation}">
+      
+      <div class="message-content" [ngClass]="{'recommendation-content': message.isRecommendation}">
+        <div class="message-text" [innerHTML]="message.text | nl2br"></div>
+        
+        <!-- Question List Options -->
+        <div *ngIf="message.options && message.questionType === 'question-list'" 
+             class="question-list">
+          <button *ngFor="let question of message.options" 
+                  class="question-btn"
+                  (click)="selectQuestion(question)">
+            {{ question }}
+          </button>
+        </div>
+        
+        <!-- Multiple Choice Options -->
+        <div *ngIf="message.options && message.questionType === 'multiple-choice' && !message.isRecommendation" 
+             class="message-options">
+          <button *ngFor="let option of message.options" 
+                  class="option-btn"
+                  (click)="selectOption(option, message.questionIndex!)">
+            {{ option }}
+          </button>
+        </div>
+        
+        <!-- Yes/No Options -->
+        <div *ngIf="message.options && message.questionType === 'yes-no' && message.questionIndex !== -1" 
+             class="message-options">
+          <button *ngFor="let option of message.options" 
+                  class="option-btn"
+                  [ngClass]="option === 'Oui' ? 'btn-success' : 'btn-danger'"
+                  (click)="selectOption(option, message.questionIndex!)">
+            {{ option }}
+          </button>
+        </div>
+        
+        <!-- More Questions Yes/No -->
+        <div *ngIf="message.options && message.questionType === 'yes-no' && message.questionIndex === -1" 
+             class="message-options">
+          <button *ngFor="let option of message.options" 
+                  class="option-btn"
+                  [ngClass]="option.includes('Oui') ? 'btn-success' : 'btn-danger'"
+                  (click)="handleMoreQuestions(option)">
+            {{ option }}
+          </button>
+        </div>
+        
+        <!-- Final Action Buttons -->
+        <div *ngIf="message.options && message.isRecommendation && message.recommendationType === 'final'" 
+             class="final-actions">
+          <button *ngFor="let action of message.options" 
+                  class="action-btn"
+                  (click)="handleFinalAction(action)">
+            {{ action }}
+          </button>
+        </div>
+        
+        <div class="message-time">{{ message.timestamp | date:'HH:mm' }}</div>
+      </div>
+    </div>
+
+    <!-- Typing Indicator -->
+    <div *ngIf="isTyping" class="message-wrapper bot-message">
+      <div class="message-content">
+        <div class="typing-indicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Text Input -->
+  <div *ngIf="showInput" class="chat-input">
+    <div class="input-group">
+      <input type="text" 
+             class="text-input" 
+             [(ngModel)]="userInput"
+             (keyup.enter)="sendTextInput()"
+             placeholder="Tapez votre réponse...">
+      <button class="send-btn" 
+              type="button" 
+              (click)="sendTextInput()"
+              [disabled]="!userInput.trim()">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div> 

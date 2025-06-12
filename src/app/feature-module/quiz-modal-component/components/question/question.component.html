@@ -1,0 +1,48 @@
+<div class="question-container">
+  <div class="question-header">
+    <h3>Question {{ questionIndex + 1 }} / {{ totalQuestions }}</h3>
+  </div>
+
+  <div class="question-text">
+    <p>{{ question?.question_text }}</p>
+  </div>
+
+  <div class="options-container">
+    <!-- Options pour les questions à choix unique -->
+    <div *ngIf="question?.question_type === 'single_choice'" class="single-choice-options">
+      <div
+        *ngFor="let option of ['option_1', 'option_2', 'option_3', 'option_4']"
+        class="option-item"
+        [class.selected]="isOptionSelected(option)"
+        (click)="selectSingleOption(option)"
+        [hidden]="!question?.options[option]?.text">
+
+        <div class="radio-button">
+          <div class="radio-inner" *ngIf="isOptionSelected(option)"></div>
+        </div>
+
+        <div class="option-text">
+          {{ question?.options[option]?.text }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Options pour les questions à choix multiples -->
+    <div *ngIf="question?.question_type === 'multiple_choice'" class="multiple-choice-options">
+      <div
+        *ngFor="let option of ['option_1', 'option_2', 'option_3', 'option_4']"
+        class="option-item"
+        [hidden]="!question?.options[option]?.text">
+
+        <label class="checkbox-container">
+          <input
+            type="checkbox"
+            [checked]="isOptionSelected(option)"
+            (change)="toggleMultipleOption(option, $event.target.checked)">
+          <span class="checkmark"></span>
+          <span class="option-text">{{ question?.options[option]?.text }}</span>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>

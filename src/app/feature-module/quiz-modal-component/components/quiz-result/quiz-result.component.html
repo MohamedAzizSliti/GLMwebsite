@@ -1,0 +1,39 @@
+<div class="result-container">
+  <div class="result-header" [ngClass]="resultClass">
+    <h2 class="result-title">
+      {{ result?.passed ? 'Félicitations !' : 'Quiz terminé' }}
+    </h2>
+    <div class="result-status">
+      {{ result?.passed ? 'Vous avez réussi le quiz !' : 'Vous n\'avez pas atteint le score minimum requis.' }}
+    </div>
+  </div>
+  
+  <div class="result-details">
+    <div class="score-circle" [ngClass]="resultClass">
+      <div class="score-value">{{ result?.score }}</div>
+      <div class="score-label">points</div>
+    </div>
+    
+    <div class="stats-container">
+      <div class="stat-item">
+        <div class="stat-label">Questions</div>
+        <div class="stat-value">{{ result?.totalQuestions }}</div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="stat-label">Réponses correctes</div>
+        <div class="stat-value">{{ result?.correctAnswers }}</div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="stat-label">Pourcentage</div>
+        <div class="stat-value">{{ successPercentage }}%</div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="stat-label">Score minimum</div>
+        <div class="stat-value">{{ result?.passMarks }}</div>
+      </div>
+    </div>
+  </div>
+</div>

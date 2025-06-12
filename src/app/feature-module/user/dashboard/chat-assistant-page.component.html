@@ -1,0 +1,55 @@
+<!-- Breadcrumb -->
+<div class="breadcrumb-bar breadcrumb-bg-04 text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-12">
+                <h2 class="breadcrumb-title mb-2">Chat Assistant</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center mb-0">
+                        <li class="breadcrumb-item"><a [routerLink]="routes.index"><i class="isax isax-home5"></i></a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Chat Assistant</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Breadcrumb -->
+
+<!-- Page Wrapper -->
+<div class="content content-two">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-xl-3 col-lg-4">
+                <app-user-dashboard/>
+            </div>
+            <!-- /Sidebar -->
+
+            <div class="col-xl-9 col-lg-8">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card shadow-none">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div>
+                                        <h6>Assistant d'apprentissage personnalisé</h6>
+                                        <p class="fs-14 text-muted mb-0">Obtenez des recommandations personnalisées pour améliorer votre apprentissage</p>
+                                    </div>
+                                    <div class="chat-status-indicator">
+                                        <span class="status-dot bg-success"></span>
+                                        <small class="text-success">En ligne</small>
+                                    </div>
+                                </div>
+                                
+                                <!-- Chat Assistant Component -->
+                                <app-chat-assistant></app-chat-assistant>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Wrapper --> 

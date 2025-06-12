@@ -1,0 +1,48 @@
+<div class="quiz-modal-overlay" *ngIf="isOpen">
+  <div class="quiz-modal-container">
+    <div class="quiz-modal-header">
+      <h2>{{ exam?.title }}</h2>
+      <app-timer *ngIf="!quizCompleted"></app-timer>
+      <button class="close-button" (click)="closeModal()">×</button>
+    </div>
+
+    <div class="quiz-modal-body">
+      <!-- Affichage des questions -->
+      <div *ngIf="!quizCompleted && currentQuestion">
+        <app-question 
+          [question]="currentQuestion" 
+          [questionIndex]="currentQuestionIndex"
+          [totalQuestions]="exam?.nbr_question || 0">
+        </app-question>
+      </div>
+
+      <!-- Affichage du résultat -->
+      <div *ngIf="quizCompleted && quizResult">
+        <app-quiz-result [result]="quizResult"></app-quiz-result>
+      </div>
+    </div>
+
+    <div class="quiz-modal-footer" *ngIf="!quizCompleted">
+      <button 
+        class="btn btn-secondary" 
+        (click)="previousQuestion()" 
+        [disabled]="currentQuestionIndex === 0">
+        Précédent
+      </button>
+      
+      <div class="question-counter">
+        Question {{ currentQuestionIndex + 1 }} / {{ exam?.nbr_question }}
+      </div>
+      
+      <button 
+        class="btn btn-primary" 
+        (click)="nextQuestion()">
+        {{ currentQuestionIndex < (exam?.nbr_question || 0) - 1 ? 'Suivant' : 'Terminer' }}
+      </button>
+    </div>
+
+    <div class="quiz-modal-footer" *ngIf="quizCompleted">
+      <button class="btn btn-primary" (click)="closeModal()">Fermer</button>
+    </div>
+  </div>
+</div>

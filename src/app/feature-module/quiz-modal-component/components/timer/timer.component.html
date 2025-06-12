@@ -1,0 +1,8 @@
+<div class="timer-container" *ngIf="isRunning$ | async">
+  <div class="timer-icon">
+    <i class="fa fa-clock-o"></i>
+  </div>
+  <div class="timer-display">
+    {{ formattedTime$ | async }}
+  </div>
+</div>

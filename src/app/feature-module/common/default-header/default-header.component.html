@@ -1,0 +1,588 @@
+<div class="main-header" [ngClass]="{'main-header-four':base==='index-2' || base==='index-4' || base==='index-6'}">
+
+  <!-- Header Topbar-->
+  <div [hidden]="base === 'index-2' || base === 'index-3' || base === 'index-4' || base === 'index-5' || base === 'index-6' || page==='index-rtl'" class="header-topbar text-center bg-transparent">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between flex-wrap">
+        <p class="d-flex align-items-center fw-medium fs-14 mb-2"><i class="isax isax-call5 me-2"></i>Contactez-nous: +216 26 883 826</p>
+        <div class="d-flex align-items-center">
+          <p class="mb-2 me-3 d-flex align-items-center fw-medium fs-14"><i class="isax isax-message-text-15 me-2"></i>Email : contact&#64;gold-lms.online</p>
+          <div class="dropdown flag-dropdown mb-2 me-3">
+            <a href="javascript:void(0);" class="dropdown-toggle d-inline-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="assets/img/flags/france-flag.svg" class="me-2" alt="flag">FRE
+            </a>
+            <ul class="dropdown-menu p-2 mt-2">
+              <li>
+                <a class="dropdown-item rounded d-flex align-items-center" href="javascript:void(0);">
+                  <img src="assets/img/flags/france-flag.svg" class="me-2" alt="flag">FRE
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="dropdown mb-2 me-3">
+            <a href="javascript:void(0);" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              TND
+            </a>
+            <ul class="dropdown-menu p-2 mt-2">
+              <li><a class="dropdown-item rounded" href="javascript:void(0);">TND</a></li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <header [ngClass]="{ 'header-three': base === 'index-3', 'header-four': base === 'index-4'|| base === 'index-2', 'header-five': base === 'index-5' , 'header-six': base === 'index-6','fixed': isFixed }">
+        <div [ngClass]="base ==='index-4' ? 'container-fluid' : 'container'">
+            <div class="offcanvas-info" [ngClass]="{ 'show': show }">
+                <div class="offcanvas-wrap">
+                    <div class="offcanvas-detail">
+                        <div class="offcanvas-head">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <a [routerLink]="routes.index" class="black-logo-responsive">
+                                    <img src="assets/img/logo-dark.png" alt="logo-img">
+                                </a>
+                                <a [routerLink]="routes.index" class="white-logo-responsive">
+                                    <img src="assets/img/logo.png" alt="logo-img" style="max-width: 353px;">
+                                </a>
+                                <div class="offcanvas-close" (click)="closeMenu()">
+                                    <i class="ti ti-x"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="mobile-menu fix mb-3" [ngClass]="{ 'mean-container': isMobileMenu }">
+                            <div class="mean-bar">
+                            <a href="#nav" class="meanmenu-reveal" style="right: 0px; left: auto; display: inline;">
+                            <span><span>
+                                <span></span>
+                            </span></span>
+                            </a>
+                            <nav class="mean-nav">
+                            <ul class="main-nav" style="display: none;" [ngClass]="{'active' : isDropdownOpen}">
+                                <ng-container *ngFor="let mainMenus of header, let i = index">
+                                <ng-container *ngIf="mainMenus.separateRoute === true">
+                                <li class="has-submenu megamenu active" [ngClass]="{'dropdown-opened' : isDropdownOpen}">
+                                    <a href="javascript:void(0);">
+                                        {{mainMenus.tittle}}
+                                    </a>
+<!--                                <a class="mean-expand" href="javascript:void(0);" style="font-size: 18px" [ngClass]="{'mean-clicked' : isDropdownOpen}" (click)="openSubMenu()"><i class="ti ti-plus"></i></a>-->
+                                </li>
+                                </ng-container>
+                                <ng-container *ngIf="mainMenus.separateRoute === false">
+                                <li class="has-submenu mega-innermenu" [class.active]="base === mainMenus.base || page===mainMenus.base" [ngClass]="{'dropdown-opened' : openDropdownIndex === i}">
+                                    <a href="javascript:void(0);">{{mainMenus.tittle}} </a>
+                                    <ul class="submenu mega-submenu" [ngStyle]="{ display: openDropdownIndex === i ? 'block' : 'none' }">
+                                        <li>
+                                            <div class="megamenu-wrapper">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <h6>{{mainMenus.tittle}}</h6>
+                                                        <ul style="display: none;">
+                                                            <ng-container *ngFor="let menu of mainMenus.menu">
+                                                                <ng-container *ngIf="mainMenus.twoTitle === false">
+                                                                <li><a  href="javascript:void(0)">{{menu.menuValue}}</a></li>
+                                                            </ng-container>
+                                                            <ng-container *ngIf="mainMenus.twoTitle === true">
+                                                                <ng-container *ngIf="menu.menuValue">
+                                                                    <li><a  href="javascript:void(0)">{{menu.menuValue}}</a></li>
+                                                                </ng-container>
+                                                            </ng-container>
+                                                            <ng-container *ngIf="mainMenus.twoTitle === true">
+                                                                <ng-container *ngIf="menu.menuValue2">
+                                                                <li><a  href="javascript:void(0)">{{menu.menuValue2}}</a></li>
+                                                                </ng-container>
+                                                            </ng-container>
+                                                            </ng-container>
+                                                        </ul>
+                                                    <a class="mean-expand" href="javascript:void(0);" style="font-size: 18px"><i class="ti ti-plus"></i></a></div>
+                                                    <div class="col-lg-6">
+                                                        <div class="menu-img">
+                                                            <img src="assets/img/menu/flight.jpg" alt="img" class="img-fluid">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                <a class="mean-expand" href="javascript:void(0);" style="font-size: 18px" [ngClass]="{'mean-clicked' : openDropdownIndex === i}" (click)="toggleSubMenu(i)"><i class="ti ti-plus"></i></a>
+                                </li>
+                            </ng-container>
+                                </ng-container>
+                            </ul>
+                        </nav>
+                        </div>
+                        </div>
+                        <div class="offcanvas__contact">
+                            <div class="mt-4">
+                                <div class="header-dropdown d-flex flex-fill">
+                                    <div class="w-100">
+                                        <div class="dropdown flag-dropdown mb-2">
+                                            <a href="javascript:void(0);" class="dropdown-toggle bg-white border d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <img src="assets/img/flags/us-flag.svg" class="me-2" alt="flag">ENG
+                                            </a>
+                                            <ul class="dropdown-menu p-2">
+                                                <li>
+                                                    <a class="dropdown-item rounded d-flex align-items-center" href="javascript:void(0);">
+                                                        <img src="assets/img/flags/us-flag.svg" class="me-2" alt="flag">ENG
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item rounded d-flex align-items-center" href="javascript:void(0);">
+                                                        <img src="assets/img/flags/arab-flag.svg" class="me-2" alt="flag">ARA
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item rounded d-flex align-items-center" href="javascript:void(0);">
+                                                        <img src="assets/img/flags/france-flag.svg" class="me-2" alt="flag">FRE
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="dropdown">
+                                            <a href="javascript:void(0);" class="dropdown-toggle bg-white border d-block" data-bs-toggle="dropdown" aria-expanded="false">
+                                                USD
+                                            </a>
+                                            <ul class="dropdown-menu p-2">
+                                                <li><a class="dropdown-item rounded" href="javascript:void(0);">USD</a></li>
+                                                <li><a class="dropdown-item rounded" href="javascript:void(0);">YEN</a></li>
+                                                <li><a class="dropdown-item rounded" href="javascript:void(0);">EURO</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div><a href="javascript:void(0);" class="text-white btn btn-dark w-100 mb-3" data-bs-toggle="modal" data-bs-target="#login-modal">Log IN</a></div>
+                                <a [routerLink]="routes.becomeAnStudent" class="btn btn-primary w-100">Etudiant ?</a>
+                                <a [routerLink]="routes.becomeAnExpert" class="btn btn-primary w-100">Formateur</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="offcanvas-overlay" [ngClass]="{ 'overlay-open': show }" (click)="closeMenu()"></div>
+            <div class="header-nav">
+                <div class="main-menu-wrapper">
+                    <div class="navbar-logo">
+                        <a class="logo-white header-logo" [routerLink]="routes.index">
+                            <img [src]=" base==='index-2' || base==='index-3' || base==='index-4' || base==='index-5'? 'assets/img/logo-dark.png' :'assets/img/logo.png'" style="max-width: 353px;" class="logo" alt="Logo">
+                        </a>
+                        <a [hidden]="base==='index-6'" class="logo-dark header-logo" [routerLink]="routes.index" >
+                            <img src="assets/img/logo-dark.png" style="max-width: 353px;" class="logo" alt="Logo" >
+                        </a>
+                    </div>
+                    <nav id="mobile-menu">
+                        <ul class="main-nav"[ngClass]="{ 'active': isHovered }">
+                        <ng-container *ngFor="let mainMenus of header">
+                            <ng-container *ngIf="mainMenus.separateRoute === true">
+                            <li class="has-submenu megamenu" [class.active]="base===mainMenus.base || base===mainMenus.base1 || base===mainMenus.base2 || base===mainMenus.base3 || base===mainMenus.base4 || base===mainMenus.base5 || base===mainMenus.base6" (mouseenter)="isHovered = true"  (mouseleave)="isHovered = false">
+                                <a [routerLink]="mainMenus.route">{{mainMenus.tittle}}  </a>
+
+                            </li>
+                            </ng-container>
+                            <ng-container *ngIf="mainMenus.separateRoute === false">
+                            <ng-container *ngIf="mainMenus.twoTitle === false">
+                                <li class="has-submenu mega-innermenu" [class.active]="base===mainMenus.base">
+                                <a [routerLink]="mainMenus.route">{{mainMenus.tittle}}</a>
+                                </li>
+                            </ng-container>
+                            <ng-container *ngIf="mainMenus.twoTitle === true">
+                                <li class="has-submenu mega-innermenu" [class.active]="base===mainMenus.base || base===mainMenus.base1 || base===mainMenus.base2">
+                                <a href="javascript:void(0);">{{mainMenus.tittle}}  </a>
+                                            <ul class="submenu mega-submenu">
+                                                <li>
+                                                    <div class="megamenu-wrapper">
+                                                        <div class="row g-lg-4">
+                                                            <div class="col-lg-6">
+                                                                <h6>{{mainMenus.subTitle}}</h6>
+                                                                <ul>
+                                                                    <ng-container *ngFor="let menu of mainMenus.menu">
+                                                                    <ng-container  *ngIf="menu.menuValue">
+                                                                        <li [class.active]="page===menu.base"><a [routerLink]="menu.route">{{menu.menuValue}}</a></li>
+                                                                    </ng-container>
+                                                                </ng-container>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="col-lg-6">
+                                                                <h6>{{mainMenus.subTitle2}}</h6>
+                                                                <ul>
+                                                                <ng-container *ngFor="let menu of mainMenus.menu">
+                                                                    <ng-container  *ngIf="menu.menuValue2">
+                                                                        <li [class.active]="page===menu.base"><a [routerLink]="menu.route">{{menu.menuValue2}}</a></li>
+                                                                    </ng-container>
+                                                                </ng-container>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                </li>
+                            </ng-container>
+                            </ng-container>
+                        </ng-container>
+
+                    </ul>
+                    </nav>
+
+                   <span  *ngIf="currentUser === null else defaultheader">
+                    <div *ngIf="base === 'index'" class="header-btn d-flex align-items-center">
+                        <div class="me-3">
+                            <a href="javascript:void(0);" id="dark-mode-toggle" class="theme-toggle" [ngClass]="{'activate' : isdark}" (click)="darkMode()" (click)="settings.changeThemeColor('1')">
+                                <i class="isax isax-moon"></i>
+                            </a>
+                            <a href="javascript:void(0);" id="light-mode-toggle" class="theme-toggle" [ngClass]="{'activate' : islight}" (click)="darkMode()" (click)="settings.changeThemeColor('2')">
+                                <i class="isax isax-sun-1"></i>
+                            </a>
+                        </div>
+                        <div><a href="javascript:void(0);" class="btn btn-white me-3" data-bs-toggle="modal" data-bs-target="#login-modal"  style="display: inline-block; width: 68px;">Log IN</a></div>
+                        <a [routerLink]="routes.becomeAnExpert" class="btn btn-primary me-0">Formateur</a> &nbsp;
+                       <a [routerLink]="routes.becomeAnStudent" class="btn btn-primary w-100">Etudiant</a>
+                        <div class="header__hamburger d-xl-none my-auto">
+                            <div class="sidebar-menu" (click)="addmenu()">
+                                <i class="isax isax-menu5"></i>
+                            </div>
+                        </div>
+                    </div>
+                </span>
+                    <ng-template #defaultheader >
+                        <div *ngIf="base !== 'index' || page !=='index-rtl'" class="header-btn d-flex align-items-center" >
+                            <div class="me-3">
+                                <a href="javascript:void(0);" id="dark-mode-toggle" class="theme-toggle" [ngClass]="{'activate' : isdark}" (click)="darkMode()" (click)="settings.changeThemeColor('1')">
+                                    <i class="isax isax-moon"></i>
+                                </a>
+                                <a href="javascript:void(0);" id="light-mode-toggle" class="theme-toggle" [ngClass]="{'activate' : islight}" (click)="darkMode()" (click)="settings.changeThemeColor('2')">
+                                    <i class="isax isax-sun-1"></i>
+                                </a>
+                            </div>
+                            <div class="dropdown profile-dropdown">
+                                <a href="javascript:void(0);" class="d-flex align-items-center" data-bs-toggle="dropdown">
+                                    <span class="avatar avatar-md">
+                                    <img src="assets/img/users/user-05.jpg" alt="Img" class="img-fluid rounded-circle border border-white border-4">
+                                </span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end p-3">
+                                    <li>
+                                        <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2" [routerLink]="routes.userDashboard">Dashboard</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2" [routerLink]="routes.review">Mes cours</a>
+                                    </li>
+                                    <li>
+
+                                      <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2" [routerLink]="routes.myProfile">Mon Profile</a>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider my-2">
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2" [routerLink]="routes.login" href="javascript:void(0)" (click)="logout()" >Logout</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <a  *ngIf="globalService.getRole() == 'teacher'"
+                            class="btn btn-primary me-0">
+                                 Ajouter un cours
+                            </a>
+                            <div class="header__hamburger d-xl-none my-auto">
+                                <div class="sidebar-menu">
+                                    <i class="isax isax-menu5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </header>
+</div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="login-modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header d-flex align-items-center justify-content-end pb-0 border-0">
+                    <a href="javascript:void(0);" data-bs-dismiss="modal" aria-label="Close"><i
+							class="ti ti-x fs-20"></i></a>
+                </div>
+                <div class="modal-body p-4 pt-0">
+
+                        <div class="text-center mb-3">
+                            <h5 class="mb-1">Connectez-vous</h5>
+                            <p>Connectez-vous pour commencer à gérer votre compte Gold LMS</p>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Email</label>
+                            <div class="input-icon">
+                                <span class="input-icon-addon">
+									<i class="isax isax-message"></i>
+                                </span>
+                                <input type="email" class="form-control form-control-lg" placeholder="Saisir votre mail" [(ngModel)]="user.email">
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Mot de passe</label>
+                            <div class="pass-group input-icon">
+                                <span class="input-icon-addon">
+                                    <i class="isax isax-lock"></i>
+                                  </span>
+                                <input
+                                [type]="password[0] ? 'text' : 'password'"
+                                class="pass-input form-control"
+                                [(ngModel)]="user.password"
+                                placeholder="Saisir votre mot de passe"
+                              />
+                              <span
+                                class="isax toggle-password"
+                                [ngClass]="password[0] ? 'isax-eye' : 'isax-eye-slash'"
+                                (click)="togglePassword(0)"
+                                (keydown.enter)="togglePassword(0)"
+                                tabindex="0"
+                              ></span>
+                              </div>
+                        </div>
+                        <div class="mt-3 mb-3">
+                            <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2">
+                                <div class="form-check d-flex align-items-center mb-2">
+                                    <input class="form-check-input mt-0" type="checkbox" value="" id="remembers_me">
+                                    <label class="form-check-label ms-2 text-gray-9 fs-14" for="remembers_me">
+                                        Remember Me
+                                    </label>
+                                </div>
+                             </div>
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" (click)="login()" class="btn btn-xl btn-primary d-flex align-items-center justify-content-center w-100" data-bs-dismiss="modal">Login<i class="isax isax-arrow-right-3 ms-2"></i></button>
+                        </div>
+
+                        <div class="d-flex justify-content-center">
+                            <p class="fs-14">Vous n'avez pas un compte ?  <a href="javascript:void(0);" class="link-primary fw-medium" data-bs-toggle="modal" data-bs-target="#register-modal">Sign up</a></p>
+                        </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- /Login Modal -->
+
+
+        <!-- Register Modal -->
+        <div class="modal fade" id="register-modal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header d-flex align-items-center justify-content-end pb-0 border-0">
+                        <a href="javascript:void(0);" data-bs-dismiss="modal" aria-label="Close"><i
+                                class="ti ti-x fs-20"></i></a>
+                    </div>
+                    <div class="modal-body p-4 pt-0">
+
+                            <div class="text-center border-bottom mb-3">
+                                <h5 class="mb-1">Inscription</h5>
+                                <p class="mb-3">Créer votre compte</p>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Nom</label>
+                                <div class="input-icon">
+                                    <span class="input-icon-addon">
+                                        <i class="isax isax-user"></i>
+                                    </span>
+                                    <input type="text" class="form-control form-control-lg" placeholder="Entrez votre nom" [(ngModel)]="user.name">
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Email</label>
+                                <div class="input-icon">
+                                    <span class="input-icon-addon">
+                                        <i class="isax isax-message"></i>
+                                    </span>
+                                    <input type="email" class="form-control form-control-lg" placeholder="Entrez votre Email" [(ngModel)]="user.email">
+                                </div>
+                            </div>
+                      <div class="mb-2">
+                        <label class="form-label">Téléphone</label>
+                        <div class="input-icon">
+                                    <span class="input-icon-addon">
+                                        <i class="isax isax-message"></i>
+                                    </span>
+                          <input type="text" class="form-control form-control-lg" placeholder="Entrez votre téléphone" [(ngModel)]="user.phone">
+                        </div>
+                      </div>
+                            <div class="mb-2">
+                                <label class="form-label">Mot de passe</label>
+                                <div class="pass-group input-icon">
+                                    <span class="input-icon-addon">
+                                        <i class="isax isax-lock"></i>
+                                      </span>
+                                    <input
+                                    [type]="password[1] ? 'text' : 'password'"
+                                    [(ngModel)]="user.password"
+                                    class="pass-input form-control"
+                                    placeholder="Enter Password"
+                                  />
+                                  <span
+                                    class="isax toggle-password"
+                                    [ngClass]="password[1] ? 'isax-eye' : 'isax-eye-slash'"
+                                    (click)="togglePassword(1)"
+                                    (keydown.enter)="togglePassword(1)"
+                                    tabindex="0"
+                                  ></span>
+                                  </div>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Confirm Password</label>
+                                <div class="pass-group input-icon">
+                                    <span class="input-icon-addon">
+                                        <i class="isax isax-lock"></i>
+                                      </span>
+                                    <input
+                                    [type]="password[2] ? 'text' : 'password'"
+                                    [(ngModel)]="user.password_confirmation"
+                                    class="pass-input form-control"
+                                    placeholder="Enter Password"
+                                  />
+                                  <span
+                                    class="isax toggle-password"
+                                    [ngClass]="password[2] ? 'isax-eye' : 'isax-eye-slash'"
+                                    (click)="togglePassword(2)"
+                                    (keydown.enter)="togglePassword(2)"
+                                    tabindex="0"
+                                  ></span>
+                                  </div>
+                            </div>
+                            <div class="mt-3 mb-3">
+                                <div class="d-flex">
+                                    <div class="form-check d-flex align-items-center mb-2">
+                                        <input class="form-check-input mt-0" type="checkbox" value="" id="agree">
+                                        <label class="form-check-label ms-2 text-gray-9 fs-14" for="agree">
+                                           J'accepte les  <a href="javascript:void(0);" class="link-primary fw-medium">Conditions d'utilisations.</a>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <button type="submit" (click)="register()" class="btn btn-xl btn-primary d-flex align-items-center justify-content-center w-100"  data-bs-dismiss="modal"  >S'inscrire<i class="isax isax-arrow-right-3 ms-2"></i></button>
+                            </div>
+<!--                            <div class="login-or mb-3">-->
+<!--                                <span class="span-or">Or</span>-->
+<!--                            </div>-->
+<!--                            <div class="d-flex align-items-center mb-3">-->
+<!--                                <a href="javascript:void(0);" class="btn btn-light flex-fill d-flex align-items-center justify-content-center me-2">-->
+<!--                                    <img src="assets/img/icons/google-icon.svg" class="me-2" alt="Img">Google-->
+<!--                                </a>-->
+<!--                                <a href="javascript:void(0);" class="btn btn-light flex-fill d-flex align-items-center justify-content-center">-->
+<!--                                    <img src="assets/img/icons/fb-icon.svg" class="me-2" alt="Img">Facebook-->
+<!--                                </a>-->
+<!--                            </div>-->
+                            <div class="d-flex justify-content-center">
+                                <p class="fs-14">Avez-vous déja un compte ? <a href="javascript:void(0);" class="link-primary fw-medium" data-bs-toggle="modal" data-bs-target="#login-modal">Sign In</a></p>
+                            </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div >
+        <!-- /Register Modal -->
+
+        <!-- Change Password -->
+        <div class="modal fade" id="change-password">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header d-flex align-items-center justify-content-end pb-0 border-0">
+                        <a href="javascript:void(0);" data-bs-dismiss="modal" aria-label="Close"><i
+                                class="ti ti-x fs-20"></i></a>
+                    </div>
+                    <div class="modal-body p-4 pt-0">
+
+                            <div class="text-center border-bottom mb-3">
+                                <h5 class="mb-1">Change Password</h5>
+                                <p class="mb-3">Enter Details to Change Password</p>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Password</label>
+                                <div class="pass-group input-icon">
+                                    <span class="input-icon-addon">
+                                        <i class="isax isax-lock"></i>
+                                      </span>
+                                    <input
+                                    [type]="password[3] ? 'text' : 'password'"
+                                    class="pass-input form-control"
+                                    placeholder="Enter Password"
+                                  />
+                                  <span
+                                    class="isax toggle-password"
+                                    [ngClass]="password[3] ? 'isax-eye' : 'isax-eye-slash'"
+                                    (click)="togglePassword(3)"
+                                    (keydown.enter)="togglePassword(3)"
+                                    tabindex="0"
+                                  ></span>
+                                  </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Confirm Password</label>
+                                <div class="pass-group input-icon">
+                                    <span class="input-icon-addon">
+                                        <i class="isax isax-lock"></i>
+                                      </span>
+                                    <input
+                                    [type]="password[4] ? 'text' : 'password'"
+                                    class="pass-input form-control"
+                                    placeholder="Enter Password"
+                                  />
+                                  <span
+                                    class="isax toggle-password"
+                                    [ngClass]="password[4] ? 'isax-eye' : 'isax-eye-slash'"
+                                    (click)="togglePassword(4)"
+                                    (keydown.enter)="togglePassword(4)"
+                                    tabindex="0"
+                                  ></span>
+                                  </div>
+                            </div>
+                            <div class="mb-0">
+                                <button type="button" class="btn btn-xl btn-primary d-flex align-items-center justify-content-center w-100" data-bs-toggle="modal" data-bs-target="#login-password">Modifier le mot de passe<i class="isax isax-arrow-right-3 ms-2"></i></button>
+                            </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- /Change Password -->
+
+        <!-- Forgot Password -->
+        <div class="modal fade" id="forgot-modal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header d-flex align-items-center justify-content-end pb-0 border-0">
+                        <a href="javascript:void(0);" data-bs-dismiss="modal" aria-label="Close"><i
+                                class="ti ti-x fs-20"></i></a>
+                    </div>
+                    <div class="modal-body p-4 pt-0">
+
+                            <div class="text-center border-bottom mb-3">
+                                <h5 class="mb-1">Mot de passe oublié</h5>
+                                <p>Réinitialiser le mot de passe</p>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Email</label>
+                                <div class="input-icon">
+                                    <span class="input-icon-addon">
+                                        <i class="isax isax-message"></i>
+                                    </span>
+                                    <input type="email" class="form-control form-control-lg" placeholder="Enter Email">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-xl btn-primary d-flex align-items-center justify-content-center w-100" data-bs-toggle="modal" data-bs-target="#change-password">Reset Password<i class="isax isax-arrow-right-3 ms-2"></i></button>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <p class="fs-14">Remember Password ? <a href="javascript:void(0);" class="link-primary fw-medium" data-bs-toggle="modal" data-bs-target="#login-modal">Sign In</a></p>
+                            </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- /Forgot Password -->
