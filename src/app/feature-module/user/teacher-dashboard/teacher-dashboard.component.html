@@ -3,11 +3,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12 col-12">
-                    <h2 class="breadcrumb-title mb-2">Dashboard Enseignant</h2>
+                    <h2 class="breadcrumb-title mb-2">Teacher Dashboard</h2>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center mb-0">
                             <li class="breadcrumb-item"><a [routerLink]="routes.index"><i class="isax isax-home5"></i></a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Dashboard Enseignant</li>
+                            <li class="breadcrumb-item active" aria-current="page">Teacher Dashboard</li>
                         </ol>
                     </nav>
                 </div>
@@ -30,6 +30,20 @@
 
             <!-- Teacher Dashboard -->
             <div class="col-xl-9 col-lg-8">
+                <!-- Loading indicator -->
+                <div class="alert alert-info" *ngIf="isLoading">
+                    <div class="d-flex align-items-center">
+                        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                        <span>Loading dashboard data...</span>
+                    </div>
+                </div>
+
+                <!-- Error message -->
+                <div class="alert alert-warning" *ngIf="error">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    {{ error }}
+                </div>
+
                 <!-- Teacher Stats Cards -->
                 <div class="row">
                     <div class="col-xl-3 col-md-6">
@@ -37,11 +51,11 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <span class="avatar avatar-xl rounded-circle bg-primary me-3">
-                                        <i class="isax isax-people fs-36"></i>
+                                        <i class="isax isax-user-tick fs-36"></i>
                                     </span>
                                     <div>
                                         <h3>{{teacherData.totalStudents}}</h3>
-                                        <p>Total Étudiants</p>
+                                        <p>Total Students</p>
                                     </div>
                                 </div>
                             </div>
@@ -52,11 +66,11 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <span class="avatar avatar-xl rounded-circle bg-success me-3">
-                                        <i class="isax isax-book-15 fs-36"></i>
+                                        <i class="isax isax-document-text fs-36"></i>
                                     </span>
                                     <div>
                                         <h3>{{teacherData.activeCourses}}</h3>
-                                        <p>Cours Actifs</p>
+                                        <p>Active Courses</p>
                                     </div>
                                 </div>
                             </div>
@@ -67,11 +81,11 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <span class="avatar avatar-xl rounded-circle bg-warning me-3">
-                                        <i class="isax isax-tick-circle fs-36"></i>
+                                        <i class="isax isax-clipboard-tick fs-36"></i>
                                     </span>
                                     <div>
                                         <h3>{{teacherData.completedCourses}}</h3>
-                                        <p>Cours Terminés</p>
+                                        <p>Completed Courses</p>
                                     </div>
                                 </div>
                             </div>
@@ -82,11 +96,11 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <span class="avatar avatar-xl rounded-circle bg-info me-3">
-                                        <i class="isax isax-money-send5 fs-36"></i>
+                                        <i class="isax isax-money-recive fs-36"></i>
                                     </span>
                                     <div>
-                                        <h3>{{teacherData.totalRevenue}} <small>TND</small></h3>
-                                        <p>Revenus Total</p>
+                                        <h3>{{teacherData.totalRevenue}} <small>DT</small></h3>
+                                        <p>Total Revenue</p>
                                     </div>
                                 </div>
                             </div>
@@ -101,8 +115,8 @@
                         <div class="card shadow-none flex-fill">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h6 class="fw-bold">Avancement des Étudiants</h6>
-                                    <span class="badge badge-soft-primary">{{teacherData.studentProgress.length}} étudiants</span>
+                                    <h6 class="fw-bold">Student Progress</h6>
+                                    <span class="badge badge-soft-primary">{{teacherData.studentProgress.length}} students</span>
                                 </div>
                                 
                                 <div class="student-progress-list">
@@ -135,34 +149,34 @@
                         <div class="card shadow-none flex-fill">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h6 class="fw-bold">Avancement des Cours</h6>
-                                    <span class="badge badge-soft-info">{{teacherData.courseProgress.length}} cours</span>
+                                    <h6 class="fw-bold">Course Progress</h6>
+                                    <span class="badge badge-soft-info">{{teacherData.courseProgress.length}} courses</span>
                                 </div>
                                 
                                 <div class="course-progress-list">
                                     <div *ngFor="let course of teacherData.courseProgress" class="course-item mb-4">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <h6 class="mb-0 fs-14">{{course.course}}</h6>
-                                            <span class="text-muted fs-12">{{course.totalStudents}} étudiants</span>
+                                            <span class="text-muted fs-12">{{course.totalStudents}} students</span>
                                         </div>
                                         
                                         <div class="row g-2 mb-2">
                                             <div class="col-4">
                                                 <div class="text-center p-2 bg-success-light rounded">
                                                     <div class="fs-16 fw-bold text-success">{{course.completed}}</div>
-                                                    <div class="fs-11 text-muted">Terminé</div>
+                                                    <div class="fs-11 text-muted">Completed</div>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="text-center p-2 bg-warning-light rounded">
                                                     <div class="fs-16 fw-bold text-warning">{{course.inProgress}}</div>
-                                                    <div class="fs-11 text-muted">En cours</div>
+                                                    <div class="fs-11 text-muted">In Progress</div>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="text-center p-2 bg-danger-light rounded">
                                                     <div class="fs-16 fw-bold text-danger">{{course.notStarted}}</div>
-                                                    <div class="fs-11 text-muted">Non commencé</div>
+                                                    <div class="fs-11 text-muted">Not Started</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -186,50 +200,54 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card shadow-none">
+                            <div class="card-header">
+                                <h5 class="card-title">Your Recent Courses</h5>
+                            </div>
                             <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h6 class="fw-bold">Derniers Cours Créés</h6>
-                                    <span class="badge badge-soft-secondary">{{teacherData.recentCourses.length}} cours</span>
-                                </div>
-                                
-                                <div class="row">
-                                    <div *ngFor="let course of teacherData.recentCourses" class="col-xl-4 col-md-6 mb-3">
-                                        <div class="card border">
-                                            <div class="card-body">
-                                                <div class="d-flex align-items-center mb-3">
-                                                    <img [src]="course.image" class="avatar avatar-lg rounded me-3" alt="Course">
-                                                    <div class="flex-fill">
-                                                        <h6 class="mb-1 fs-14">{{course.title}}</h6>
-                                                        <span class="badge badge-soft-info badge-xs">{{course.category}}</span>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="row g-2 mb-3">
-                                                    <div class="col-6">
-                                                        <div class="text-center">
-                                                            <div class="fs-18 fw-bold text-primary">{{course.students}}</div>
-                                                            <div class="fs-12 text-muted">Étudiants</div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Course</th>
+                                                <th>Category</th>
+                                                <th>Students</th>
+                                                <th>Completion</th>
+                                                <th>Created</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let course of teacherData.recentCourses">
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="avatar avatar-md me-2">
+                                                            <img [src]="course.image" class="avatar-img rounded" alt="{{ course.title }}">
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="mb-0">{{ course.title }}</h6>
                                                         </div>
                                                     </div>
-                                                    <div class="col-6">
-                                                        <div class="text-center">
-                                                            <div class="fs-18 fw-bold text-success">{{course.completion}}%</div>
-                                                            <div class="fs-12 text-muted">Completion</div>
+                                                </td>
+                                                <td>{{ course.category }}</td>
+                                                <td>{{ course.students }}</td>
+                                                <td>
+                                                    <div class="progress" style="height: 6px;">
+                                                        <div class="progress-bar bg-success" role="progressbar"
+                                                            [style.width]="course.completion + '%'"
+                                                            [attr.aria-valuenow]="course.completion"
+                                                            aria-valuemin="0" aria-valuemax="100">
                                                         </div>
                                                     </div>
-                                                </div>
-                                                
-                                                <div class="progress mb-2" style="height: 6px;">
-                                                    <div class="progress-bar bg-success" [style.width.%]="course.completion"></div>
-                                                </div>
-                                                
-                                                <p class="fs-12 text-muted mb-0">
-                                                    <i class="isax isax-calendar-25 me-1"></i>
-                                                    Créé le {{course.createdAt | date:'dd/MM/yyyy'}}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                                    <span class="small text-muted">{{ course.completion }}% Complete</span>
+                                                </td>
+                                                <td>{{ course.createdAt | date }}</td>
+                                            </tr>
+                                            <tr *ngIf="teacherData.recentCourses.length === 0">
+                                                <td colspan="5" class="text-center py-3">
+                                                    <p class="mb-0 text-muted">No courses found</p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>

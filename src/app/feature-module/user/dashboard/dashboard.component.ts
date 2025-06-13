@@ -13,6 +13,7 @@ import {
 import { routes } from '../../../shared/routes/routes';
 import {AccessDataService} from "../../../services/access-data.service";
 import {GlobalService} from "../../../services/global.service";
+import {ApiService} from "../../../services/api.service";
 
 
 export interface ChartOptions {
@@ -27,10 +28,15 @@ export interface ChartOptions {
   responsive: ApexResponsive[];
   colors: string[];
 }
+
+export interface ApexResponsive {
+  breakpoint: number;
+  options: any;
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: false,
-
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -45,6 +51,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   categoryLabels: string[] = [];
   categorySeries: number[] = [];
   categoryColors: string[] = ['#3b82f6', '#0ea5e9', '#111827', '#6b7280', '#f59e0b'];
+  
+  // Dashboard data
+  studentData: any = {
+    enrolledCourses: 0,
+    completedCourses: 0,
+    totalSpent: 0,
+    activeCourses: 0,
+    courseList: [],
+    isLoading: true,
+    error: null
+  };
 
   // Scrolling properties
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
@@ -95,10 +112,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     ]
   };
-  constructor(private accessDataService: AccessDataService,
-              private globalService: GlobalService) {
+  
+  constructor(
+    private accessDataService: AccessDataService,
+    private globalService: GlobalService,
+    private apiService: ApiService
+  ) {
     this.user = this.globalService.getCurrentUser()
   }
+  
   ngOnInit(): void {
     const maxValue = 10;
 
@@ -137,9 +159,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
               show: true,
               offsetY: -10,
               fontSize: '16px',
-
             },
-
           },
         },
       },
@@ -163,108 +183,167 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         },
       ],
     };
-this.transactionChart={
-  chart: {
-    height: 250,
-    type: 'bar',
-    stacked: true,
-    toolbar: {
-      show: false,
-    }
-  },
-  colors: ['#CF3425', '#FEEDEB'],
-  responsive: [{
-    breakpoint: 480,
-    options: {
-      legend: {
-        position: 'bottom',
-        offsetX: -10,
-        offsetY: 0
-      }
-    }
-  }],
-  plotOptions: {
-    bar: {
-      borderRadius: 5,
-      borderRadiusWhenStacked: 'all',
-      horizontal: false,
-      endingShape: 'rounded'
-    },
-  },
-  series: [{
-    name: 'Income',
-    data: [5000, 16000, 8000, 5000, 4000, 5000, 12000, 5000, 8000, 5000, 5000, 8000]
-  }, {
-    name: 'Expenses',
-    data: [5000, 4000, 4000, 5000, 8000, 5000, 4000, 5000, 4000, 5000, 5000, 4000]
-  }],
-  xaxis: {
-    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct','Nov', 'Dec'],
-    labels: {
-      style: {
-        colors: '#4E5561',
-        fontSize: '12px',
-      }
-    }
-  },
-  yaxis: {
-    labels: {
-      formatter: (val:any) => {
-        return val / 1000 + 'K'
+    
+    this.transactionChart={
+      chart: {
+        height: 250,
+        type: 'bar',
+        stacked: true,
+        toolbar: {
+          show: false,
+        }
       },
-      offsetX: -15,
-      style: {
-        colors: '#4E5561',
-        fontSize: '13px',
-      }
-    }
-  },
-  grid: {
-    show:false,
-  },
-  legend: {
-    show: false
-  },
-  dataLabels: {
-    enabled: false // Disable data labels
-  },
-  fill: {
-    opacity: 1
-  },
-}
-}
-
-  loadStats(){
-    this.accessDataService.getData(null,'dashboard-user/'+this.user.id).subscribe(
-          (response: any) => {
-            this.data = response;
-            this.categoryLabels = response.data.map((d:any) => d.category);
-            this.categorySeries = response.data.map((d:any) => d.total);
-
-            this.chartOptions.series = this.categorySeries;
-            this.chartOptions.labels = this.categoryLabels;
-            this.chartOptions.colors = this.categoryColors.slice(0, this.categoryLabels.length);
-          },
-          error => {
-            // Fallback data for demo
-            this.setFallbackData();
-          },
-          () => {
+      colors: ['#CF3425', '#FEEDEB'],
+      responsive: [{
+        breakpoint: 480,
+        options: {
+          legend: {
+            position: 'bottom',
+            offsetX: -10,
+            offsetY: 0
           }
-        )
+        }
+      }],
+      plotOptions: {
+        bar: {
+          borderRadius: 5,
+          borderRadiusWhenStacked: 'all',
+          horizontal: false,
+          endingShape: 'rounded'
+        },
+      },
+      series: [{
+        name: 'Income',
+        data: [5000, 16000, 8000, 5000, 4000, 5000, 12000, 5000, 8000, 5000, 5000, 8000]
+      }, {
+        name: 'Expenses',
+        data: [5000, 4000, 4000, 5000, 8000, 5000, 4000, 5000, 4000, 5000, 5000, 4000]
+      }],
+    }
+  }
+
+  loadStats() {
+    this.studentData.isLoading = true;
+    
+    // Check if we have a logged-in user
+    if (this.user && this.user.id) {
+      // Get user dashboard data from API
+      this.apiService.getDashboardUserData(this.user.id).subscribe({
+        next: (data) => {
+          if (data) {
+            // Update student dashboard with API data
+            this.studentData.enrolledCourses = data.courses ? data.courses.length : 0;
+            this.studentData.completedCourses = data.completedCoursesCount || 0;
+            this.studentData.totalSpent = data.totalCoursePrice || 0;
+            
+            // Calculate active courses (not completed)
+            this.studentData.activeCourses = this.studentData.enrolledCourses - this.studentData.completedCourses;
+            
+            // Process enrollment data
+            if (data.enrollments && data.enrollments.length) {
+              this.studentData.courseList = data.enrollments.map((enrollment: any) => {
+                return {
+                  id: enrollment.id,
+                  title: enrollment.course?.title || 'Untitled Course',
+                  progress: enrollment.progress || 0,
+                  image: enrollment.course?.media?.length ? enrollment.course.media[0].url : 'assets/img/course-placeholder.jpg',
+                  category: enrollment.course?.category?.name || 'Uncategorized',
+                  instructor: enrollment.course?.instructor?.name || 'Unknown Instructor'
+                };
+              });
+            }
+            
+            // Update category chart data if available
+            if (data.data && data.data.length) {
+              this.categoryLabels = data.data.map((item: any) => item.category);
+              this.categorySeries = data.data.map((item: any) => item.total);
+              
+              // Update chart options
+              this.chartOptions.labels = this.categoryLabels;
+              this.chartOptions.series = this.categorySeries;
+              this.chartOptions.colors = this.categoryColors.slice(0, this.categoryLabels.length);
+            }
+            
+            this.data = data;
+          } else {
+            // Fallback to demo data if API returns empty data
+            this.setFallbackData();
+          }
+          this.studentData.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Error loading student dashboard data:', err);
+          this.studentData.error = 'Failed to load dashboard data. Using demo data instead.';
+          this.setFallbackData();
+          this.studentData.isLoading = false;
+        }
+      });
+    } else {
+      // No user logged in, use fallback data
+      this.setFallbackData();
+      this.studentData.isLoading = false;
+    }
   }
 
   setFallbackData() {
-    // Fallback data similar to the image
-    this.categoryLabels = ['Réparation', 'Programmation'];
-    this.categorySeries = [1, 3]; // 1 repair course, 3 programming courses
-    this.data = {
-      totalCoursePrice: 111
-    };
-    
-    this.chartOptions.series = this.categorySeries;
+    // Demo data for the category chart
+    this.categoryLabels = ['Web Development', 'Mobile Development', 'Data Science', 'Design', 'Business'];
+    this.categorySeries = [30, 25, 20, 15, 10];
     this.chartOptions.labels = this.categoryLabels;
-    this.chartOptions.colors = ['#3b82f6', '#0ea5e9']; // Blue colors like in the image
+    this.chartOptions.series = this.categorySeries;
+    this.chartOptions.colors = this.categoryColors;
+    
+    // Demo data for student dashboard
+    this.studentData = {
+      enrolledCourses: 5,
+      completedCourses: 2,
+      totalSpent: 499,
+      activeCourses: 3,
+      courseList: [
+        {
+          id: 1,
+          title: 'Introduction to HTML & CSS',
+          progress: 100,
+          image: 'assets/img/course-placeholder.jpg',
+          category: 'Web Development',
+          instructor: 'Ahmed Bouazizi'
+        },
+        {
+          id: 2,
+          title: 'JavaScript Fundamentals',
+          progress: 85,
+          image: 'assets/img/course-placeholder.jpg',
+          category: 'Web Development',
+          instructor: 'Leila Kaddour'
+        },
+        {
+          id: 3,
+          title: 'React for Beginners',
+          progress: 65,
+          image: 'assets/img/course-placeholder.jpg',
+          category: 'Web Development',
+          instructor: 'Mohamed Ali'
+        },
+        {
+          id: 4,
+          title: 'Advanced Python Programming',
+          progress: 32,
+          image: 'assets/img/course-placeholder.jpg',
+          category: 'Data Science',
+          instructor: 'Sami Trabelsi'
+        },
+        {
+          id: 5,
+          title: 'Mobile App UI Design',
+          progress: 100,
+          image: 'assets/img/course-placeholder.jpg',
+          category: 'Design',
+          instructor: 'Amina Beldi'
+        }
+      ],
+      isLoading: false,
+      error: null
+    };
   }
 
   getCategoryCount(index: number): number {
@@ -272,10 +351,10 @@ this.transactionChart={
   }
 
   getCategoryPercentage(index: number): string {
-    const total = this.categorySeries.reduce((sum, val) => sum + val, 0);
+    const total = this.categorySeries.reduce((sum, value) => sum + value, 0);
     if (total === 0) return '0%';
-    const percentage = (this.categorySeries[index] / total) * 100;
-    return percentage.toFixed(1) + '%';
+    
+    return Math.round((this.categorySeries[index] / total) * 100) + '%';
   }
 
   ngAfterViewInit() {
@@ -287,42 +366,28 @@ this.transactionChart={
   }
 
   startAutoScroll() {
-    if (this.scrollInterval) {
-      clearInterval(this.scrollInterval);
-    }
+    if (!this.scrollContainer || !this.scrollContent) return;
     
     this.scrollInterval = setInterval(() => {
-      if (this.isScrolling && this.scrollContainer && this.scrollContent) {
-        try {
-          const container = this.scrollContainer.nativeElement;
-          const content = this.scrollContent.nativeElement;
-          
-          if (!container || !content) {
-            return;
-          }
-          
-          this.scrollPosition += this.scrollSpeed;
-          
-          // Reset scroll position when we've scrolled through half the content (for seamless loop)
-          const halfContentHeight = content.scrollHeight / 2;
-          if (this.scrollPosition >= halfContentHeight) {
-            this.scrollPosition = 0;
-          }
-          
-          container.scrollTop = this.scrollPosition;
-        } catch (error) {
-          console.warn('Error during auto-scroll:', error);
-          // Stop scrolling if there's an error
-          this.stopAutoScroll();
-        }
+      if (!this.isScrolling) return;
+      
+      const containerWidth = this.scrollContainer.nativeElement.offsetWidth;
+      const contentWidth = this.scrollContent.nativeElement.scrollWidth;
+      
+      this.scrollPosition += this.scrollSpeed;
+      
+      if (this.scrollPosition >= contentWidth - containerWidth) {
+        // Reset to start when reaching the end
+        this.scrollPosition = 0;
       }
-    }, 50); // 50ms interval for smooth scrolling
+      
+      this.scrollContainer.nativeElement.scrollLeft = this.scrollPosition;
+    }, 30);
   }
 
   stopAutoScroll() {
     if (this.scrollInterval) {
       clearInterval(this.scrollInterval);
-      this.scrollInterval = null;
     }
   }
 
@@ -333,7 +398,6 @@ this.transactionChart={
   resumeScroll() {
     this.isScrolling = true;
   }
-
 }
 
 
