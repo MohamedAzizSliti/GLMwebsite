@@ -278,11 +278,23 @@ public static get customerTourBooking(): string {
 public static get review(): string {
   return this.user + '/review';
 }
+public static get addCourse(): string {
+  return this.user + '/add-course';
+}
+public static get courseManagement(): string {
+  return this.user + '/course-management';
+}
 public static get chat(): string {
   return this.user + '/chat';
 }
+public static get messaging(): string {
+  return this.user + '/messaging';
+}
 public static get chatAssistant(): string {
   return this.user + '/dashboard/chat-assistant';
+}
+public static get myEnrollments(): string {
+  return this.user + '/my-enrollments';
 }
 public static get wishlist(): string {
   return this.user + '/wishlist';

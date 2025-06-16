@@ -4,44 +4,60 @@
   </div>
 
   <div class="question-text">
-    <p>{{ question?.question_text }}</p>
+    <p>{{ question?.question || question?.question_text }}</p>
   </div>
 
   <div class="options-container">
     <!-- Options pour les questions à choix unique -->
-    <div *ngIf="question?.question_type === 'single_choice'" class="single-choice-options">
+    <div *ngIf="question?.type === 'single_choice' || question?.question_type === 'single_choice'" class="single-choice-options">
       <div
-        *ngFor="let option of ['option_1', 'option_2', 'option_3', 'option_4']"
+        *ngFor="let option of getAvailableOptionKeys()"
         class="option-item"
         [class.selected]="isOptionSelected(option)"
-        (click)="selectSingleOption(option)"
-        [hidden]="!question?.options[option]?.text">
+        (click)="selectSingleOption(option)">
 
         <div class="radio-button">
           <div class="radio-inner" *ngIf="isOptionSelected(option)"></div>
         </div>
 
         <div class="option-text">
-          {{ question?.options[option]?.text }}
+          {{ getOptionText(option) }}
         </div>
       </div>
     </div>
 
     <!-- Options pour les questions à choix multiples -->
-    <div *ngIf="question?.question_type === 'multiple_choice'" class="multiple-choice-options">
+    <div *ngIf="question?.type === 'multiple_choice' || question?.question_type === 'multiple_choice'" class="multiple-choice-options">
       <div
-        *ngFor="let option of ['option_1', 'option_2', 'option_3', 'option_4']"
+        *ngFor="let option of getAvailableOptionKeys()"
         class="option-item"
-        [hidden]="!question?.options[option]?.text">
+        [class.selected]="isOptionSelected(option)"
+        (click)="toggleMultipleOption(option, !isOptionSelected(option))">
 
-        <label class="checkbox-container">
-          <input
-            type="checkbox"
-            [checked]="isOptionSelected(option)"
-            (change)="toggleMultipleOption(option, $event.target.checked)">
-          <span class="checkmark"></span>
-          <span class="option-text">{{ question?.options[option]?.text }}</span>
-        </label>
+        <div class="checkbox-button">
+          <div class="checkbox-inner" *ngIf="isOptionSelected(option)">✓</div>
+        </div>
+
+        <div class="option-text">
+          {{ getOptionText(option) }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Options pour les questions binaires (vrai/faux) -->
+    <div *ngIf="question?.type === 'binary'" class="binary-options">
+      <div class="option-item" [class.selected]="isOptionSelected('option_1')" (click)="selectSingleOption('option_1')">
+        <div class="radio-button">
+          <div class="radio-inner" *ngIf="isOptionSelected('option_1')"></div>
+        </div>
+        <div class="option-text">{{ getOptionText('option_1') || 'Oui' }}</div>
+      </div>
+      
+      <div class="option-item" [class.selected]="isOptionSelected('option_2')" (click)="selectSingleOption('option_2')">
+        <div class="radio-button">
+          <div class="radio-inner" *ngIf="isOptionSelected('option_2')"></div>
+        </div>
+        <div class="option-text">{{ getOptionText('option_2') || 'Non' }}</div>
       </div>
     </div>
   </div>

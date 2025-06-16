@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { routes } from '../routes/routes';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { apiResultFormat, MainMenu, SideBar, SideBar2, SideBarMenu } from '../models/models';
 
@@ -142,7 +142,7 @@ export class DataService {
       separateRoute: false,
       menu:[
         {
-          menuValue: 'Dashboard',
+          menuValue: 'sidebar.dashboard',
           route: routes.userDashboard,
           hasSubRoute: false,
           showSubRoute: false,
@@ -153,7 +153,7 @@ export class DataService {
           icon:'isax-grid-55'
         },
         {
-          menuValue: 'Chat Assistant',
+          menuValue: 'sidebar.chat_assistant',
           route: routes.chatAssistant,
           hasSubRoute: false,
           showSubRoute: false,
@@ -164,7 +164,7 @@ export class DataService {
           icon:'isax-message-question'
         },
         {
-          menuValue: 'Mes cours',
+          menuValue: 'sidebar.my_courses',
           route: routes.review,
           hasSubRoute: false,
           showSubRoute: false,
@@ -172,7 +172,7 @@ export class DataService {
           page: '',
           last: '',
           subMenus: [],
-          icon:'isax-magic-star5'
+          icon:'fa fa-book'
         }
       ]
     },
@@ -351,18 +351,18 @@ export class DataService {
       separateRoute: false,
       menu:[
         {
-          menuValue: 'Dashboard',
-          route: routes.teacherDashboard,
+          menuValue: 'nav.dashboard',
+          route: routes.teacherDashboard, // Teacher dashboard route
           hasSubRoute: false,
           showSubRoute: false,
           base: 'teacher-dashboard',
           page: '',
           last: '',
           subMenus: [],
-          icon:'isax-grid-55'
+          icon:'isax isax-grid-55'
         },
         {
-          menuValue: 'Mes cours',
+          menuValue: 'sidebar.my_courses',
           route: routes.review,
           hasSubRoute: false,
           showSubRoute: false,
@@ -370,21 +370,21 @@ export class DataService {
           page: '',
           last: '',
           subMenus: [],
-          icon:'isax-book-15'
+          icon:'isax isax-book-15'
         },
         {
-          menuValue: 'Étudiants',
-          route: routes.review,
+          menuValue: 'sidebar.add_course',
+          route: routes.addCourse,
           hasSubRoute: false,
           showSubRoute: false,
-          base: 'students',
+          base: 'add-course',
           page: '',
           last: '',
           subMenus: [],
-          icon:'isax-people'
+          icon:'isax isax-add-circle'
         },
         {
-          menuValue: 'Gestion des Certifications',
+          menuValue: 'header.students',
           route: routes.certificationManagement,
           hasSubRoute: false,
           showSubRoute: false,
@@ -392,7 +392,18 @@ export class DataService {
           page: '',
           last: '',
           subMenus: [],
-          icon:'isax-award'
+          icon:'isax isax-people'
+        },
+        {
+          menuValue: 'header.certifications',
+          route: routes.certificationManagement,
+          hasSubRoute: false,
+          showSubRoute: false,
+          base: 'certification-management',
+          page: '',
+          last: '',
+          subMenus: [],
+          icon:'isax isax-award'
         }
       ]
     },
@@ -428,21 +439,9 @@ export class DataService {
     }
   ];
 
-  public getTeacherSideBar: BehaviorSubject<Array<SideBar2>> = new BehaviorSubject<
+  public getTeacherSideBarData: BehaviorSubject<Array<SideBar2>> = new BehaviorSubject<
   Array<SideBar2>
   >(this.teacherSideBar);
-
-  // Method to get sidebar based on user role
-  public getSideBarByRole(userRole: string): BehaviorSubject<Array<SideBar2>> {
-    switch(userRole) {
-      case 'teacher':
-        return this.getTeacherSideBar;
-      case 'student':
-        return this.getSideBarData2;
-      default:
-        return this.getSideBarData2; // Default to student sidebar
-    }
-  }
 
   public resetData2(): void {
     this.sideBar2.map((res: SideBar2) => {
@@ -499,6 +498,202 @@ export class DataService {
   public getSideBarData: BehaviorSubject<Array<SideBar>> = new BehaviorSubject<
   Array<SideBar>
   >(this.sideBar);
+
+  // Method to get student sidebar with correct dashboard route
+  public getStudentSideBar(): SideBar2[] {
+    return [
+      {
+        tittle:'Main',
+        base:'user',
+        showAsTab: false,
+        separateRoute: false,
+        menu:[
+          {
+            menuValue: 'sidebar.dashboard',
+            route: routes.userDashboard, // Student dashboard route
+            hasSubRoute: false,
+            showSubRoute: false,
+            base: 'dashboard',
+            page: '',
+            last: '',
+            subMenus: [],
+            icon:'isax isax-grid-55'
+          },
+          {
+            menuValue: 'sidebar.chat_assistant',
+            route: routes.chatAssistant,
+            hasSubRoute: false,
+            showSubRoute: false,
+            base: 'chat-assistant',
+            page: '',
+            last: '',
+            subMenus: [],
+            icon:'isax isax-message-question'
+          },
+          {
+            menuValue: 'sidebar.my_enrollments',
+            route: routes.myEnrollments,
+            hasSubRoute: false,
+            showSubRoute: false,
+            base: 'my-enrollments',
+            page: '',
+            last: '',
+            subMenus: [],
+            icon:'isax isax-book-saved'
+          },
+          {
+            menuValue: 'sidebar.my_courses',
+            route: routes.review,
+            hasSubRoute: false,
+            showSubRoute: false,
+            base: 'review',
+            page: '',
+            last: '',
+            subMenus: [],
+            icon:'isax isax-book-15'
+          }
+        ]
+      },
+      {
+        tittle:'Account',
+        base:'user',
+        showAsTab: false,
+        separateRoute: false,
+        menu:[
+          {
+            menuValue: 'header.profile',
+            route: routes.myProfile,
+            hasSubRoute: false,
+            showSubRoute: false,
+            base: 'my-profile',
+            page: '',
+            last: '',
+            subMenus: [],
+            icon:'isax isax-profile-circle'
+          },
+          {
+            menuValue: 'nav.logout',
+            route: routes.login,
+            hasSubRoute: false,
+            showSubRoute: false,
+            base: 'logout',
+            page: '',
+            last: '',
+            subMenus: [],
+            icon:'isax isax-logout'
+          }
+        ]
+      }
+    ];
+  }
+
+  // Method to get teacher sidebar with correct dashboard route
+  public getTeacherSideBar(): SideBar2[] {
+    return [
+      {
+        tittle:'Main',
+        base:'user',
+        showAsTab: false,
+        separateRoute: false,
+        menu:[
+          {
+            menuValue: 'nav.dashboard',
+            route: routes.teacherDashboard, // Teacher dashboard route
+            hasSubRoute: false,
+            showSubRoute: false,
+            base: 'teacher-dashboard',
+            page: '',
+            last: '',
+            subMenus: [],
+            icon:'isax isax-grid-55'
+          },
+          {
+            menuValue: 'sidebar.my_courses',
+            route: routes.review,
+            hasSubRoute: false,
+            showSubRoute: false,
+            base: 'review',
+            page: '',
+            last: '',
+            subMenus: [],
+            icon:'isax isax-book-15'
+          },
+          {
+            menuValue: 'sidebar.add_course',
+            route: routes.addCourse,
+            hasSubRoute: false,
+            showSubRoute: false,
+            base: 'add-course',
+            page: '',
+            last: '',
+            subMenus: [],
+            icon:'isax isax-add-circle'
+          },
+          {
+            menuValue: 'header.students',
+            route: routes.certificationManagement,
+            hasSubRoute: false,
+            showSubRoute: false,
+            base: 'certification-management',
+            page: '',
+            last: '',
+            subMenus: [],
+            icon:'isax isax-people'
+          },
+          {
+            menuValue: 'header.certifications',
+            route: routes.certificationManagement,
+            hasSubRoute: false,
+            showSubRoute: false,
+            base: 'certification-management',
+            page: '',
+            last: '',
+            subMenus: [],
+            icon:'isax isax-award'
+          }
+        ]
+      },
+      {
+        tittle:'Account',
+        base:'user',
+        showAsTab: false,
+        separateRoute: false,
+        menu:[
+          {
+            menuValue: 'header.profile',
+            route: routes.myProfile,
+            hasSubRoute: false,
+            showSubRoute: false,
+            base: 'my-profile',
+            page: '',
+            last: '',
+            subMenus: [],
+            icon:'isax isax-profile-circle'
+          },
+          {
+            menuValue: 'nav.logout',
+            route: routes.login,
+            hasSubRoute: false,
+            showSubRoute: false,
+            base: 'logout',
+            page: '',
+            last: '',
+            subMenus: [],
+            icon:'isax isax-logout'
+          }
+        ]
+      }
+    ];
+  }
+
+  // Method to get sidebar by role
+  public getSideBarByRole(role: string): Observable<SideBar2[]> {
+    if (role === 'teacher') {
+      return of(this.getTeacherSideBar());
+    } else {
+      return of(this.getStudentSideBar());
+    }
+  }
 
 
 }

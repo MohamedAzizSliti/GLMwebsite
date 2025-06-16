@@ -80,12 +80,18 @@ export class QuizModalComponent implements OnInit, OnDestroy {
    * Démarre le quiz et initialise le minuteur
    */
   startQuiz(): void {
+    console.log('🔍 QuizModal - Starting quiz with exam:', this.exam);
+    console.log('🔍 QuizModal - Exam questions:', this.exam?.questions);
+    
     if (this.exam) {
       this.currentQuestionIndex = 0;
       this.quizCompleted = false;
       this.quizResult = null;
       this.quizService.resetUserAnswers();
       this.timerService.startTimer(this.exam.duration);
+      
+      console.log('🔍 QuizModal - Quiz started, current question index:', this.currentQuestionIndex);
+      console.log('🔍 QuizModal - First question:', this.exam.questions[0]);
     }
   }
 
@@ -143,6 +149,13 @@ export class QuizModalComponent implements OnInit, OnDestroy {
    * Récupère la question courante
    */
   get currentQuestion() {
-    return this.exam?.questions[this.currentQuestionIndex] || null;
+    const question = this.exam?.questions[this.currentQuestionIndex] || null;
+    console.log('🔍 QuizModal - Getting current question:', {
+      currentQuestionIndex: this.currentQuestionIndex,
+      totalQuestions: this.exam?.questions?.length,
+      question: question,
+      exam: this.exam
+    });
+    return question;
   }
 }

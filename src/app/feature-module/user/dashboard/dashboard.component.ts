@@ -51,7 +51,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   categoryLabels: string[] = [];
   categorySeries: number[] = [];
   categoryColors: string[] = ['#3b82f6', '#0ea5e9', '#111827', '#6b7280', '#f59e0b'];
-  
+
+  // Loading states
+  isLoadingDashboard = true;
+
   // Dashboard data
   studentData: any = {
     enrolledCourses: 0,
@@ -223,66 +226,119 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadStats() {
+    this.isLoadingDashboard = true;
     this.studentData.isLoading = true;
-    
+
+    // Minimum loading time to show the loading indicator
+    const minLoadingTime = 1000; // 1 second
+    const startTime = Date.now();
+
     // Check if we have a logged-in user
     if (this.user && this.user.id) {
-      // Get user dashboard data from API
+      // Get student dashboard data from dashboard-user endpoint which provides comprehensive data
       this.apiService.getDashboardUserData(this.user.id).subscribe({
         next: (data) => {
+          console.log('Student dashboard data:', data);
+
           if (data) {
-            // Update student dashboard with API data
-            this.studentData.enrolledCourses = data.courses ? data.courses.length : 0;
+            // Update student dashboard with API data from dashboard-user endpoint
+            this.studentData.enrolledCourses = data.courses?.length || 0;
             this.studentData.completedCourses = data.completedCoursesCount || 0;
             this.studentData.totalSpent = data.totalCoursePrice || 0;
-            
-            // Calculate active courses (not completed)
-            this.studentData.activeCourses = this.studentData.enrolledCourses - this.studentData.completedCourses;
-            
-            // Process enrollment data
-            if (data.enrollments && data.enrollments.length) {
-              this.studentData.courseList = data.enrollments.map((enrollment: any) => {
+            this.studentData.activeCourses = (data.courses?.length || 0) - (data.completedCoursesCount || 0);
+
+            // Process course list from enrollments (courses array)
+            if (data.courses && data.courses.length) {
+              this.studentData.courseList = data.courses.slice(0, 5).map((enrollment: any) => {
                 return {
                   id: enrollment.id,
                   title: enrollment.course?.title || 'Untitled Course',
                   progress: enrollment.progress || 0,
                   image: enrollment.course?.media?.length ? enrollment.course.media[0].url : 'assets/img/course-placeholder.jpg',
                   category: enrollment.course?.category?.name || 'Uncategorized',
-                  instructor: enrollment.course?.instructor?.name || 'Unknown Instructor'
+                  instructor: enrollment.course?.instructor?.name || 'Unknown Instructor',
+                  status: enrollment.progress >= 100 ? 'Completed' : enrollment.progress > 0 ? 'In Progress' : 'Not Started'
                 };
               });
             }
-            
-            // Update category chart data if available
-            if (data.data && data.data.length) {
+
+            // Create category chart data from enrollmentsPerCategory
+            if (data.enrollmentsPerCategory && data.enrollmentsPerCategory.length) {
+              this.categoryLabels = data.enrollmentsPerCategory.map((item: any) => item.category);
+              this.categorySeries = data.enrollmentsPerCategory.map((item: any) => item.count);
+
+              // Update chart options
+              this.chartOptions.labels = this.categoryLabels;
+              this.chartOptions.series = this.categorySeries;
+              this.chartOptions.colors = this.categoryColors.slice(0, this.categoryLabels.length);
+            } else if (data.data && data.data.length) {
+              // Fallback to data array if enrollmentsPerCategory is not available
               this.categoryLabels = data.data.map((item: any) => item.category);
               this.categorySeries = data.data.map((item: any) => item.total);
-              
+
               // Update chart options
               this.chartOptions.labels = this.categoryLabels;
               this.chartOptions.series = this.categorySeries;
               this.chartOptions.colors = this.categoryColors.slice(0, this.categoryLabels.length);
             }
-            
+
             this.data = data;
           } else {
             // Fallback to demo data if API returns empty data
             this.setFallbackData();
           }
-          this.studentData.isLoading = false;
+
+          // Ensure minimum loading time
+          const elapsedTime = Date.now() - startTime;
+          const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
+
+          setTimeout(() => {
+            this.studentData.isLoading = false;
+            this.isLoadingDashboard = false;
+          }, remainingTime);
         },
         error: (err) => {
           console.error('Error loading student dashboard data:', err);
           this.studentData.error = 'Failed to load dashboard data. Using demo data instead.';
           this.setFallbackData();
-          this.studentData.isLoading = false;
+
+          // Ensure minimum loading time even on error
+          const elapsedTime = Date.now() - startTime;
+          const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
+
+          setTimeout(() => {
+            this.studentData.isLoading = false;
+            this.isLoadingDashboard = false;
+          }, remainingTime);
         }
       });
     } else {
       // No user logged in, use fallback data
       this.setFallbackData();
-      this.studentData.isLoading = false;
+
+      // Ensure minimum loading time even when no user
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
+
+      setTimeout(() => {
+        this.studentData.isLoading = false;
+        this.isLoadingDashboard = false;
+      }, remainingTime);
     }
+  }
+
+  getCategoryPercentage(index: number): string {
+    if (!this.categorySeries || this.categorySeries.length === 0) {
+      return '0%';
+    }
+
+    const total = this.categorySeries.reduce((sum, value) => sum + value, 0);
+    if (total === 0) {
+      return '0%';
+    }
+
+    const percentage = Math.round((this.categorySeries[index] / total) * 100);
+    return `${percentage}%`;
   }
 
   setFallbackData() {
@@ -350,12 +406,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.categorySeries[index] || 0;
   }
 
-  getCategoryPercentage(index: number): string {
-    const total = this.categorySeries.reduce((sum, value) => sum + value, 0);
-    if (total === 0) return '0%';
-    
-    return Math.round((this.categorySeries[index] / total) * 100) + '%';
-  }
+
 
   ngAfterViewInit() {
     this.startAutoScroll();
@@ -397,6 +448,33 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   resumeScroll() {
     this.isScrolling = true;
+    this.startAutoScroll();
+  }
+
+  // Get course image URL with fallbacks
+  getCourseImageUrl(course: any): string {
+    if (!course) {
+      return 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=600&fit=crop&crop=center';
+    }
+    
+    // First try media_path.original_url (from mediaPath accessor)
+    if (course.media_path && course.media_path.original_url) {
+      return course.media_path.original_url;
+    }
+    
+    // Then try cover_image.url (from coverImage accessor)
+    if (course.cover_image && course.cover_image.url) {
+      return course.cover_image.url;
+    }
+    
+    // Fallback to a default course image
+    return 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=600&fit=crop&crop=center';
+  }
+
+  // Handle image loading errors
+  onImageError(event: any): void {
+    // Set a fallback image when the original fails to load
+    event.target.src = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=600&fit=crop&crop=center';
   }
 }
 

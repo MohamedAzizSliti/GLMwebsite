@@ -94,4 +94,26 @@ selectClass(index:number):void{
 showMore(index:number) : void {
   this.isMore[index]=!this.isMore[index];
 }
+
+// Get course image URL with fallbacks
+getCourseImageUrl(course: any): string {
+  // First try media_path.original_url (from mediaPath accessor)
+  if (course.media_path && course.media_path.original_url) {
+    return course.media_path.original_url;
+  }
+  
+  // Then try cover_image.url (from coverImage accessor)
+  if (course.cover_image && course.cover_image.url) {
+    return course.cover_image.url;
+  }
+  
+  // Fallback to a default course image
+  return 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=600&fit=crop&crop=center';
+}
+
+// Handle image loading errors
+onImageError(event: any): void {
+  // Set a fallback image when the original fails to load
+  event.target.src = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=600&fit=crop&crop=center';
+}
 }

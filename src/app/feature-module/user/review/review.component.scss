@@ -1,0 +1,149 @@
+// Step Indicator Styles
+.step-indicator {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  border: 2px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  transition: all 0.3s ease;
+
+  .step-number {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 14px;
+  }
+
+  &.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+
+    .step-number {
+      color: white;
+    }
+  }
+
+  &.completed {
+    background-color: #198754;
+    border-color: #198754;
+
+    .step-number {
+      color: white;
+    }
+
+    &::before {
+      content: "✓";
+      font-weight: bold;
+      color: white;
+    }
+
+    .step-number {
+      display: none;
+    }
+  }
+}
+
+// Step Content Animation
+.step-content {
+  animation: fadeInUp 0.3s ease-in-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Modal Enhancements
+.modal-xl {
+  max-width: 1000px;
+}
+
+// Progress Bar Enhancement
+.progress {
+  background-color: #e9ecef;
+  border-radius: 10px;
+
+  .progress-bar {
+    border-radius: 10px;
+    transition: width 0.3s ease;
+  }
+}
+
+// Card Enhancements for Review Step
+.card {
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+
+  .card-body {
+    padding: 1.5rem;
+  }
+}
+
+// Form Enhancements
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  padding: 0.75rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+}
+
+.form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+// Button Enhancements
+.btn {
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.15s ease-in-out;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Small text styling
+small.form-text {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .modal-xl {
+    max-width: 95%;
+    margin: 1rem auto;
+  }
+
+  .step-indicator {
+    width: 35px;
+    height: 35px;
+
+    .step-number {
+      font-size: 12px;
+    }
+  }
+}

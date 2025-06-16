@@ -21,260 +21,142 @@
         <div class="container">
             <div class="customer-chat">
                 <div class="header-navigation">
-                    <a [routerLink]="routes.userDashboard" class="d-inline-flex align-items-center"><i class="isax isax-arrow-left me-2"></i>Back to Dashboard</a>
+                    <a *ngIf="!isDirectChatMode" [routerLink]="routes.userDashboard" class="d-inline-flex align-items-center">
+                        <i class="isax isax-arrow-left me-2"></i>{{ 'nav.back_to_dashboard' | translate }}
+                    </a>
+                    <a *ngIf="isDirectChatMode" [routerLink]="routes.userDashboard" class="d-inline-flex align-items-center">
+                        <i class="isax isax-arrow-left me-2"></i>{{ 'nav.back_to_course' | translate }}
+                    </a>
+                    <span *ngIf="isDirectChatMode && currentConversation" class="badge bg-primary ms-3">
+                        <i class="isax isax-message-notif5 me-1"></i>{{ 'chat.chat_with' | translate }} {{ getConversationName(currentConversation) }}
+                    </span>
                 </div>
                 <div class="row chat-window">
 
                     <!-- Chat User List -->
-                    <div class="col-lg-4 chat-cont-left ">
+                    <div class="col-lg-4 chat-cont-left" *ngIf="!isDirectChatMode">
                         <div class="card mb-0 flex-fill">
                             <div class="chat-header">
                                 <div class="mb-3">
-                                    <h6>Chats</h6>
+                                    <h6>{{ 'chat.messages' | translate }}</h6>
                                 </div>
                                 <div class="input-icon">
                                     <span class="input-icon-addon">
 										<i class="isax isax-search-normal-14"></i>
 									</span>
-                                    <input type="email" class="form-control form-control-md" placeholder="Search">
+                                    <input type="email" class="form-control form-control-md" [placeholder]="'common.search' | translate">
                                 </div>
                             </div>
                             <div class="card-body chat-users-list chat-scroll pt-0">
-                                <a href="javascript:void(0);" class="d-flex justify-content-between chat-member mb-3">
+                                <!-- Liste dynamique des conversations -->
+                                <div *ngIf="loading" class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Chargement...</span>
+                                    </div>
+                                </div>
+
+                                <div *ngIf="!loading && conversations.length === 0" class="text-center py-4 text-muted">
+                                    <i class="isax isax-message-notif5 fs-2 mb-2"></i>
+                                    <p>{{ 'chat.no_conversations' | translate }}</p>
+                                </div>
+
+                                <a *ngFor="let conversation of conversations"
+                                   href="javascript:void(0);"
+                                   class="d-flex justify-content-between chat-member mb-3"
+                                   [class.active]="currentConversation?.id === conversation.id"
+                                   (click)="selectConversation(conversation)">
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-lg online flex-shrink-0 me-2 bg-primary d-flex align-items-center justify-content-center">
-                                            <span class="text-white fs-16 fw-bold">MR</span>
+                                        <div class="avatar avatar-lg flex-shrink-0 me-2 d-flex align-items-center justify-content-center"
+                                             [class.online]="conversation.participants[0]?.is_online"
+                                             [ngClass]="'bg-' + ['primary', 'success', 'warning', 'info', 'danger', 'secondary'][conversation.id % 6]">
+                                            <span class="text-white fs-16 fw-bold">{{ getConversationAvatar(conversation) }}</span>
                                         </div>
                                         <div>
-                                            <h6 class="fs-16 fw-medium mb-1">Mohamed Rakrouki</h6>
-                                            <p class="fs-14 d-flex align-items-center"><i class="isax isax-image5 me-1"></i>Image</p>
+                                            <h6 class="fs-16 fw-medium mb-1">{{ getConversationName(conversation) }}</h6>
+                                            <p class="fs-14 text-gray-6 text-truncate" style="max-width: 150px;">
+                                                <span *ngIf="conversation.latest_message">
+                                                    {{ conversation.latest_message.content }}
+                                                </span>
+                                                <span *ngIf="!conversation.latest_message" class="text-muted">
+                                                    Nouvelle conversation
+                                                </span>
+                                            </p>
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">
                                         <div class="text-end">
-                                            <p class="mb-1 fs-14 text-gray-6">20/03/24</p>
+                                            <p class="mb-1 fs-14 text-gray-6">
+                                                {{ conversation.latest_message ? formatDate(conversation.latest_message.created_at) : formatDate(conversation.created_at) }}
+                                            </p>
                                             <div class="d-flex align-items-center justify-content-end">
-                                                <i class="fa-solid fa-check"></i>
+                                                <span *ngIf="conversation.unread_count && conversation.unread_count > 0"
+                                                      class="msg-count badge badge-primary d-flex align-items-center justify-content-center rounded-circle">
+                                                    {{ conversation.unread_count }}
+                                                </span>
+                                                <i *ngIf="!conversation.unread_count" class="fa-solid fa-check text-success"></i>
                                             </div>
                                         </div>
                                     </div>
                                 </a>
-                                <a href="javascript:void(0);" class="d-flex justify-content-between chat-member mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-lg flex-shrink-0 me-2 bg-warning d-flex align-items-center justify-content-center">
-                                            <span class="text-white fs-16 fw-bold">AS</span>
-                                        </div>
-                                        <div>
-                                            <h6 class="fs-16 fw-medium mb-1">Ahmed Slimani</h6>
-                                            <p class="fs-14 text-gray-6 text-truncate">Avez-vous reçu le devoir ?</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="text-end">
-                                            <p class="mb-1 fs-14 text-gray-6">Maintenant</p>
-                                            <div class="d-flex justify-content-end">
-                                                <span class="msg-count badge badge-primary d-flex align-items-center justify-content-center rounded-circle">2</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="javascript:void(0);" class="d-flex justify-content-between chat-member mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-lg online flex-shrink-0 me-2 bg-success d-flex align-items-center justify-content-center">
-                                            <span class="text-white fs-16 fw-bold">FH</span>
-                                        </div>
-                                        <div>
-                                            <h6 class="fs-16 fw-medium mb-1">Fatma Hamdi</h6>
-                                            <p class="fs-14 d-flex align-items-center"><i class="isax isax-video5 me-1"></i>Vidéo</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="text-end">
-                                            <p class="mb-1 fs-14 text-gray-6">Il y a 5 min</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="javascript:void(0);" class="d-flex justify-content-between chat-member mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-lg flex-shrink-0 me-2 bg-info d-flex align-items-center justify-content-center">
-                                            <span class="text-white fs-16 fw-bold">KB</span>
-                                        </div>
-                                        <div>
-                                            <h6 class="fs-16 fw-medium mb-1">Karim Ben Ali</h6>
-                                            <p class="fs-14 d-flex align-items-center"><i class="isax isax-document-text-15 me-1"></i>Projet_Final.doc</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="text-end">
-                                            <p class="mb-1 fs-14 text-gray-6">22:20</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="javascript:void(0);" class="d-flex justify-content-between chat-member mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-lg online flex-shrink-0 me-2 bg-secondary d-flex align-items-center justify-content-center">
-                                            <span class="text-white fs-16 fw-bold">LT</span>
-                                        </div>
-                                        <div>
-                                            <h6 class="fs-16 fw-medium mb-1">Leila Trabelsi</h6>
-                                            <p class="fs-14 d-flex align-items-center"><i class="isax isax-microphone-25 me-1"></i>Audio</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="text-end">
-                                            <p class="mb-1 fs-14 text-gray-6">12:30</p>
-                                            <div>
-                                                <i class="fa-solid fa-check-double text-success"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="javascript:void(0);" class="d-flex justify-content-between chat-member mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-lg online flex-shrink-0 me-2 bg-danger d-flex align-items-center justify-content-center">
-                                            <span class="text-white fs-16 fw-bold">SB</span>
-                                        </div>
-                                        <div>
-                                            <h6 class="fs-16 fw-medium mb-1">Sami Bouazizi</h6>
-                                            <p class="fs-14 text-gray-6">Pouvez-vous m'aider ?</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="text-end">
-                                            <p class="mb-1 fs-14 text-gray-6">Maintenant</p>
-                                            <div class="d-flex justify-content-end">
-                                                <span class="msg-count badge badge-primary d-flex align-items-center justify-content-center rounded-circle">3</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="javascript:void(0);" class="d-flex justify-content-between chat-member mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-lg online flex-shrink-0 me-2 bg-dark d-flex align-items-center justify-content-center">
-                                            <span class="text-white fs-16 fw-bold">NM</span>
-                                        </div>
-                                        <div>
-                                            <h6 class="fs-16 fw-medium mb-1">Nadia Mejri</h6>
-                                            <p class="fs-14 text-gray-6 d-flex align-items-center"><i class="ti ti-file me-1"></i>Document</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="text-end">
-                                            <p class="mb-1 fs-14 text-gray-6">Il y a 5 min</p>
-                                            <div>
-                                                <i class="fa fa-check"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="javascript:void(0);" class="d-flex justify-content-between chat-member  mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-lg online flex-shrink-0 me-2 bg-warning d-flex align-items-center justify-content-center">
-                                            <span class="text-white fs-16 fw-bold">YK</span>
-                                        </div>
-                                        <div>
-                                            <h6 class="fs-16 fw-medium mb-1">Youssef Karray</h6>
-                                            <p class="fs-14 text-danger d-flex align-items-center "><i class="isax isax-call5 me-1 text-gray-9"></i>Appel manqué</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="text-end">
-                                            <p class="mb-1 fs-14 text-gray-6">Hier</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="javascript:void(0);" class="d-flex justify-content-between chat-member  mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-lg online flex-shrink-0 me-2 bg-primary d-flex align-items-center justify-content-center">
-                                            <span class="text-white fs-16 fw-bold">HZ</span>
-                                        </div>
-                                        <div>
-                                            <h6 class="fs-16 fw-medium mb-1">Hedi Zouari</h6>
-                                            <p class="fs-14  d-flex align-items-center ">Merci pour le cours</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="text-end">
-                                            <p class="mb-1 fs-14 text-gray-6">23/03/24</p>
-                                            <div>
-                                                <i class="fa fa-check"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="javascript:void(0);" class="d-flex justify-content-between chat-member  mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-lg online flex-shrink-0 me-2 bg-success d-flex align-items-center justify-content-center">
-                                            <span class="text-white fs-16 fw-bold">MN</span>
-                                        </div>
-                                        <div>
-                                            <h6 class="fs-16 fw-medium mb-1">Mariem Nasri</h6>
-                                            <p class="fs-14  d-flex align-items-center "><i class="isax isax-document-text-15 me-1"></i>Notes_Cours.doc</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="text-end">
-                                            <p class="mb-1 fs-14 text-gray-6">20/03/24</p>
-                                            <div>
-                                                <i class="fa fa-check"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="javascript:void(0);" class="d-flex justify-content-between chat-member mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-lg online flex-shrink-0 me-2 bg-info d-flex align-items-center justify-content-center">
-                                            <span class="text-white fs-16 fw-bold">AB</span>
-                                        </div>
-                                        <div>
-                                            <h6 class="fs-16 fw-medium mb-1">Ali Brahim</h6>
-                                            <p class="fs-14 text-danger d-flex align-items-center "><i class="isax isax-call5 me-1 text-gray-9"></i>Appel manqué</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="text-end">
-                                            <p class="mb-1 fs-14 text-gray-6">Hier</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="javascript:void(0);" class="d-flex justify-content-between chat-member">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-lg online flex-shrink-0 me-2 bg-secondary d-flex align-items-center justify-content-center">
-                                            <span class="text-white fs-16 fw-bold">RK</span>
-                                        </div>
-                                        <div>
-                                            <h6 class="fs-16 fw-medium mb-1">Ryhem Kochti</h6>
-                                            <p class="fs-14 text-gray-6">Merci encore, à demain !</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="text-end">
-                                            <p class="mb-1 fs-14 text-gray-6">11:15</p>
-                                        </div>
-                                    </div>
-                                </a>
+
                             </div>
                         </div>
                     </div>
                     <!-- Chat User List -->
 
                     <!-- Chat Content -->
-                    <div class="col-lg-8 chat-cont-right chat-window-long">
+                    <div class="chat-cont-right chat-window-long" [ngClass]="isDirectChatMode ? 'col-lg-12' : 'col-lg-8'">
 
                         <!-- Chat History -->
                         <div class="card chat-window mb-0 shadow-none flex-fill">
                             <div class="card-header border-0">
-                                <div class="msg_head">
+                                <!-- Error Message -->
+                                <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                                    <i class="isax isax-warning-2 me-2"></i>{{ errorMessage }}
+                                    <button type="button" class="btn-close" (click)="clearError()"></button>
+                                </div>
+
+                                <div class="msg_head" *ngIf="currentConversation">
                                     <div class="d-flex bd-highlight align-items-center">
-                                        <a id="back_user_list" href="javascript:void(0)" class="back-user-list">
+                                        <a id="back_user_list" href="javascript:void(0)" class="back-user-list" (click)="toggleConversationList()">
                                             <i class="fas fa-chevron-left"></i>
                                         </a>
-                                        <div class="avatar avatar-lg online flex-shrink-0 me-2 bg-primary d-flex align-items-center justify-content-center">
-                                            <span class="text-white fs-16 fw-bold">MR</span>
+                                        <div class="avatar avatar-lg flex-shrink-0 me-2 d-flex align-items-center justify-content-center"
+                                             [class.online]="currentConversation.participants[0]?.is_online"
+                                             [ngClass]="'bg-' + ['primary', 'success', 'warning', 'info', 'danger', 'secondary'][currentConversation.id % 6]">
+                                            <span class="text-white fs-16 fw-bold">{{ getConversationAvatar(currentConversation) }}</span>
                                         </div>
-                                        <div>
-                                            <h6 class="fs-16 fw-medium mb-1">Mohamed Rakrouki</h6>
-                                            <p class="fs-14">Professeur HTML/CSS</p>
+                                        <div class="flex-grow-1">
+                                            <h6 class="fs-16 fw-medium mb-1">{{ getConversationName(currentConversation) }}</h6>
+                                            <p class="fs-14">
+                                                <span *ngIf="currentConversation.participants[0]?.is_online" class="text-success">En ligne</span>
+                                                <span *ngIf="!currentConversation.participants[0]?.is_online" class="text-muted">Hors ligne</span>
+                                            </p>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <!-- Demo Mode Indicator -->
+                                            <span *ngIf="currentConversation.id > 1000000000000" 
+                                                  class="badge bg-warning text-dark me-2" 
+                                                  title="Mode démonstration - Les messages ne sont pas sauvegardés">
+                                                <i class="isax isax-info-circle me-1"></i>Demo
+                                            </span>
+                                            
+                                            <button class="btn btn-sm btn-outline-primary me-2" 
+                                                    (click)="refreshMessages()" 
+                                                    [disabled]="loading"
+                                                    title="Actualiser les messages">
+                                                <i class="isax isax-refresh" [class.fa-spin]="loading"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- État par défaut si aucune conversation -->
+                                </div>
+                                <div class="msg_head" *ngIf="!currentConversation">
+                                    <div class="d-flex bd-highlight align-items-center">
+                                        <div class="text-center w-100">
+                                            <h6 class="fs-16 fw-medium mb-1 text-muted">Sélectionnez une conversation</h6>
+                                            <p class="fs-14 text-muted">Choisissez une conversation pour commencer à discuter</p>
                                         </div>
                                     </div>
                                     <div class="d-flex align-items-center send-action">
@@ -306,312 +188,133 @@
                                 </div>
                                 <!-- /Chat Search -->
                             </div>
-                            <div class="card-body msg_card_body chat-scroll">
+                            <div class="card-body msg_card_body chat-scroll" #messagesContainer>
 
-                                <ul class="list-unstyled">
-                                    <li class="sent-message-group">
+                                <!-- Loading State -->
+                                <div *ngIf="loading" class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Chargement des messages...</span>
+                                    </div>
+                                </div>
+
+                                <!-- No Messages State -->
+                                <div *ngIf="!loading && messages.length === 0" class="text-center py-4 text-muted">
+                                    <i class="isax isax-message-notif5 fs-2 mb-2"></i>
+                                    <p>Aucun message dans cette conversation</p>
+                                    <p class="fs-14">Commencez la conversation en envoyant un message</p>
+                                </div>
+
+                                <!-- Dynamic Messages -->
+                                <ul class="list-unstyled" *ngIf="!loading && messages.length > 0">
+                                    <!-- Day Badge -->
+                                    <li class="text-center day-badge mb-4">
+                                        <span class="badge badge-light badge-md text-gray-9 fw-normal fs-14 rounded-pill mx-auto">
+                                            {{ formatDate(messages[0]?.created_at) }}
+                                        </span>
+                                    </li>
+
+                                    <!-- Messages Loop -->
+                                    <ng-container *ngFor="let message of messages; let i = index">
+                                        
+                                                                                <!-- Sent Messages (Own Messages) -->
+                                        <li class="sent-message-group" *ngIf="isOwnMessage(message)" 
+                                            [ngClass]="{'message-failed': message.status === 'failed', 'sending-indicator': message.status === 'sending'}">
                                         <ul>
                                             <li class="media sent d-flex align-items-end">
-                                                <div class="media-body flex-grow-1">
-                                                    <div class="msg-box">
-                                                        <div class="d-flex align-items-center justify-content-end mb-1">
-                                                            <div>
-                                                                <h6 class="fs-16 fw-normal d-flex align-items-center">Ryhem</h6>
-                                                                <div class="d-flex justify-content-end">
-                                                                    <p class="fs-12">9:45 AM <i class="ms-1 text-success fa-solid fa-check-double"></i></p>
+                                                    <div class="media-body flex-grow-1">
+                                                        <div class="msg-box">
+                                                            <div class="d-flex align-items-center justify-content-end mb-1">
+                                                                <div>
+                                                                    <h6 class="fs-16 fw-normal d-flex align-items-center">{{ message.user.name }}</h6>
+                                                                    <div class="d-flex justify-content-end">
+                                                                        <p class="fs-12">{{ formatTime(message.created_at) }} 
+                                                                            <i class="ms-1" [ngClass]="getMessageStatusIcon(message)"></i>
+                                                                            <span *ngIf="message.status === 'sending'" class="ms-1 text-muted">Envoi...</span>
+                                                                            <span *ngIf="message.status === 'failed'" class="ms-1 text-danger">Échec</span>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="ms-2">
+                                                                    <div class="avatar avatar-lg bg-success d-flex align-items-center justify-content-center">
+                                                                        <span class="text-white fs-16 fw-bold">{{ getUserInitials(message.user) }}</span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="ms-2">
-                                                                <div class="avatar avatar-lg bg-success d-flex align-items-center justify-content-center">
-                                                                    <span class="text-white fs-16 fw-bold">RK</span>
+                                                            <div class="position-relative">
+                                                                <div class="d-flex align-items-center">
+                                                                    <div class="chat-actions me-2">
+                                                                        <a href="javascript:void(0);" data-bs-toggle="dropdown">
+                                                                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                                                                        </a>
+                                                                        <ul class="dropdown-menu dropdown-menu-end p-3">
+                                                                            <li><a class="dropdown-item" href="javascript:void(0);" (click)="copyMessage(message)"><i class="isax isax-copy me-2"></i>Copier</a></li>
+                                                                            <li><a class="dropdown-item" href="javascript:void(0);" (click)="deleteMessage(message)"><i class="isax isax-trash me-2"></i>Supprimer</a></li>
+                                                                            <li *ngIf="message.status === 'failed'"><a class="dropdown-item" href="javascript:void(0);" (click)="retryMessage(message)"><i class="isax isax-refresh me-2"></i>Réessayer</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="sent-message">
+                                                                        <p class="fs-14">{{ message.content }}</p>
+                                                                        <!-- File/Image Display -->
+                                                                        <div *ngIf="message.type === 'image' && message.file_path" class="mt-2">
+                                                                            <img [src]="message.file_path" alt="Image" class="img-fluid rounded" style="max-width: 200px;">
+                                                                        </div>
+                                                                        <div *ngIf="message.type === 'file' && message.file_path" class="mt-2">
+                                                                            <a [href]="message.file_path" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                                                <i class="isax isax-document-download me-1"></i>Télécharger le fichier
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="position-relative">
-                                                            <div class="d-flex align-items-center">
-                                                                <div class="chat-actions me-2">
-                                                                    <a href="javascript:void(0);" data-bs-toggle="dropdown">
-                                                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+
+                                        <!-- Received Messages -->
+                                        <li class="media received" *ngIf="!isOwnMessage(message)">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <div class="avatar avatar-lg flex-shrink-0 me-2 bg-primary d-flex align-items-center justify-content-center">
+                                                    <span class="text-white fs-16 fw-bold">{{ getUserInitials(message.user) }}</span>
+                                                </div>
+                                                <div>
+                                                    <h6 class="fs-16 fw-normal d-flex align-items-center">{{ message.user.name }}</h6>
+                                                    <div class="d-flex justify-content-start">
+                                                        <p class="fs-12">{{ formatTime(message.created_at) }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="media-body flex-grow-1">
+                                                <div class="msg-box">
+                                                    <div class="position-relative">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="received-message me-2">
+                                                                <p class="fs-14">{{ message.content }}</p>
+                                                                <!-- File/Image Display -->
+                                                                <div *ngIf="message.type === 'image' && message.file_path" class="mt-2">
+                                                                    <img [src]="message.file_path" alt="Image" class="img-fluid rounded" style="max-width: 200px;">
+                                                                </div>
+                                                                <div *ngIf="message.type === 'file' && message.file_path" class="mt-2">
+                                                                    <a [href]="message.file_path" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                                        <i class="isax isax-document-download me-1"></i>Télécharger le fichier
                                                                     </a>
-                                                                    <ul class="dropdown-menu dropdown-menu-end p-3">
-                                                                        <li><a class="dropdown-item reply-btn" href="javascript:void(0);"><i class="isax isax-back-square me-2"></i>Reply</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-regular fa-share-from-square me-2"></i>Forward</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-copy me-2"></i>Copy</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-heart me-2"></i>Mark as Favourite</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#message-delete"><i class="isax isax-trash me-2"></i>Delete</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-solid fa-check me-2"></i>Mark as Unread</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-archive-1 me-2"></i>Archeive Chat</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-solid fa-thumbtack me-2"></i>Pin Chat</a></li>
+                                                                </div>
+                                                            </div>
+                                                            <div class="chat-actions me-2">
+                                                                <a href="javascript:void(0);" data-bs-toggle="dropdown">
+                                                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                                                </a>
+                                                                                                                                    <ul class="dropdown-menu dropdown-menu-end p-3">
+                                                                        <li><a class="dropdown-item" href="javascript:void(0);" (click)="copyMessage(message)"><i class="isax isax-copy me-2"></i>Copier</a></li>
                                                                     </ul>
-                                                                </div>
-                                                                <div class="sent-message">
-                                                                    <p class="fs-14">Bonjour Monsieur Rakrouki, j'ai un peu de mal à comprendre certains points en HTML. Est-ce que vous pourriez m'aider s'il vous plaît ?</p>
-                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="text-center day-badge mb-4"><span class="badge badge-light badge-md text-gray-9 fw-normal fs-14 rounded-pill mx-auto">Aujourd'hui, 25 Mars</span></li>
-                                    <li class="media received">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <div class="avatar avatar-lg flex-shrink-0 me-2 bg-primary d-flex align-items-center justify-content-center">
-                                                <span class="text-white fs-16 fw-bold">MR</span>
                                             </div>
-                                            <div>
-                                                <h6 class="fs-16 fw-normal d-flex align-items-center">Mohamed Rakrouki</h6>
-                                                <div class="d-flex justify-content-start">
-                                                    <p class="fs-12">10:47 AM</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="media-body flex-grow-1">
-                                            <div class="msg-box">
-                                                <div class="position-relative">
-                                                    <div class="d-flex align-items-center ">
-                                                        <div class="received-message me-2">
-                                                            <p class="fs-14">Bonjour Ryhem, pas de souci. Tu peux me dire exactement ce que tu ne comprends pas ?</p>
-                                                        </div>
-                                                        <div class="chat-actions me-2">
-                                                            <a href="javascript:void(0);" data-bs-toggle="dropdown">
-                                                                <i class="fa-solid fa-ellipsis-vertical"></i>
-                                                            </a>
-                                                            <ul class="dropdown-menu dropdown-menu-end p-3">
-                                                                <li><a class="dropdown-item reply-btn" href="javascript:void(0);"><i class="isax isax-back-square me-2"></i>Reply</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-regular fa-share-from-square me-2"></i>Forward</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-copy me-2"></i>Copy</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-heart me-2"></i>Mark as Favourite</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#message-delete"><i class="isax isax-trash me-2"></i>Delete</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-solid fa-check me-2"></i>Mark as Unread</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-archive-1 me-2"></i>Archeive Chat</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-solid fa-thumbtack me-2"></i>Pin Chat</a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                    <li class="sent-message-group">
-                                        <ul>
-                                            <li class="media sent d-flex align-items-end">
-                                                <div class="media-body flex-grow-1">
-                                                    <div class="msg-box">
-                                                        <div class="d-flex align-items-center justify-content-end mb-1">
-                                                            <div>
-                                                                <h6 class="fs-16 fw-normal d-flex align-items-center">Ryhem</h6>
-                                                                <div class="d-flex justify-content-end">
-                                                                    <p class="fs-12">11:00 AM <i class="ms-1 text-success fa-solid fa-check-double"></i></p>
-                                                                </div>
-                                                            </div>
-                                                            <div class="ms-2">
-                                                                <div class="avatar avatar-lg bg-success d-flex align-items-center justify-content-center">
-                                                                    <span class="text-white fs-16 fw-bold">RK</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="position-relative">
-                                                            <div class="d-flex align-items-center">
-                                                                <div class="chat-actions me-2">
-                                                                    <a href="javascript:void(0);" data-bs-toggle="dropdown">
-                                                                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                                                                    </a>
-                                                                    <ul class="dropdown-menu dropdown-menu-end p-3">
-                                                                        <li><a class="dropdown-item reply-btn" href="javascript:void(0);"><i class="isax isax-back-square me-2"></i>Reply</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-regular fa-share-from-square me-2"></i>Forward</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-copy me-2"></i>Copy</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-heart me-2"></i>Mark as Favourite</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#message-delete"><i class="isax isax-trash me-2"></i>Delete</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-solid fa-check me-2"></i>Mark as Unread</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-archive-1 me-2"></i>Archeive Chat</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-solid fa-thumbtack me-2"></i>Pin Chat</a></li>
-                                                                    </ul>
-                                                                </div>
-                                                                <div class="sent-message">
-                                                                    <p class="fs-14">C'est surtout la structure des balises et comment les utiliser correctement dans une page web. J'ai lu le cours mais je me sens encore un peu perdue.</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="media received">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <div class="avatar avatar-lg flex-shrink-0 me-2 bg-primary d-flex align-items-center justify-content-center">
-                                                <span class="text-white fs-16 fw-bold">MR</span>
-                                            </div>
-                                            <div>
-                                                <h6 class="fs-16 fw-normal d-flex align-items-center">Mohamed Rakrouki</h6>
-                                                <div class="d-flex justify-content-start">
-                                                    <p class="fs-12">11:00 AM</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="media-body flex-grow-1">
-                                            <div class="msg-box">
-                                                <div class="position-relative">
-                                                    <div class="d-flex align-items-center ">
-                                                        <div class="received-message me-2">
-                                                            <p class="fs-14">D'accord, je comprends. Ce n'est pas grave, on peut faire une petite réunion pour t'expliquer tout ça plus clairement. Es-tu disponible demain à 10h ?</p>
-                                                        </div>
-                                                        <div class="chat-actions me-2">
-                                                            <a href="javascript:void(0);" data-bs-toggle="dropdown">
-                                                                <i class="fa-solid fa-ellipsis-vertical"></i>
-                                                            </a>
-                                                            <ul class="dropdown-menu dropdown-menu-end p-3">
-                                                                <li><a class="dropdown-item reply-btn" href="javascript:void(0);"><i class="isax isax-back-square me-2"></i>Reply</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-regular fa-share-from-square me-2"></i>Forward</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-copy me-2"></i>Copy</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-heart me-2"></i>Mark as Favourite</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#message-delete"><i class="isax isax-trash me-2"></i>Delete</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-solid fa-check me-2"></i>Mark as Unread</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-archive-1 me-2"></i>Archeive Chat</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-solid fa-thumbtack me-2"></i>Pin Chat</a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="sent-message-group">
-                                        <ul>
-                                            <li class="media sent d-flex align-items-end">
-                                                <div class="media-body flex-grow-1">
-                                                    <div class="msg-box">
-                                                        <div class="d-flex align-items-center justify-content-end mb-1">
-                                                            <div>
-                                                                <h6 class="fs-16 fw-normal d-flex align-items-center">Ryhem</h6>
-                                                                <div class="d-flex justify-content-end">
-                                                                    <p class="fs-12">11:05 AM<i class="ms-1 text-success fa-solid fa-check-double"></i></p>
-                                                                </div>
-                                                            </div>
-                                                            <div class="ms-2">
-                                                                <div class="avatar avatar-lg bg-success d-flex align-items-center justify-content-center">
-                                                                    <span class="text-white fs-16 fw-bold">RK</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="position-relative">
-                                                            <div class="d-flex align-items-center">
-                                                                <div class="chat-actions me-2">
-                                                                    <a href="javascript:void(0);" data-bs-toggle="dropdown">
-                                                                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                                                                    </a>
-                                                                    <ul class="dropdown-menu dropdown-menu-end p-3">
-                                                                        <li><a class="dropdown-item reply-btn" href="javascript:void(0);"><i class="isax isax-back-square me-2"></i>Reply</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-regular fa-share-from-square me-2"></i>Forward</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-copy me-2"></i>Copy</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-heart me-2"></i>Mark as Favourite</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#message-delete"><i class="isax isax-trash me-2"></i>Delete</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-solid fa-check me-2"></i>Mark as Unread</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-archive-1 me-2"></i>Archeive Chat</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-solid fa-thumbtack me-2"></i>Pin Chat</a></li>
-                                                                    </ul>
-                                                                </div>
-                                                                <div class="sent-message">
-                                                                    <p class="fs-14">Oui, c'est parfait pour moi. Merci beaucoup Monsieur !</p>
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="media received">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <div class="avatar avatar-lg flex-shrink-0 me-2 bg-primary d-flex align-items-center justify-content-center">
-                                                <span class="text-white fs-16 fw-bold">MR</span>
-                                            </div>
-                                            <div>
-                                                <h6 class="fs-16 fw-normal d-flex align-items-center">Mohamed Rakrouki</h6>
-                                                <div class="d-flex justify-content-start">
-                                                    <p class="fs-12">11:10 AM</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="media-body flex-grow-1">
-                                            <div class="msg-box">
-                                                <div class="position-relative">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="received-message me-2">
-                                                            <p class="fs-14">Très bien, on se voit demain à 10h alors. Prépare tes questions si tu en as, et on fera le point ensemble.</p>
-                                                        </div>
-                                                        <div class="chat-actions me-2">
-                                                            <a href="javascript:void(0);" data-bs-toggle="dropdown">
-                                                                <i class="fa-solid fa-ellipsis-vertical"></i>
-                                                            </a>
-                                                            <ul class="dropdown-menu dropdown-menu-end p-3">
-                                                                <li><a class="dropdown-item reply-btn" href="javascript:void(0);"><i class="isax isax-back-square me-2"></i>Reply</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-regular fa-share-from-square me-2"></i>Forward</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-copy me-2"></i>Copy</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-heart me-2"></i>Mark as Favourite</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#message-delete"><i class="isax isax-trash me-2"></i>Delete</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-solid fa-check me-2"></i>Mark as Unread</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-archive-1 me-2"></i>Archeive Chat</a></li>
-                                                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-solid fa-thumbtack me-2"></i>Pin Chat</a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="sent-message-group">
-                                        <ul>
-                                            <li class="media sent d-flex align-items-end">
-                                                <div class="media-body flex-grow-1">
-                                                    <div class="msg-box">
-                                                        <div class="d-flex align-items-center justify-content-end mb-1">
-                                                            <div>
-                                                                <h6 class="fs-16 fw-normal d-flex align-items-center">Ryhem</h6>
-                                                                <div class="d-flex justify-content-end">
-                                                                    <p class="fs-12">11:15 AM<i class="ms-1 text-success fa-solid fa-check-double"></i></p>
-                                                                </div>
-                                                            </div>
-                                                            <div class="ms-2">
-                                                                <div class="avatar avatar-lg bg-success d-flex align-items-center justify-content-center">
-                                                                    <span class="text-white fs-16 fw-bold">RK</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="position-relative">
-                                                            <div class="d-flex align-items-center">
-                                                                <div class="chat-actions me-2">
-                                                                    <a href="javascript:void(0);" data-bs-toggle="dropdown">
-                                                                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                                                                    </a>
-                                                                    <ul class="dropdown-menu dropdown-menu-end p-3">
-                                                                        <li><a class="dropdown-item reply-btn" href="javascript:void(0);"><i class="isax isax-back-square me-2"></i>Reply</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-regular fa-share-from-square me-2"></i>Forward</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-copy me-2"></i>Copy</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-heart me-2"></i>Mark as Favourite</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#message-delete"><i class="isax isax-trash me-2"></i>Delete</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-solid fa-check me-2"></i>Mark as Unread</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="isax isax-archive-1 me-2"></i>Archeive Chat</a></li>
-                                                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa-solid fa-thumbtack me-2"></i>Pin Chat</a></li>
-                                                                    </ul>
-                                                                </div>
-                                                                <div class="sent-message">
-                                                                    <p class="fs-14">Merci encore, à demain !</p>
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </li>
+                                        </li>
+                                    </ng-container>
                                 </ul>
                             </div>
                             <div class="card-footer border-0">
@@ -652,11 +355,57 @@
                                         </div>
                                         <a href="javascript:void(0);"><i class="isax isax-microphone-2"></i></a>
                                     </div>
-                                    <div class="chat-input me-2">
-                                        <input class="form-control" placeholder="Type your message here...">
+                                    <!-- File Upload Progress -->
+                                    <div *ngIf="isUploading" class="mb-2 upload-progress">
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                                 role="progressbar" 
+                                                 [style.width.%]="uploadProgress">
+                                                {{ uploadProgress }}%
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">Téléchargement en cours...</small>
                                     </div>
-                                    <div>
-                                        <button class="btn btn-primary btn_send"><i class="isax isax-send-25 text-white" aria-hidden="true"></i></button>
+
+                                    <!-- Selected File Preview -->
+                                    <div *ngIf="selectedFile" class="mb-2 p-2 file-preview">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <i class="isax isax-document me-2 file-icon"></i>
+                                                <div>
+                                                    <span class="fs-14 fw-medium">{{ selectedFile.name }}</span>
+                                                    <small class="d-block text-muted">{{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</small>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-sm btn-outline-danger" (click)="removeSelectedFile()">
+                                                <i class="isax isax-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="chat-input me-2">
+                                        <input class="form-control" 
+                                               [formControl]="messageForm.get('content')!"
+                                               placeholder="Tapez votre message ici..."
+                                               (keydown.enter)="sendMessage()">
+                                    </div>
+                                    
+                                    <!-- File Input -->
+                                    <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+                                    
+                                    <div class="d-flex align-items-center">
+                                        <button class="btn btn-outline-secondary me-2" 
+                                                (click)="fileInput.click()"
+                                                [disabled]="!currentConversation || sendingMessage"
+                                                title="Joindre un fichier">
+                                            <i class="isax isax-attach-square"></i>
+                                        </button>
+                                        <button class="btn btn-primary btn_send" 
+                                                (click)="sendMessage()"
+                                                [disabled]="!currentConversation || messageForm.get('content')?.disabled || messageForm.invalid || sendingMessage">
+                                            <i *ngIf="!sendingMessage" class="isax isax-send-25 text-white" aria-hidden="true"></i>
+                                            <i *ngIf="sendingMessage" class="fa fa-spinner fa-spin text-white" aria-hidden="true"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

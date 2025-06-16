@@ -34,86 +34,139 @@
                         <div class="card-header d-flex align-items-center justify-content-between">
                             <h6>My Profile</h6>
                             <div class="d-flex align-items-center justify-content-center">
-                                <a href="profile-settings.html" class="p-1 rounded-circle btn btn-light d-flex align-items-center justify-content-center"><i class="isax isax-edit-2 fs-14"></i></a>
+                                <a [routerLink]="routes.profileSettings" class="p-1 rounded-circle btn btn-light d-flex align-items-center justify-content-center me-2" title="Edit Profile">
+                                    <i class="isax isax-edit-2 fs-14"></i>
+                                </a>
+                                <button (click)="refreshProfile()" class="p-1 rounded-circle btn btn-light d-flex align-items-center justify-content-center" title="Refresh" [disabled]="loading">
+                                    <i class="isax isax-refresh fs-14" [class.fa-spin]="loading"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="card-body">
-                            <h6 class="fs-16 mb-3">Basic Information</h6>
-                            <div class="d-flex align-items-center mb-3">
-                                <span class="avatar avatar-xl flex-shrink-0 me-3 ">
-                                    <img src="assets/img/users/user-01.jpg" alt="Img" class="img-fluid rounded">
-                                </span>
-                                <div class="profile-upload">
-                                    <div class="mb-2">
-                                        <p class="fs-12">Recommended image size is 40px x 40px</p>
-                                    </div>
-                                    <div class="profile-uploader d-flex align-items-center">
-                                        <div class="drag-upload-btn btn btn-sm btn-primary me-2">
-                                            Upload
-                                            <input type="file" class="form-control image-sign" multiple="">
+                            <!-- Loading State -->
+                            <div *ngIf="loading" class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2 text-muted">Loading profile...</p>
+                            </div>
+
+                            <!-- Error State -->
+                            <div *ngIf="error && !loading" class="alert alert-danger" role="alert">
+                                <i class="isax isax-warning-2 me-2"></i>{{ error }}
+                                <button type="button" class="btn btn-sm btn-outline-danger ms-2" (click)="refreshProfile()">
+                                    Try Again
+                                </button>
+                            </div>
+
+                            <!-- Profile Content -->
+                            <div *ngIf="user && !loading && !error">
+                                <h6 class="fs-16 mb-3">Basic Information</h6>
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="avatar avatar-xl flex-shrink-0 me-3">
+                                        <img [src]="getUserAvatar()" [alt]="user.name" class="img-fluid rounded" 
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <div class="avatar avatar-xl bg-primary d-none align-items-center justify-content-center rounded">
+                                            <span class="text-white fs-20 fw-bold">{{ getUserInitials() }}</span>
                                         </div>
-                                        <a href="javascript:void(0);" class="btn btn-light btn-sm">Cancel</a>
+                                    </span>
+                                    <div class="profile-upload">
+                                        <div class="mb-2">
+                                            <h6 class="fs-16 fw-medium mb-1">{{ user.name }}</h6>
+                                            <p class="fs-12 text-muted">Recommended image size is 400px x 400px</p>
+                                        </div>
+                                        <div class="profile-uploader d-flex align-items-center">
+                                            <a [routerLink]="routes.profileSettings" class="btn btn-sm btn-primary me-2">
+                                                Edit Profile
+                                            </a>
+                                            <span class="badge bg-success" *ngIf="user.status === 'active'">Active</span>
+                                            <span class="badge bg-warning" *ngIf="user.status === 'pending'">Pending</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row border-bottom pb-2 mb-3">
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <h6 class="fs-14">First Name</h6>
-                                        <p>Jeffrey </p>
+                                <div class="row border-bottom pb-2 mb-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-2">
+                                            <h6 class="fs-14">First Name</h6>
+                                            <p>{{ getFirstName() || 'Not provided' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-2">
+                                            <h6 class="fs-14">Last Name</h6>
+                                            <p>{{ getLastName() || 'Not provided' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-2">
+                                            <h6 class="fs-14">Email</h6>
+                                            <p>{{ user.email }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-2">
+                                            <h6 class="fs-14">Phone</h6>
+                                            <p>{{ user.phone || 'Not provided' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" *ngIf="user.role">
+                                        <div class="mb-2">
+                                            <h6 class="fs-14">Role</h6>
+                                            <p>{{ user.role.name || 'User' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" *ngIf="user.created_at">
+                                        <div class="mb-2">
+                                            <h6 class="fs-14">Member Since</h6>
+                                            <p>{{ user.created_at | date:'mediumDate' }}</p>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <h6 class="fs-14">Last Name</h6>
-                                        <p>Wilson</p>
+                                
+                                <!-- Address Information -->
+                                <h6 class="fs-16 mb-3">Address Information</h6>
+                                <div class="row g-2" *ngIf="getPrimaryAddress() as address; else noAddress">
+                                    <div class="col-md-12">
+                                        <div>
+                                            <h6 class="fs-14">Address</h6>
+                                            <p>{{ address.address || 'Not provided' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div>
+                                            <h6 class="fs-14">Country</h6>
+                                            <p>{{ address.country || 'Not provided' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div>
+                                            <h6 class="fs-14">State</h6>
+                                            <p>{{ address.state || 'Not provided' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div>
+                                            <h6 class="fs-14">City</h6>
+                                            <p>{{ address.city || 'Not provided' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div>
+                                            <h6 class="fs-14">Postal Code</h6>
+                                            <p>{{ address.postal_code || 'Not provided' }}</p>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <h6 class="fs-14">Email</h6>
-                                        <p>chrfo2356&#64;example.com</p>
+                                
+                                <ng-template #noAddress>
+                                    <div class="text-center py-4">
+                                        <i class="isax isax-location fs-2 text-muted mb-2"></i>
+                                        <p class="text-muted">No address information provided</p>
+                                        <a [routerLink]="routes.profileSettings" class="btn btn-outline-primary btn-sm">
+                                            Add Address
+                                        </a>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <h6 class="fs-14">Phone</h6>
-                                        <p>+1 12656 26654</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <h6 class="fs-16 mb-3">Address Information</h6>
-                            <div class="row g-2">
-                                <div class="col-md-12">
-                                    <div>
-                                        <h6 class="fs-14">Address</h6>
-                                        <p>4530 Clousson Road, Houston </p>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div>
-                                        <h6 class="fs-14">Country</h6>
-                                        <p>United States Of America</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div>
-                                        <h6 class="fs-14">State</h6>
-                                        <p>California</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div>
-                                        <h6 class="fs-14">City</h6>
-                                        <p>San Francisco</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div>
-                                        <h6 class="fs-14">Postal Code</h6>
-                                        <p>94105</p>
-                                    </div>
-                                </div>
+                                </ng-template>
                             </div>
                         </div>
                     </div>

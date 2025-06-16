@@ -32,6 +32,7 @@
     "@fullcalendar/list": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
     "@types/aos": "^3.0.7",
+    "@types/socket.io-client": "^1.4.36",
     "animate.css": "^4.1.1",
     "aos": "^2.3.4",
     "apexcharts": "^4.3.0",
@@ -63,6 +64,7 @@
     "sass": "^1.83.0",
     "slick-carousel": "^1.8.1",
     "slimscroll": "^0.9.1",
+    "socket.io-client": "^4.8.1",
     "swiper": "^11.1.12",
     "tslib": "^2.3.0",
     "zone.js": "^0.15.0"

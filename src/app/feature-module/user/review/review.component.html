@@ -30,28 +30,44 @@
 
                 <div class="col-xl-9 col-lg-8">
 
-                    <!-- Review Title -->
+                    <!-- Course Management Header -->
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center flex-wrap row-gap-3">
                                 <div>
-                                    <h6>Mes cours</h6>
+                                    <h6>Mes cours & Gestion</h6>
                                     <p class="fs-14">Nombre de cours : {{courses.length}}</p>
                                 </div>
                                 <div class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-                                    <div class="me-3 ">
-                                        <div class="input-icon-end position-relative">
-                                            <span class="input-icon-addon">
-                                                <i class="isax isax-calendar-edit"></i>
-                                            </span>
-                                            <app-date-range-picker/>
-                                        </div>
+                                    <!-- View Toggle Buttons -->
+                                    <div class="btn-group me-3" role="group">
+                                        <button type="button"
+                                                class="btn btn-sm"
+                                                [class.btn-primary]="viewMode === 'list'"
+                                                [class.btn-outline-primary]="viewMode !== 'list'"
+                                                (click)="setViewMode('list')">
+                                            <i class="isax isax-menu me-1"></i>Liste
+                                        </button>
+                                        <button type="button"
+                                                class="btn btn-sm"
+                                                [class.btn-primary]="viewMode === 'manage'"
+                                                [class.btn-outline-primary]="viewMode !== 'manage'"
+                                                (click)="setViewMode('manage')">
+                                            <i class="isax isax-setting-2 me-1"></i>Gestion
+                                        </button>
                                     </div>
+
+                                    <!-- Add Course Button -->
+                                    <a [routerLink]="routes.addCourse" class="btn btn-primary d-inline-flex align-items-center me-3">
+                                        <i class="isax isax-add me-2"></i>Créer un nouveau cours
+                                    </a>
+
+                                    <!-- Export Dropdown -->
                                     <div class="dropdown">
                                         <a href="javascript:void(0);" class="dropdown-toggle btn btn-white rounded border d-inline-flex align-items-center" data-bs-toggle="dropdown">
                                             <i class="ti ti-file-export me-1"></i>Export
                                         </a>
-                                        <ul class="dropdown-menu  dropdown-menu-end p-3">
+                                        <ul class="dropdown-menu dropdown-menu-end p-3">
                                             <li>
                                                 <a href="javascript:void(0);" class="dropdown-item rounded-1"><i class="ti ti-file-type-pdf me-1"></i>Export as PDF</a>
                                             </li>
@@ -64,66 +80,233 @@
                             </div>
                         </div>
                     </div>
-                    <!-- /Review Title -->
+                    <!-- /Course Management Header -->
 
-                    <!-- Reviews -->
-                  <ng-container *ngFor="let course  of  courses;let i = index">
-                    <div class="card shadow-none">
-                      <div class="card-body">
-                        <div class="border-bottom mb-3">
-                          <div class="d-flex justify-content-between align-items-center flex-wrap row-gap-2 mb-2">
-                            <div class="d-flex align-items-center">
-                                        <span class="avatar avatar-lg rounded-circle flex-shrink-0 me-2">
-										                      	<img src="{{ course?.media_path?.original_url}}" alt="user" class="img-fluid rounded-circle">
-									                    	</span>
-                              <div>
-                                <h6 class="fs-16">{{course.title}}</h6>
-                                <div class="d-flex align-items-center flex-wrap">
-                                  <span class="fs-14 d-flex align-items-center">{{course.created_at}}<i class="ti ti-point-filled text-gray mx-2"></i></span>
-                                  <p class="fs-14"><span class="badge badge-xs badge-warning text-gray-9 me-2">{{course.category.name}}</span></p>
+                    <!-- Course List View -->
+                    <div *ngIf="viewMode === 'list'">
+                      <ng-container *ngFor="let course of courses; let i = index">
+                        <div class="card shadow-none">
+                          <div class="card-body">
+                            <div class="border-bottom mb-3">
+                              <div class="d-flex justify-content-between align-items-center flex-wrap row-gap-2 mb-2">
+                                <div class="d-flex align-items-center">
+                                  <span class="avatar avatar-lg rounded-circle flex-shrink-0 me-2">
+                                    <img [src]="course?.cover_image?.url || 'assets/img/course-placeholder.svg'" 
+                                         alt="course cover" 
+                                         class="img-fluid rounded-circle"
+                                      >
+                                  </span>
+                                  <div>
+                                    <h6 class="fs-16">{{course.title || 'Titre non défini'}} - ID: {{course.id}}</h6>
+                                    <div class="d-flex align-items-center flex-wrap">
+                                      <span class="fs-14 d-flex align-items-center">{{course.created_at}}<i class="ti ti-point-filled text-gray mx-2"></i></span>
+                                      <p class="fs-14"><span class="badge badge-xs badge-warning text-gray-9 me-2">{{course.category?.name || 'Sans catégorie'}}</span></p>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                  <button class="btn btn-outline-primary btn-sm me-2" (click)="manageCourse(course)">
+                                    <i class="isax isax-setting-2 me-1"></i>Gérer
+                                  </button>
+                                  <a class="btn btn-white btn-sm border me-2" [routerLink]="routes.hotelDetails+'/'+course.id">
+                                    <i class="isax isax-edit-2 me-1"></i>Voir détail
+                                  </a>
                                 </div>
                               </div>
+                              <p class="fs-16 mb-3" *ngIf="course.description">
+                                {{course.description}}
+                              </p>
                             </div>
-                            <div class="d-flex align-items-center">
-                              <a   class="btn btn-white btn-sm border me-2" [routerLink]="routes.hotelDetails+'/'+course.id"  ><i class="isax isax-edit-2 me-1" ></i>
-                               Voir détail cours
-                              </a>
-                             </div>
-                          </div>
-                          <p class="fs-16 mb-3">
-                            <ng-container *ngFor="let desc  of  course.description;let i = index">
-                              <div>
-                                <h3>{{desc.heading}}</h3>
-                                <p *ngIf="desc.body">
-                                  {{desc.body?.content[0]?.content[0]?.text}}
-                                </p>
+                            <div class="d-flex justify-content-between align-items-center flex-wrap row-gap-2">
+                              <p class="fs-14 d-flex align-items-center mb-0"><i class="isax isax-info-circle5 text-gray-9 me-2"></i>Enseignant : {{course?.instructor?.name}}</p>
+                              <div class="d-flex align-items-center">
+                                <a href="javascript:void(0);" class="fs-14 me-3"><i class="isax isax-like-1 me-1"></i>{{course.chapters?.length || 0}} Chapitres</a>
+                                <a href="javascript:void(0);" class="fs-14 me-3"><i class="isax isax-dislike me-1"></i>{{course.total_duration || 0}} Min</a>
+                                <a href="javascript:void(0);" class="fs-14 "><i class="isax isax-heart5 text-danger me-1"></i>{{course.exams?.length || 0}} Exams</a>
                               </div>
-                            </ng-container>
-                          </p>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center flex-wrap row-gap-2">
-                          <p class="fs-14 d-flex align-items-center mb-0"><i class="isax isax-info-circle5 text-gray-9 me-2"></i>Enseignant : {{course?.instructor?.name}}</p>
-                          <div class="d-flex align-items-center">
-                            <a href="javascript:void(0);" class="fs-14 me-3"><i class="isax isax-like-1 me-1"></i>{{course.chapters.length}} Chapitres</a>
-                            <a href="javascript:void(0);" class="fs-14 me-3"><i class="isax isax-dislike me-1"></i>{{course.total_duration}} Min</a>
-                            <a href="javascript:void(0);" class="fs-14 "><i class="isax isax-heart5 text-danger me-1"></i>{{course.exams}} Exams</a>
+                            </div>
+                            <!-- Progress Bar -->
+                            <div class="progress mb-2" style="height: 8px;margin-top: 10px" *ngIf="course.enrollments && course.enrollments.length > 0">
+                              <div class="progress-bar bg-success" role="progressbar"
+                                   [style.width.%]="course.enrollments[0].progress || 0"
+                                   [attr.aria-valuenow]="course.enrollments[0].progress || 0"
+                                   aria-valuemin="0" aria-valuemax="100">
+                              </div>
+                            </div>
+                            <!-- Teacher Course Info -->
+                            <div *ngIf="!course.enrollments || course.enrollments.length === 0" class="text-muted small">
+                              <i class="isax isax-user me-1"></i>Votre cours
+                            </div>
                           </div>
                         </div>
-                        <!-- Progress Bar -->
-                        <div class="progress mb-2" style="height: 8px;margin-top: 10px">
-                          <div class="progress-bar bg-success" role="progressbar"
-                               [style.width.%]="course.enrollments[0].progress"
-                               [attr.aria-valuenow]="course.enrollments[0].progress"
-                               aria-valuemin="0" aria-valuemax="100">
-                          </div>
-                        </div>
-                      </div>
+                      </ng-container>
                     </div>
-                    <!-- /Reviews -->
+                    <!-- /Course List View -->
 
-                  </ng-container>
+                    <!-- Course Management View -->
+                    <div *ngIf="viewMode === 'manage'">
 
+                        <!-- Course Selection -->
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Sélectionner un Cours à Gérer</h5>
+                                <button class="btn btn-outline-secondary btn-sm" (click)="setViewMode('list')">
+                                    <i class="isax isax-arrow-left me-2"></i>Retour à la liste
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <select class="form-select" [(ngModel)]="selectedCourseId" (change)="onCourseSelect()">
+                                            <option value="">Choisir un cours...</option>
+                                            <option *ngFor="let course of courses" [value]="course.id">
+                                                {{course.title}} ({{course.chapters?.length || 0}} chapitres)
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="btn btn-outline-primary w-100" (click)="loadCourses()">
+                                            <i class="isax isax-refresh me-2"></i>Actualiser
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
+                        <!-- Course Details & Management -->
+                        <div *ngIf="selectedCourse" class="course-management-container">
+
+                            <!-- Course Overview -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0">{{selectedCourse.title}}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="stat-card text-center p-3 border rounded">
+                                                <div class="stat-icon bg-primary text-white rounded-circle mx-auto mb-2" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="isax isax-book"></i>
+                                                </div>
+                                                <h4>{{selectedCourse.chapters?.length || 0}}</h4>
+                                                <p class="text-muted mb-0">Chapitres</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="stat-card text-center p-3 border rounded">
+                                                <div class="stat-icon bg-success text-white rounded-circle mx-auto mb-2" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="isax isax-task-square"></i>
+                                                </div>
+                                                <h4>{{selectedCourse.quizzes?.length || 0}}</h4>
+                                                <p class="text-muted mb-0">Quiz</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="stat-card text-center p-3 border rounded">
+                                                <div class="stat-icon bg-warning text-white rounded-circle mx-auto mb-2" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="isax isax-clipboard-text"></i>
+                                                </div>
+                                                <h4>{{selectedCourse.exams?.length || 0}}</h4>
+                                                <p class="text-muted mb-0">Examens</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="stat-card text-center p-3 border rounded">
+                                                <div class="stat-icon bg-info text-white rounded-circle mx-auto mb-2" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="isax isax-clock"></i>
+                                                </div>
+                                                <h4>{{selectedCourse.total_duration || 0}}</h4>
+                                                <p class="text-muted mb-0">Minutes</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Management Tabs -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-bs-toggle="tab" href="#chapters" role="tab">
+                                                <i class="isax isax-book me-2"></i>Chapitres
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#quizzes" role="tab">
+                                                <i class="isax isax-task-square me-2"></i>Quiz
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#exams" role="tab">
+                                                <i class="isax isax-clipboard-text me-2"></i>Examens
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#settings" role="tab">
+                                                <i class="isax isax-setting-2 me-2"></i>Paramètres
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="card-body">
+                                    <div class="tab-content">
+
+                                        <!-- Chapters Tab -->
+                                        <div class="tab-pane fade show active" id="chapters" role="tabpanel">
+                                            <app-chapter-management
+                                                [courseId]="selectedCourse.id"
+                                                [chapters]="selectedCourse.chapters || []"
+                                                (chaptersUpdated)="onChaptersUpdated($event)">
+                                            </app-chapter-management>
+                                        </div>
+
+                                        <!-- Quizzes Tab -->
+                                        <div class="tab-pane fade" id="quizzes" role="tabpanel">
+                                            <app-quiz-management
+                                                [courseId]="selectedCourse.id"
+                                                [quizzes]="selectedCourse.quizzes || []"
+                                                (quizzesUpdated)="onQuizzesUpdated($event)">
+                                            </app-quiz-management>
+                                        </div>
+
+                                        <!-- Exams Tab -->
+                                        <div class="tab-pane fade" id="exams" role="tabpanel">
+                                            <app-exam-management
+                                                [courseId]="selectedCourse.id"
+                                                [exams]="selectedCourse.exams || []"
+                                                (examsUpdated)="onExamsUpdated($event)">
+                                            </app-exam-management>
+                                        </div>
+
+                                        <!-- Settings Tab -->
+                                        <div class="tab-pane fade" id="settings" role="tabpanel">
+                                            <app-course-settings
+                                                [course]="selectedCourse"
+                                                (courseUpdated)="onCourseUpdated($event)">
+                                            </app-course-settings>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Empty State for Management -->
+                        <div *ngIf="!selectedCourse" class="text-center py-5">
+                            <div class="empty-state">
+                                <i class="isax isax-book-1 display-1 text-muted"></i>
+                                <h4 class="mt-3">Sélectionnez un cours à gérer</h4>
+                                <p class="text-muted">Choisissez un cours dans la liste ci-dessus pour commencer à gérer son contenu.</p>
+                                <a [routerLink]="routes.addCourse" class="btn btn-primary">
+                                    <i class="isax isax-add me-2"></i>Créer votre premier cours
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /Course Management View -->
 
                 </div>
 

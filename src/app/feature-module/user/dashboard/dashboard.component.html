@@ -28,15 +28,21 @@
          </div>
          <!-- /Sidebar -->
 
-         <div class="col-xl-9 col-lg-8">
-             <!-- Loading indicator -->
-             <div class="alert alert-info" *ngIf="studentData.isLoading">
-                <i class="fas fa-spinner fa-spin me-2"></i>
-                Loading your dashboard data...
+         <div class="col-xl-9 col-lg-8 position-relative">
+             <!-- Global Loading Overlay -->
+             <div *ngIf="isLoadingDashboard" class="loading-overlay position-absolute w-100 h-100 d-flex align-items-center justify-content-center"
+                  style="background: rgba(255, 255, 255, 0.9); z-index: 1000; min-height: 500px;">
+                 <div class="text-center">
+                     <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                         <span class="visually-hidden">Loading...</span>
+                     </div>
+                     <h5 class="text-primary mb-2">Loading Dashboard</h5>
+                     <p class="text-muted">Please wait while we fetch your data...</p>
+                 </div>
              </div>
-          
+
              <!-- Error message -->
-             <div class="alert alert-warning" *ngIf="studentData.error">
+             <div class="alert alert-warning" *ngIf="studentData.error && !isLoadingDashboard">
                 <i class="fas fa-exclamation-triangle me-2"></i>
                 {{ studentData.error }}
              </div>
@@ -50,7 +56,7 @@
                                      <i class="isax isax-calendar-15 fs-36"></i>
                                  </span>
                                  <div>
-                                     <h3>{{studentData.enrolledCourses || data?.courses?.length || 0}}</h3>
+                                     <h3>{{studentData.enrolledCourses}}</h3>
                                      <p>Enrolled Courses</p>
                                  </div>
                              </div>
@@ -65,7 +71,7 @@
                                      <i class="isax isax-money-send5 fs-36"></i>
                                  </span>
                                  <div>
-                                     <h3>{{studentData.totalSpent || data?.totalCoursePrice || 0}} <small>DT</small></h3>
+                                     <h3>{{studentData.totalSpent}} <small>DT</small></h3>
                                      <p>Total Spent</p>
                                  </div>
                              </div>
@@ -120,7 +126,7 @@
                                                  <span class="visually-hidden">Loading...</span>
                                              </div>
                                              <p class="mt-2 text-muted" *ngIf="!studentData.isLoading">No courses enrolled yet</p>
-                                             <a [routerLink]="routes.course" class="btn btn-primary btn-sm mt-2" *ngIf="!studentData.isLoading">Browse Courses</a>
+                                             <a [routerLink]="'/course/course-grid'" class="btn btn-primary btn-sm mt-2" *ngIf="!studentData.isLoading">Browse Courses</a>
                                          </div>
                                      </div>
                                      
@@ -130,9 +136,11 @@
                                              <div class="card shadow-none mb-2 course-item">
                                                <div class="card-body">
                                                  <div class="d-flex align-items-center flex-wrap row-gap-2">
-                                                   <a [routerLink]="routes.hotelDetails" class="avatar avatar-xl flex-shrink-0 me-2">
-                                                     <img [src]="enrollment?.course?.media_path?.original_url || 'https://eliezermolina.net/wp-content/uploads/2018/11/HTML-CSS@2x-768x384.png'" 
-                                                          class="img-fluid rounded-circle" alt="Img">
+                                                   <a [routerLink]="['/course/course-details', enrollment?.course?.id]" class="avatar avatar-xl flex-shrink-0 me-2">
+                                                     <img [src]="getCourseImageUrl(enrollment?.course)" 
+                                                          [alt]="enrollment?.course?.title || 'Course'"
+                                                          class="img-fluid rounded-circle" 
+                                                          (error)="onImageError($event)">
                                                    </a>
                                                    <div class="flex-fill">
                                                      <span class="badge badge-soft-info badge-xs rounded-pill mb-1">
@@ -140,7 +148,7 @@
                                                      </span>
                                                      <div class="d-flex justify-content-between align-items-center mb-1">
                                                          <h6 class="fs-16 text-truncate">
-                                                             <a [routerLink]="routes.hotelDetails+'/'+enrollment?.course?.id">
+                                                             <a [routerLink]="['/course/course-details', enrollment?.course?.id]">
                                                                  {{enrollment?.course?.title || 'Title not available'}}
                                                                  <span class="text-gray-5 fw-normal fs-14"> ( {{enrollment?.course?.instructor?.name || 'Unknown Instructor'}} )</span>
                                                              </a>
@@ -189,7 +197,7 @@
                                           <div class="card-body">
                                             <div class="d-flex align-items-center flex-wrap row-gap-2">
                                               <a class="avatar avatar-xl flex-shrink-0 me-2">
-                                                <img [src]="course.image || '/assets/img/course-placeholder.jpg'" onerror="this.src='/assets/img/course-placeholder.jpg'" class="img-fluid" alt="">
+                                                <img [src]="course.image "  class="img-fluid" alt="">
                                               </a>
                                               <div class="flex-fill">
                                                 <span class="badge badge-soft-info badge-xs rounded-pill mb-1">
@@ -244,7 +252,7 @@
                              <!-- Total Amount Section -->
                              <div class="mb-4">
                                  <p class="text-muted mb-1 fs-14">Total amount spent</p>
-                                 <h2 class="fw-bold text-dark mb-0">{{studentData.totalSpent || data?.totalCoursePrice || 0}} <span class="fs-18 fw-normal">DT</span></h2>
+                                 <h2 class="fw-bold text-dark mb-0">{{studentData.totalSpent}} <span class="fs-18 fw-normal">DT</span></h2>
                              </div>
 
                              <!-- Chart Container -->
@@ -265,14 +273,25 @@
 
                              <!-- Category List -->
                              <div class="category-list">
+                                 <div *ngIf="studentData.isLoading" class="text-center py-3">
+                                     <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                         <span class="visually-hidden">Loading...</span>
+                                     </div>
+                                     <p class="text-muted mt-2 mb-0">Loading categories...</p>
+                                 </div>
+
+                                 <div *ngIf="!studentData.isLoading && categoryLabels.length === 0" class="text-center py-3">
+                                     <p class="text-muted mb-0">No course categories found</p>
+                                 </div>
+
                                  <div *ngFor="let label of categoryLabels; let i = index" class="d-flex justify-content-between align-items-center mb-2">
                                      <div class="d-flex align-items-center">
-                                         <span class="category-dot" [style.backgroundColor]="chartOptions.colors[i]"></span>
+                                         <span class="category-dot me-2" [style.backgroundColor]="chartOptions.colors[i]" style="width: 12px; height: 12px; border-radius: 50%; display: inline-block;"></span>
                                          <span class="fs-14">{{label}}</span>
                                      </div>
-                                     <div>
-                                         <span class="badge badge-soft-secondary">{{categorySeries[i]}} courses</span>
-                                         <span class="ms-2 text-muted fs-14">{{getCategoryPercentage(i)}}</span>
+                                     <div class="text-end">
+                                         <span class="badge bg-light text-dark">{{categorySeries[i]}} Courses</span>
+                                         <div class="text-muted fs-12 mt-1">{{getCategoryPercentage(i)}}</div>
                                      </div>
                                  </div>
                              </div>

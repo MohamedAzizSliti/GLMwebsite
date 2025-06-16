@@ -1,15 +1,20 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { GeminiService } from '../../../shared/services/gemini.service';
 
 interface ChatMessage {
   id: number;
   text: string;
   isBot: boolean;
   timestamp: Date;
-  questionType?: 'multiple-choice' | 'yes-no' | 'text-input' | 'question-list';
+  questionType?: 'multiple-choice' | 'yes-no' | 'text-input' | 'question-list' | 'ai-chat';
   options?: string[];
   questionIndex?: number;
   isRecommendation?: boolean;
   recommendationType?: string;
+  senderId?: number;
+  senderName?: string;
+  isCurrentUser?: boolean;
 }
 
 interface Question {
@@ -18,6 +23,12 @@ interface Question {
   type: 'multiple-choice' | 'yes-no' | 'text-input';
   options?: string[];
   placeholder?: string;
+}
+
+interface User {
+  id: number;
+  name: string;
+  avatar?: string;
 }
 
 @Component({
@@ -29,10 +40,25 @@ interface Question {
 export class ChatAssistantComponent implements OnInit {
   messages: ChatMessage[] = [];
   isTyping = false;
-  currentQuestionIndex = -1; // Start with -1 to show question list first
+  currentQuestionIndex = -1;
   userInput = '';
   showInput = false;
   selectedQuestionIndex = -1;
+  
+  // Dynamic chat mode
+  isDynamicChatMode = false;
+  currentUser: User | null = null;
+  chatPartner: User | null = null;
+  conversationId: string = '';
+  
+  // AI Chat mode
+  isAIChatMode = false;
+  showAITuning = false;
+  
+  // AI Tuning Options
+  aiPersonality: 'helpful' | 'professional' | 'friendly' = 'helpful';
+  aiResponseLength: 'short' | 'medium' | 'detailed' = 'medium';
+  aiExpertise: 'beginner' | 'intermediate' | 'advanced' = 'intermediate';
   
   questions: Question[] = [
     {
@@ -61,16 +87,111 @@ export class ChatAssistantComponent implements OnInit {
   quizName = '';
   userObjective = '';
 
-  constructor() { }
+  constructor(
+    private geminiService: GeminiService,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
-    this.initializeChat();
+    // Check URL parameters for dynamic chat
+    this.route.queryParams.subscribe(params => {
+      if (params['userId'] && params['userName']) {
+        this.initializeDynamicChat(params['userId'], params['userName']);
+      } else {
+        this.initializeChat();
+      }
+    });
+  }
+
+  initializeDynamicChat(userId: string, userName: string): void {
+    this.isDynamicChatMode = true;
+    this.showInput = true;
+    
+    // Set chat partner
+    this.chatPartner = {
+      id: parseInt(userId),
+      name: userName,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=007bff&color=fff`
+    };
+    
+    // Set current user (in a real app, get this from auth service)
+    this.currentUser = {
+      id: 1, // Should come from auth service
+      name: 'Vous', // Should come from auth service
+      avatar: 'https://ui-avatars.com/api/?name=Vous&background=28a745&color=fff'
+    };
+
+    this.conversationId = `chat_${this.currentUser.id}_${this.chatPartner.id}`;
+    
+    // Load conversation history
+    this.loadChatHistory();
+    
+    // Add welcome message
+    setTimeout(() => {
+      this.addSystemMessage(`💬 Conversation avec ${userName}`);
+    }, 500);
+  }
+
+  loadChatHistory(): void {
+    // Simulate loading chat history from localStorage or API
+    const savedMessages = localStorage.getItem(this.conversationId);
+    
+    if (savedMessages) {
+      try {
+        const parsedMessages = JSON.parse(savedMessages);
+        this.messages = parsedMessages.map((msg: any) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp)
+        }));
+      } catch (error) {
+        console.error('Error loading chat history:', error);
+        this.messages = [];
+      }
+    } else {
+      // Create initial conversation
+      this.messages = [
+        {
+          id: 1,
+          text: `Salut ! Je suis ${this.chatPartner?.name}. Comment puis-je t'aider aujourd'hui ?`,
+          isBot: false,
+          timestamp: new Date(Date.now() - 300000), // 5 minutes ago
+          senderId: this.chatPartner?.id,
+          senderName: this.chatPartner?.name,
+          isCurrentUser: false
+        }
+      ];
+    }
+    
+    this.scrollToBottom();
+  }
+
+  saveChatHistory(): void {
+    // Save messages to localStorage (in a real app, save to API)
+    try {
+      localStorage.setItem(this.conversationId, JSON.stringify(this.messages));
+    } catch (error) {
+      console.error('Error saving chat history:', error);
+    }
+  }
+
+  addSystemMessage(text: string): void {
+    const message: ChatMessage = {
+      id: this.messages.length + 1,
+      text: text,
+      isBot: true,
+      timestamp: new Date(),
+      senderId: 0,
+      senderName: 'Système'
+    };
+    
+    this.messages.push(message);
+    this.scrollToBottom();
   }
 
   initializeChat(): void {
     // Welcome message
     setTimeout(() => {
-      this.addBotMessage("👋 Salut ! Je suis ton assistant d'apprentissage. Je vais te poser quelques questions pour mieux t'aider.");
+      this.addBotMessage("👋 Salut ! Je suis ton assistant d'apprentissage alimenté par l'IA. Je vais te poser quelques questions pour mieux t'aider.");
       
       setTimeout(() => {
         this.showQuestionList();
@@ -80,10 +201,12 @@ export class ChatAssistantComponent implements OnInit {
 
   showQuestionList(): void {
     const questionTexts = this.questions.map((q, index) => `${index + 1}. ${q.text}`);
+    // Add AI chat option
+    questionTexts.push("4. 🤖 Chat libre avec l'IA");
     this.addBotMessage("Choisis une question à laquelle tu veux répondre :", questionTexts, 'question-list');
   }
 
-  addBotMessage(text: string, options?: string[], questionType?: 'multiple-choice' | 'yes-no' | 'text-input' | 'question-list', questionIndex?: number, isRecommendation?: boolean, recommendationType?: string): void {
+  addBotMessage(text: string, options?: string[], questionType?: 'multiple-choice' | 'yes-no' | 'text-input' | 'question-list' | 'ai-chat', questionIndex?: number, isRecommendation?: boolean, recommendationType?: string): void {
     this.isTyping = true;
     
     setTimeout(() => {
@@ -118,6 +241,12 @@ export class ChatAssistantComponent implements OnInit {
   }
 
   selectQuestion(questionText: string): void {
+    // Check if AI chat was selected
+    if (questionText.includes("🤖 Chat libre avec l'IA")) {
+      this.startAIChat();
+      return;
+    }
+    
     // Find which question was selected
     const questionIndex = this.questions.findIndex(q => questionText.includes(q.text));
     if (questionIndex !== -1) {
@@ -128,6 +257,20 @@ export class ChatAssistantComponent implements OnInit {
         this.askSpecificQuestion(questionIndex);
       }, 1000);
     }
+  }
+
+  startAIChat(): void {
+    this.isAIChatMode = true;
+    this.addUserMessage("🤖 Chat libre avec l'IA");
+    
+    setTimeout(() => {
+      this.addBotMessage("🤖 Parfait ! Je suis maintenant en mode chat libre. Tu peux me poser n'importe quelle question sur tes cours, tes difficultés, ou demander des conseils d'apprentissage. Que veux-tu savoir ?", ['⚙️ Régler l\'IA'], 'ai-chat');
+      this.showInput = true;
+    }, 1000);
+  }
+
+  toggleAITuning(): void {
+    this.showAITuning = !this.showAITuning;
   }
 
   askSpecificQuestion(questionIndex: number): void {
@@ -154,14 +297,23 @@ export class ChatAssistantComponent implements OnInit {
     }
   }
 
-  provideSubjectRecommendation(subject: string): void {
+  async provideSubjectRecommendation(subject: string): Promise<void> {
     let recommendationText = '';
     let recommendationType = '';
     
-    switch (subject) {
-      case 'Python':
-        recommendationText = `🐍 Parfait ! Pour Python, je recommande :
-        
+    // Generate AI-enhanced recommendations
+    try {
+      const aiPrompt = this.generateAIPrompt(`L'étudiant a des difficultés en ${subject}. Donne des recommandations personnalisées avec des cours, quiz et conseils pratiques.`);
+      const aiRecommendation = await this.geminiService.generateResponse(`Difficultés en ${subject}`, aiPrompt);
+      
+      recommendationText = `🎯 **Recommandations IA pour ${subject} :**\n\n${aiRecommendation}`;
+      recommendationType = subject.toLowerCase();
+    } catch (error) {
+      // Fallback to original recommendations
+      switch (subject) {
+        case 'Python':
+          recommendationText = `🐍 Parfait ! Pour Python, je recommande :
+          
 📚 **Cours suggérés :**
 • Les bases de Python (variables, boucles, fonctions)
 • Programmation orientée objet en Python
@@ -173,12 +325,12 @@ export class ChatAssistantComponent implements OnInit {
 • Défis de programmation Python
 
 💡 **Astuce :** Commence par réviser les concepts de base avant de passer aux projets avancés !`;
-        recommendationType = 'python';
-        break;
-        
-      case 'Réseau':
-        recommendationText = `🌐 Excellent choix ! Pour les réseaux :
-        
+          recommendationType = 'python';
+          break;
+          
+        case 'Réseau':
+          recommendationText = `🌐 Excellent choix ! Pour les réseaux :
+          
 📚 **Cours recommandés :**
 • Fondamentaux des réseaux TCP/IP
 • Configuration des routeurs et switches
@@ -190,12 +342,12 @@ export class ChatAssistantComponent implements OnInit {
 • Diagnostic de problèmes réseau
 
 💡 **Conseil :** La pratique avec des simulateurs est essentielle !`;
-        recommendationType = 'network';
-        break;
-        
-      case 'Base de données':
-        recommendationText = `🗄️ Super ! Pour les bases de données :
-        
+          recommendationType = 'network';
+          break;
+          
+        case 'Base de données':
+          recommendationText = `🗄️ Super ! Pour les bases de données :
+          
 📚 **Cours essentiels :**
 • SQL fondamental (SELECT, INSERT, UPDATE)
 • Conception de bases de données relationnelles
@@ -207,12 +359,12 @@ export class ChatAssistantComponent implements OnInit {
 • Gestion des index et performances
 
 💡 **Tip :** Pratique avec des vraies bases de données !`;
-        recommendationType = 'database';
-        break;
-        
-      case 'Développement web':
-        recommendationText = `💻 Génial ! Pour le développement web :
-        
+          recommendationType = 'database';
+          break;
+          
+        case 'Développement web':
+          recommendationText = `💻 Génial ! Pour le développement web :
+          
 📚 **Parcours suggéré :**
 • HTML5 et CSS3 modernes
 • JavaScript ES6+ et DOM
@@ -224,12 +376,12 @@ export class ChatAssistantComponent implements OnInit {
 • API REST avec Node.js
 
 💡 **Recommandation :** Construis des projets concrets !`;
-        recommendationType = 'webdev';
-        break;
-        
-      default:
-        recommendationText = `🎯 Pas de problème ! Voici des ressources générales :
-        
+          recommendationType = 'webdev';
+          break;
+          
+        default:
+          recommendationText = `🎯 Pas de problème ! Voici des ressources générales :
+          
 📚 **Cours populaires :**
 • Algorithmique et structures de données
 • Gestion de projet informatique
@@ -241,7 +393,8 @@ export class ChatAssistantComponent implements OnInit {
 • Veille technologique
 
 💡 **Conseil :** Identifie tes intérêts spécifiques !`;
-        recommendationType = 'general';
+          recommendationType = 'general';
+      }
     }
     
     setTimeout(() => {
@@ -278,17 +431,52 @@ export class ChatAssistantComponent implements OnInit {
     }
   }
 
-  sendTextInput(): void {
-    if (this.userInput.trim()) {
-      if (this.selectedQuestionIndex === 1 && this.selectedFailedQuiz === 'Oui') {
-        // Quiz name follow-up
-        this.quizName = this.userInput;
-        this.addUserMessage(this.userInput);
-        this.userInput = '';
-        this.showInput = false;
+  async sendMessage(): Promise<void> {
+    // No event parameter needed - direct method call
+    if (!this.userInput || !this.userInput.trim()) {
+      console.log('Empty input, not sending message');
+      return;
+    }
+
+    console.log('Sending message:', this.userInput.trim());
+    const userMessage = this.userInput.trim();
+    this.addUserMessage(userMessage);
+    
+    if (this.isAIChatMode) {
+      // AI Chat mode
+      this.userInput = '';
+      this.isTyping = true;
+      
+      try {
+        const aiPrompt = this.generateAIPrompt("Tu es un assistant d'apprentissage. Réponds de manière utile et encourageante.");
+        const aiResponse = await this.geminiService.generateResponse(userMessage, aiPrompt);
         
-        setTimeout(() => {
-          this.addBotMessage(`📚 Je vois que tu as eu des difficultés avec "${this.quizName}". 
+        this.isTyping = false;
+        this.addBotMessage(aiResponse);
+      } catch (error) {
+        console.error('AI response error:', error);
+        this.isTyping = false;
+        const fallbackResponse = this.geminiService.generateFallbackResponse(userMessage, 'learning');
+        this.addBotMessage(fallbackResponse);
+      }
+    } else {
+      // Original logic for quiz/objective questions
+      this.userInput = '';
+      this.showInput = false;
+      
+      if (this.selectedQuestionIndex === 1 && this.selectedFailedQuiz === 'Oui') {
+        // Quiz name follow-up with AI enhancement
+        this.quizName = userMessage;
+        
+        setTimeout(async () => {
+          try {
+            const aiPrompt = this.generateAIPrompt(`L'étudiant a échoué au quiz "${this.quizName}". Donne un plan de révision personnalisé et encourageant.`);
+            const aiResponse = await this.geminiService.generateResponse(`Plan de révision pour ${this.quizName}`, aiPrompt);
+            
+            this.addBotMessage(`📚 **Plan de révision IA pour "${this.quizName}" :**\n\n${aiResponse}`, undefined, undefined, undefined, true, 'quiz-help');
+          } catch (error) {
+            // Fallback to original response
+            this.addBotMessage(`📚 Je vois que tu as eu des difficultés avec "${this.quizName}". 
 
 🎯 **Plan de révision personnalisé :**
 • Révision ciblée des concepts du quiz
@@ -297,20 +485,25 @@ export class ChatAssistantComponent implements OnInit {
 • Session de révision avant le prochain test
 
 💪 Ne t'inquiète pas, nous allons t'aider à réussir la prochaine fois !`, undefined, undefined, undefined, true, 'quiz-help');
+          }
           
           setTimeout(() => {
             this.askIfMoreQuestions();
           }, 2000);
         }, 1000);
       } else if (this.selectedQuestionIndex === 2) {
-        // Objective question
-        this.userObjective = this.userInput;
-        this.addUserMessage(this.userInput);
-        this.userInput = '';
-        this.showInput = false;
+        // Objective question with AI enhancement
+        this.userObjective = userMessage;
         
-        setTimeout(() => {
-          this.addBotMessage(`🎯 Excellent objectif : "${this.userObjective}" !
+        setTimeout(async () => {
+          try {
+            const aiPrompt = this.generateAIPrompt(`L'étudiant a pour objectif: "${this.userObjective}". Crée un plan d'action détaillé et motivant.`);
+            const aiResponse = await this.geminiService.generateResponse(`Plan pour objectif: ${this.userObjective}`, aiPrompt);
+            
+            this.addBotMessage(`🎯 **Plan d'action IA pour "${this.userObjective}" :**\n\n${aiResponse}`, undefined, undefined, undefined, true, 'objective-plan');
+          } catch (error) {
+            // Fallback to original response
+            this.addBotMessage(`🎯 Excellent objectif : "${this.userObjective}" !
 
 📋 **Plan d'action suggéré :**
 • Identifie les compétences nécessaires
@@ -325,6 +518,7 @@ export class ChatAssistantComponent implements OnInit {
 • Communauté d'apprentissage
 
 Tu es sur la bonne voie ! 💪`, undefined, undefined, undefined, true, 'objective-plan');
+          }
           
           setTimeout(() => {
             this.askIfMoreQuestions();
@@ -332,6 +526,59 @@ Tu es sur la bonne voie ! 💪`, undefined, undefined, undefined, true, 'objecti
         }, 1000);
       }
     }
+  }
+
+  generateAIPrompt(context: string): string {
+    let prompt = "Tu es un assistant d'apprentissage pour une plateforme LMS. ";
+    
+    // Add personality
+    switch (this.aiPersonality) {
+      case 'helpful':
+        prompt += "Tu es serviable, encourageant et patient. ";
+        break;
+      case 'professional':
+        prompt += "Tu es professionnel et précis. ";
+        break;
+      case 'friendly':
+        prompt += "Tu es amical et accessible. ";
+        break;
+    }
+    
+    // Add response length
+    switch (this.aiResponseLength) {
+      case 'short':
+        prompt += "Garde tes réponses courtes et concises. ";
+        break;
+      case 'medium':
+        prompt += "Donne des réponses de longueur moyenne. ";
+        break;
+      case 'detailed':
+        prompt += "Fournis des réponses détaillées. ";
+        break;
+    }
+    
+    // Add expertise level
+    switch (this.aiExpertise) {
+      case 'beginner':
+        prompt += "Adapte pour un niveau débutant avec des explications simples. ";
+        break;
+      case 'intermediate':
+        prompt += "Utilise un niveau intermédiaire. ";
+        break;
+      case 'advanced':
+        prompt += "Tu peux utiliser un vocabulaire technique avancé. ";
+        break;
+    }
+    
+    prompt += "Réponds toujours en français. " + context;
+    
+    return prompt;
+  }
+
+  exitAIChat(): void {
+    this.isAIChatMode = false;
+    this.showInput = false;
+    this.addBotMessage("🔄 Retour au mode questions guidées. Veux-tu répondre à une autre question ?", ['Oui, une autre question', 'Non, c\'est bon'], 'yes-no', -1);
   }
 
   askIfMoreQuestions(): void {
@@ -372,6 +619,19 @@ Tu es sur la bonne voie ! 💪`, undefined, undefined, undefined, true, 'objecti
           break;
       }
     }, 1000);
+  }
+
+  onKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      console.log('Enter key pressed - sending message directly');
+      event.preventDefault(); // Prevent any default behavior
+      this.sendMessage();
+    }
+  }
+
+  onSendButtonClick(): void {
+    console.log('Send button clicked - sending message directly');
+    this.sendMessage();
   }
 
   scrollToBottom(): void {

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -19,6 +20,8 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {NgxSpinnerModule} from "ngx-spinner";
 import {QuizModalModule} from "./feature-module/quiz-modal-component/quiz-modal.module";
 import {ModalModule} from "ngx-bootstrap/modal";
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { CongratulationsModalComponent } from './shared/components/congratulations-modal/congratulations-modal.component';
 
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
@@ -49,10 +52,15 @@ registerLocaleData(localeFr, 'fr');
     NgxSpinnerModule.forRoot(),
     SharedModule,
     QuizModalModule,
-    NgScrollbarModule
+    NgScrollbarModule,
+    CongratulationsModalComponent
   ],
   providers: [
-
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
     provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]

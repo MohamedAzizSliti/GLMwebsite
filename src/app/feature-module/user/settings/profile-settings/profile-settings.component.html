@@ -42,101 +42,171 @@
                                 <a [routerLink]="routes.integrationSettings" class="pe-3"><i class="isax isax-hierarchy me-2"></i>Integrations</a>
                             </div>
 
-                            <!-- Settings Content -->
-                            <div class="settings-content mb-3">
-                                <h6 class="fs-16 mb-3">Basic Information</h6>
-                                <div class="row gy-2">
-                                    <div class="col-lg-12">
-                                        <div class="d-flex align-items-center">
-                                            <img src="assets/img/users/user-01.jpg" alt="image" class="img-fluid avatar avatar-xxl br-10 flex-shrink-0 me-3">
-                                            <div>
-                                                <p class="fs-14 text-gray-6 fw-normal mb-2">Recommended dimensions are typically 400 x 400 pixels.</p>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="me-2">
-                                                        <label class="upload-btn" for="fileUpload">Upload</label>
-                                                        <input type="file" id="fileUpload" style="display: none;">
+                            <!-- Loading State -->
+                            <div *ngIf="loading" class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2 text-muted">Loading profile...</p>
+                            </div>
+
+                            <!-- Error State -->
+                            <div *ngIf="error && !loading" class="alert alert-danger" role="alert">
+                                <i class="isax isax-warning-2 me-2"></i>{{ error }}
+                            </div>
+
+                            <!-- Success Message -->
+                            <div *ngIf="successMessage" class="alert alert-success" role="alert">
+                                <i class="isax isax-tick-circle me-2"></i>{{ successMessage }}
+                            </div>
+
+                            <!-- Settings Form -->
+                            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+                                <!-- Settings Content -->
+                                <div class="settings-content mb-3">
+                                    <h6 class="fs-16 mb-3">Basic Information</h6>
+                                    <div class="row gy-2">
+                                        <div class="col-lg-12">
+                                            <div class="d-flex align-items-center">
+                                                <div class="position-relative me-3">
+                                                    <img [src]="getUserAvatar()" [alt]="user?.name" 
+                                                         class="img-fluid avatar avatar-xxl br-10 flex-shrink-0"
+                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="avatar avatar-xxl bg-primary d-none align-items-center justify-content-center br-10">
+                                                        <span class="text-white fs-20 fw-bold">{{ getUserInitials() }}</span>
                                                     </div>
-                                                    <a href="javascript:void(0);" class="btn btn-light btn-md">Remove</a>
+                                                    
+                                                    <!-- Upload Progress -->
+                                                    <div *ngIf="uploadingImage" class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 br-10">
+                                                        <div class="text-center text-white">
+                                                            <div class="spinner-border spinner-border-sm mb-1" role="status"></div>
+                                                            <small class="d-block">{{ uploadProgress }}%</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <p class="fs-14 text-gray-6 fw-normal mb-2">Recommended dimensions are typically 400 x 400 pixels.</p>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="me-2">
+                                                            <button type="button" class="btn btn-primary btn-md" (click)="triggerFileInput()" [disabled]="saving || uploadingImage">
+                                                                <i class="isax isax-camera me-1"></i>Upload
+                                                            </button>
+                                                            <input type="file" #fileInput (change)="onFileSelected($event)" 
+                                                                   accept="image/*" style="display: none;">
+                                                        </div>
+                                                        <button type="button" class="btn btn-light btn-md" (click)="removeImage()" 
+                                                                [disabled]="saving || uploadingImage || (!selectedFile && !imagePreview)">
+                                                            Remove
+                                                        </button>
+                                                    </div>
+                                                    <small class="text-muted d-block mt-1" *ngIf="selectedFile">
+                                                        Selected: {{ selectedFile.name }} ({{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB)
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div>
+                                                <label class="form-label">First Name <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" formControlName="firstName"
+                                                       [class.is-invalid]="isFieldInvalid(profileForm, 'firstName')">
+                                                <div class="invalid-feedback" *ngIf="isFieldInvalid(profileForm, 'firstName')">
+                                                    {{ getFieldError(profileForm, 'firstName') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div>
+                                                <label class="form-label">Last Name <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" formControlName="lastName"
+                                                       [class.is-invalid]="isFieldInvalid(profileForm, 'lastName')">
+                                                <div class="invalid-feedback" *ngIf="isFieldInvalid(profileForm, 'lastName')">
+                                                    {{ getFieldError(profileForm, 'lastName') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div>
+                                                <label class="form-label">Email <span class="text-danger">*</span></label>
+                                                <input type="email" class="form-control" formControlName="email"
+                                                       [class.is-invalid]="isFieldInvalid(profileForm, 'email')">
+                                                <div class="invalid-feedback" *ngIf="isFieldInvalid(profileForm, 'email')">
+                                                    {{ getFieldError(profileForm, 'email') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div>
+                                                <label class="form-label">Phone</label>
+                                                <input type="tel" class="form-control" formControlName="phone"
+                                                       [class.is-invalid]="isFieldInvalid(profileForm, 'phone')"
+                                                       placeholder="+1234567890">
+                                                <div class="invalid-feedback" *ngIf="isFieldInvalid(profileForm, 'phone')">
+                                                    {{ getFieldError(profileForm, 'phone') }}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
-                                        <div>
-                                            <label class="form-label">First Name</label>
-                                            <input type="text" class="form-control">
+                                </div>
+
+                                <!-- Address Information -->
+                                <div class="settings-content" [formGroup]="addressForm">
+                                    <h6 class="fs-16 mb-3">Address Information</h6>
+                                    <div class="row gy-2">
+                                        <div class="col-lg-12">
+                                            <div>
+                                                <label class="form-label">Address</label>
+                                                <input type="text" class="form-control" formControlName="address"
+                                                       placeholder="Enter your full address">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div>
-                                            <label class="form-label">Last Name</label>
-                                            <input type="text" class="form-control">
+                                        <div class="col-lg-6">
+                                            <div>
+                                                <label class="form-label">Country</label>
+                                                <input type="text" class="form-control" formControlName="country"
+                                                       placeholder="Enter country">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div>
-                                            <label class="form-label">Email</label>
-                                            <input type="email" class="form-control">
+                                        <div class="col-lg-6">
+                                            <div>
+                                                <label class="form-label">State</label>
+                                                <input type="text" class="form-control" formControlName="state"
+                                                       placeholder="Enter state">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div>
-                                            <label class="form-label">Phone</label>
-                                            <input type="email" class="form-control">
+                                        <div class="col-lg-6">
+                                            <div>
+                                                <label class="form-label">City</label>
+                                                <input type="text" class="form-control" formControlName="city"
+                                                       placeholder="Enter city">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div>
+                                                <label class="form-label">Postal Code</label>
+                                                <input type="text" class="form-control" formControlName="postal_code"
+                                                       [class.is-invalid]="isFieldInvalid(addressForm, 'postal_code')"
+                                                       placeholder="12345">
+                                                <div class="invalid-feedback" *ngIf="isFieldInvalid(addressForm, 'postal_code')">
+                                                    {{ getFieldError(addressForm, 'postal_code') }}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="settings-content">
-                                <h6 class="fs-16 mb-3">Address Information</h6>
-                                <div class="row gy-2">
-                                    <div class="col-lg-12">
-                                        <div>
-                                            <label class="form-label">Address</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div>
-                                            <label class="form-label">Country</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div>
-                                            <label class="form-label">State</label>
-                                            <mat-select class="custom-mat-select select" placeholder="Select">
-                                                <mat-option value="1">Select</mat-option>
-                                                <mat-option value="1">California</mat-option>
-                                                <mat-option value="1">Texas</mat-option>
-                                            </mat-select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div>
-                                            <label class="form-label">City</label>
-                                            <mat-select class="custom-mat-select select" placeholder="Select">
-                                                <mat-option value="1">Select</mat-option>
-                                                <mat-option value="1">New York</mat-option>
-                                                <mat-option value="1">Tokyo </mat-option>
-                                            </mat-select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div>
-                                            <label class="form-label">Postal Code</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- /Settings Content-->
+                                <!-- /Settings Content-->
+                            </form>
 
                         </div>
                         <div class="card-footer">
                             <div class="d-flex align-items-center justify-content-end">
-                                <a href="javascript:void(0);" class="btn btn-light me-2">Cancel</a>
-                                <a href="javascript:void(0);" class="btn btn-primary">Save</a>
+                                <button type="button" class="btn btn-light me-2" (click)="cancel()" [disabled]="saving">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn btn-primary" (click)="onSubmit()" [disabled]="saving || profileForm.invalid">
+                                    <span *ngIf="saving" class="spinner-border spinner-border-sm me-1" role="status"></span>
+                                    {{ saving ? 'Saving...' : 'Save' }}
+                                </button>
                             </div>
                         </div>
                     </div>

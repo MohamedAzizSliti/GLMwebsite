@@ -17,9 +17,26 @@
 </div>
 <!-- /Breadcrumb -->
 
-<!-- Page Wrapper -->
-<div class="content">
+<!-- Loading State -->
+<div *ngIf="!course || !course.id" class="content">
   <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 text-muted">Chargement du cours...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Page Wrapper -->
+<div class="content" *ngIf="course && course.id">
+  <div class="container">
+    
+    <!-- Debug Panel -->
+    <app-auth-debug></app-auth-debug>
 
     <div class="row">
 
@@ -29,16 +46,16 @@
         <!-- Slider -->
         <div class="d-flex align-items-center justify-content-between flex-wrap mb-2">
           <div class="mb-2">
-            <h4 class="mb-1 d-flex align-items-center flex-wrap">{{course.title}}<span
+            <h4 class="mb-1 d-flex align-items-center flex-wrap">{{course?.title || 'Course Title'}}<span
               class="badge badge-xs bg-success rounded-pill ms-2"><i
               class="isax isax-ticket-star me-1"></i>Verified</span></h4>
             <div class="d-flex align-items-center flex-wrap">
               <p class="fs-14 mb-2 me-3 pe-3 border-end"><i
-                class="isax isax-buildings me-2"></i>{{course.category?.name}}</p>
+                class="isax isax-buildings me-2"></i>{{course?.category?.name || 'Category'}}</p>
               <p class="fs-14 mb-2 me-3 pe-3 border-end"><i class="isax isax-location5 me-2"></i>Tunisia</p>
               <div class="d-flex align-items-center mb-2">
                 <span class="badge badge-warning badge-xs text-gray-9 fs-13 fw-medium me-2">Teacher</span>
-                <p class="fs-14"><a href="#reviews">{{course.instructor?.name}}</a></p>
+                <p class="fs-14"><a href="#reviews">{{course?.instructor?.name || 'Instructor'}}</a></p>
               </div>
             </div>
           </div>
@@ -53,29 +70,29 @@
         <div class="d-flex align-items-center justify-content-between flex-wrap mb-3">
           <div class="d-flex align-items-center flex-wrap">
             <p class="fs-14 me-2 mb-2"><i class="isax isax-tick-circle5 text-success me-2"></i>With Certaficate
-              : {{course.certificate_available}}</p>
+              : {{course?.certificate_available || 'N/A'}}</p>
             <p class="fs-14 me-2 mb-2"><i class="isax isax-tick-circle5 text-success me-2"></i>Nombre d'examens
-              : {{course.exams?.length}}</p>
+              : {{course?.exams?.length || 0}}</p>
             <p class="fs-14 mb-2"><i class="isax isax-tick-circle5 text-success me-2"></i>Nombre
-              Quiz: {{course.quizzes?.length}}</p>
+              Quiz: {{course?.quizzes?.length || 0}}</p>
           </div>
           <span
-            class="badge badge-light text-gray-9 badge-md fs-13 fw-medium rounded-pill mb-2">Total {{course?.chapters?.length}}
+            class="badge badge-light text-gray-9 badge-md fs-13 fw-medium rounded-pill mb-2">Total {{course?.chapters?.length || 0}}
             chapitres</span>
         </div>
         <div class="border-bottom pb-4 mb-4">
           <div class="service-wrap hotel-wrap mb-4">
             <div class="slider-wrap mb-4">
-              <img [src]="course.media_path?.original_url" class="img-fluid" alt="Slider Img"/>
+              <img [src]="course?.cover_image?.url || course?.media_path?.original_url || 'assets/img/course-placeholder.jpg'" class="img-fluid" alt="Course Cover Image"/>
             </div>
           </div>
           <h5 class="mb-3 fs-18">Description</h5>
 
-          <ng-container *ngFor="let desc  of  course.description;let i = index">
+          <ng-container *ngFor="let desc of course?.description || []; let i = index">
             <div>
-              <h3>{{desc.heading}}</h3>
-              <p *ngIf="desc.body">
-                {{desc.body?.content[0]?.content[0]?.text}}
+              <h3>{{desc?.heading || 'Section'}}</h3>
+              <p *ngIf="desc?.body">
+                {{desc?.body?.content?.[0]?.content?.[0]?.text || 'Description content'}}
               </p>
             </div>
           </ng-container>
@@ -88,7 +105,7 @@
             </div>
 
             <div class="accordion" id="contentAccordion">
-              <ng-container *ngFor="let chapter of course.chapters; let chapterIndex = index">
+              <ng-container *ngFor="let chapter of course?.chapters || []; let chapterIndex = index">
                 <div class="border border-2 bg-white rounded mb-2">
                   <h2 class="m-0">
                     <button
@@ -101,9 +118,9 @@
                       <div class="accordion-content w-100">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                           <small class="me-2 text-muted">Chapter {{ chapterIndex + 1 }}</small>
-                          <small class="me-2 text-muted chapter-duration">{{ chapter.total_duration }} min</small>
+                          <small class="me-2 text-muted chapter-duration">{{ chapter?.total_duration || 0 }} min</small>
                         </div>
-                        <span class="chapter-title">{{ chapter.title }}</span>
+                        <span class="chapter-title">{{ chapter?.title || 'Chapter Title' }}</span>
                       </div>
                     </button>
                   </h2>
@@ -113,7 +130,7 @@
                     class="accordion-collapse my-1 collapse"
                     data-bs-parent="#contentAccordion">
                     <div class="accordion-body border-start border-end border-light p-0 mx-1">
-                      <ng-container *ngFor="let content of chapter.contents; let contentIndex = index">
+                      <ng-container *ngFor="let content of chapter?.contents || []; let contentIndex = index">
                         <div>
                           <a
                             [routerLink]="[]"
@@ -122,13 +139,13 @@
                             <div class="d-flex align-items-center">
 
                               <!-- Icône selon le type -->
-                              <ng-container *ngIf="content.type === 'image'">
+                              <ng-container *ngIf="content?.type === 'image'">
                                 <div class="text-muted img-fluid me-3 svgEdit">
                                   <div data-v-1ee90fc2="" class="text-muted img-fluid me-3 svgEdit"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path><path opacity="0.4" d="M9 10C10.1046 10 11 9.10457 11 8C11 6.89543 10.1046 6 9 6C7.89543 6 7 6.89543 7 8C7 9.10457 7.89543 10 9 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path opacity="0.4" d="M2.66992 18.9505L7.59992 15.6405C8.38992 15.1105 9.52992 15.1705 10.2399 15.7805L10.5699 16.0705C11.3499 16.7405 12.6099 16.7405 13.3899 16.0705L17.5499 12.5005C18.3299 11.8305 19.5899 11.8305 20.3699 12.5005L21.9999 13.9005" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
 
                                 </div>
                               </ng-container>
-                              <ng-container *ngIf="content.type === 'video'">
+                              <ng-container *ngIf="content?.type === 'video'">
                                 <div class="text-muted img-fluid me-3 svgEdit">
                                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                        xmlns="http://www.w3.org/2000/svg">
@@ -150,9 +167,9 @@
                               </ng-container>
 
                               <!-- Titre et durée -->
-                              <span class="text-muted title-font">{{ content.title }}</span>
+                              <span class="text-muted title-font">{{ content?.title || 'Content Title' }}</span>
                               <div class="ms-auto d-flex justify-content-between align-items-center gap-3">
-                                <small class="text-muted" style="font-size: 0.625em;">{{ content.duration }} min</small>
+                                <small class="text-muted" style="font-size: 0.625em;">{{ content?.duration || 0 }} min</small>
                                 <small class="text-muted" style="font-size: 0.625em;">
                                   <svg class="svg-inline--fa fa-circle text-primary" aria-hidden="true" focusable="false"
                                        data-prefix="fas" data-icon="circle" role="img"
@@ -177,10 +194,288 @@
             </div>
           </section>
 
+          <!-- UDEMY-LIKE COURSE CONTENT STRUCTURE -->
+          <div class="course-content-section">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <h6 class="mb-0 text-dark">
+                <i class="fas fa-list-alt me-2"></i>Contenu du cours
+              </h6>
+              <div class="course-stats">
+                <span class="badge bg-primary me-2">{{ course.chapters?.length || 0 }} chapitres</span>
+                <span class="badge bg-info me-2">{{ getTotalContentCount() }} contenus</span>
+                <span class="badge bg-success me-2">{{ course.quizzes?.length || 0 }} quiz</span>
+                <span class="badge bg-warning">{{ course.exams?.length || 0 }} examens</span>
+              </div>
+            </div>
 
+            <!-- Course Progress Bar -->
+            <div class="course-progress mb-4" *ngIf="isPurchased && enrollment">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted">Progression du cours</span>
+                <span class="text-primary fw-bold">{{ enrollment.progress || 0 }}%</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-primary" 
+                     [style.width.%]="enrollment.progress || 0"></div>
+              </div>
+            </div>
+
+            <!-- Chapters and Content -->
+            <div class="chapters-container">
+              <div *ngFor="let chapter of course.chapters; let chapterIndex = index" 
+                   class="chapter-item mb-3">
+                
+                <!-- Chapter Header -->
+                <div class="chapter-header p-3 bg-light border rounded-top cursor-pointer"
+                     (click)="toggleClass(chapterIndex)">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <div class="chapter-info">
+                      <h6 class="mb-1 text-dark">
+                        <i class="fas fa-folder me-2"></i>
+                        Chapitre {{ chapterIndex + 1 }}: {{ chapter.title }}
+                      </h6>
+                      <small class="text-muted">
+                        {{ chapter.contents?.length || 0 }} contenus
+                        <span *ngIf="chapter.description"> • {{ chapter.description }}</span>
+                      </small>
+                    </div>
+                    <div class="chapter-toggle">
+                      <i class="fas" 
+                         [class.fa-chevron-down]="!isClassAdded[chapterIndex]"
+                         [class.fa-chevron-up]="isClassAdded[chapterIndex]"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Chapter Content -->
+                <div class="chapter-content border border-top-0 rounded-bottom"
+                     [class.show]="isClassAdded[chapterIndex]"
+                     [style.display]="isClassAdded[chapterIndex] ? 'block' : 'none'">
+                  
+                  <!-- Chapter Contents -->
+                  <div *ngFor="let content of chapter.contents; let contentIndex = index"
+                       class="content-item p-3 border-bottom hover-bg-light cursor-pointer"
+                       [class.completed]="isContentCompleted(chapterIndex, contentIndex)"
+                       (click)="handleContentClick(content, chapterIndex, contentIndex)">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div class="content-info d-flex align-items-center">
+                        <!-- Content Type Icon -->
+                        <div class="content-icon me-3">
+                          <i class="fas" 
+                             [class.fa-play-circle]="content.type === 'video'"
+                             [class.fa-file-pdf]="content.type === 'pdf'"
+                             [class.fa-file-alt]="content.type === 'text'"
+                             [class.fa-image]="content.type === 'image'"
+                             [class.fa-headphones]="content.type === 'audio'"
+                             [class.text-primary]="content.type === 'video'"
+                             [class.text-danger]="content.type === 'pdf'"
+                             [class.text-secondary]="content.type === 'text'"
+                             [class.text-info]="content.type === 'image'"
+                             [class.text-warning]="content.type === 'audio'"></i>
+                        </div>
+                        
+                        <!-- Content Details -->
+                        <div class="content-details">
+                          <h6 class="mb-1 text-dark">{{ content.title }}</h6>
+                          <small class="text-muted">
+                            <span class="content-type">{{ getContentTypeLabel(content.type) }}</span>
+                            <span *ngIf="content.duration" class="ms-2">
+                              <i class="fas fa-clock me-1"></i>{{ content.duration }} min
+                            </span>
+                            <span *ngIf="content.is_free" class="badge bg-success ms-2">Gratuit</span>
+                          </small>
+                        </div>
+                      </div>
+                      
+                      <!-- Content Status -->
+                      <div class="content-status">
+                        <i class="fas fa-check-circle text-success" 
+                           *ngIf="isContentCompleted(chapterIndex, contentIndex)"></i>
+                        <i class="fas fa-lock text-muted" 
+                           *ngIf="!isPurchased && !content.is_free"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Chapter Quizzes -->
+                  <div *ngFor="let quiz of getChapterQuizzes(chapter.id)" 
+                       class="quiz-item p-3 border-bottom bg-light-blue hover-bg-light"
+                       [class.completed]="isQuizCompleted(quiz.id)"
+                       [class.cursor-pointer]="!isQuizCompleted(quiz.id)"
+                       [class.cursor-not-allowed]="isQuizCompleted(quiz.id)"
+                       [title]="isQuizCompleted(quiz.id) ? 'Quiz déjà terminé avec succès ✅' : 'Cliquer pour commencer le quiz'"
+                       (click)="openQuiz(quiz.id)">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div class="quiz-info d-flex align-items-center">
+                        <div class="quiz-icon me-3">
+                          <i class="fas fa-question-circle text-primary fs-5"></i>
+                        </div>
+                        <div class="quiz-details">
+                          <h6 class="mb-1 text-dark">
+                            <i class="fas fa-quiz me-1"></i>{{ quiz.title }}
+                          </h6>
+                          <small class="text-muted">
+                            Quiz • {{ quiz.duration || 15 }} min • {{ quiz.questions?.length || 0 }} questions
+                            <span *ngIf="isQuizCompleted(quiz.id)" class="ms-2">
+                              <span class="badge" 
+                                    [class.bg-success]="getQuizCompletionStatus(quiz.id) === 'Réussi'"
+                                    [class.bg-danger]="getQuizCompletionStatus(quiz.id) === 'Échoué'">
+                                {{ getQuizCompletionStatus(quiz.id) }}
+                              </span>
+                            </span>
+                          </small>
+                        </div>
+                      </div>
+                      <div class="quiz-status">
+                        <i class="fas fa-check-circle text-success" 
+                           *ngIf="isQuizCompleted(quiz.id)"></i>
+                        <i class="fas fa-play-circle text-primary" 
+                           *ngIf="!isQuizCompleted(quiz.id) && isPurchased"></i>
+                        <i class="fas fa-lock text-muted" 
+                           *ngIf="!isPurchased"></i>
+                        <span *ngIf="isLoadingQuiz" class="spinner-border spinner-border-sm text-primary"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Chapter Exams -->
+                  <div *ngFor="let exam of getChapterExams(chapter.id)" 
+                       class="exam-item p-3 border-bottom bg-light-warning hover-bg-light cursor-pointer"
+                       [class.completed]="isExamCompleted(exam.id)"
+                       (click)="openQuizModal(exam)">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div class="exam-info d-flex align-items-center">
+                        <div class="exam-icon me-3">
+                          <i class="fas fa-graduation-cap text-warning fs-5"></i>
+                        </div>
+                        <div class="exam-details">
+                          <h6 class="mb-1 text-dark">
+                            <i class="fas fa-certificate me-1"></i>{{ exam.title }}
+                          </h6>
+                          <small class="text-muted">
+                            Examen • {{ exam.duration || 60 }} min • {{ exam.questions?.length || exam.nbr_question || 0 }} questions
+                            <span *ngIf="isExamCompleted(exam.id)" class="ms-2">
+                              <span class="badge" 
+                                    [class.bg-success]="getExamCompletionStatus(exam.id) === 'Réussi'"
+                                    [class.bg-danger]="getExamCompletionStatus(exam.id) === 'Échoué'">
+                                {{ getExamCompletionStatus(exam.id) }}
+                              </span>
+                            </span>
+                          </small>
+                        </div>
+                      </div>
+                      <div class="exam-status">
+                        <i class="fas fa-check-circle text-success" 
+                           *ngIf="isExamCompleted(exam.id)"></i>
+                        <i class="fas fa-play-circle text-warning fs-4" 
+                           *ngIf="!isExamCompleted(exam.id) && isPurchased"></i>
+                        <i class="fas fa-lock text-muted fs-4" 
+                           *ngIf="!isPurchased"></i>
+                        <span *ngIf="isLoadingExam" class="spinner-border spinner-border-sm text-warning"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Course-level Quizzes (not tied to specific chapters) -->
+            <div *ngIf="getCourseQuizzes().length > 0" class="course-quizzes mt-4">
+              <h6 class="mb-3 text-primary">
+                <i class="fas fa-question-circle me-2"></i>Quiz du cours
+              </h6>
+              <div *ngFor="let quiz of getCourseQuizzes()" 
+                   class="quiz-item p-3 mb-2 border rounded hover-shadow"
+                   [class.completed]="isQuizCompleted(quiz.id)"
+                   [class.cursor-pointer]="!isQuizCompleted(quiz.id)"
+                   [class.cursor-not-allowed]="isQuizCompleted(quiz.id)"
+                   [title]="isQuizCompleted(quiz.id) ? 'Quiz déjà terminé avec succès ✅' : 'Cliquer pour commencer le quiz'"
+                   (click)="openQuiz(quiz.id)">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="quiz-info d-flex align-items-center">
+                    <div class="quiz-icon me-3">
+                      <i class="fas fa-question-circle text-primary fs-5"></i>
+                    </div>
+                    <div class="quiz-details">
+                      <h6 class="mb-1 text-dark">{{ quiz.title }}</h6>
+                      <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>{{ quiz.duration || 15 }} min
+                        <i class="fas fa-star ms-2 me-1"></i>{{ quiz.total_marks || 0 }} pts
+                        <span *ngIf="isQuizCompleted(quiz.id)" class="ms-2">
+                          <span class="badge" 
+                                [class.bg-success]="getQuizCompletionStatus(quiz.id) === 'Réussi'"
+                                [class.bg-danger]="getQuizCompletionStatus(quiz.id) === 'Échoué'">
+                            {{ getQuizCompletionStatus(quiz.id) }}
+                          </span>
+                        </span>
+                      </small>
+                    </div>
+                  </div>
+                  <div class="quiz-action">
+                    <i class="fas fa-check-circle text-success fs-4" 
+                       *ngIf="isQuizCompleted(quiz.id)"></i>
+                    <i class="fas fa-play-circle text-primary fs-4" 
+                       *ngIf="!isQuizCompleted(quiz.id) && isPurchased"></i>
+                    <i class="fas fa-lock text-muted fs-4" 
+                       *ngIf="!isPurchased"></i>
+                    <span *ngIf="isLoadingQuiz" class="spinner-border spinner-border-sm text-primary"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Course-level Exams (not tied to specific chapters) -->
+            <div *ngIf="getCourseExams().length > 0" class="course-exams mt-4">
+              <h6 class="mb-3 text-warning">
+                <i class="fas fa-graduation-cap me-2"></i>Examens du cours
+              </h6>
+              <div *ngFor="let exam of getCourseExams()" 
+                   class="exam-item p-3 mb-2 border rounded hover-shadow cursor-pointer"
+                   [class.completed]="isExamCompleted(exam.id)"
+                   (click)="openQuizModal(exam)">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="exam-info d-flex align-items-center">
+                    <div class="exam-icon me-3">
+                      <i class="fas fa-graduation-cap text-warning fs-5"></i>
+                    </div>
+                    <div class="exam-details">
+                      <h6 class="mb-1 text-dark">{{ exam.title }}</h6>
+                      <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>{{ exam.duration || 60 }} min
+                        <i class="fas fa-list-ol ms-2 me-1"></i>{{ exam.questions?.length || exam.nbr_question || 0 }} questions
+                        <span *ngIf="isExamCompleted(exam.id)" class="ms-2">
+                          <span class="badge" 
+                                [class.bg-success]="getExamCompletionStatus(exam.id) === 'Réussi'"
+                                [class.bg-danger]="getExamCompletionStatus(exam.id) === 'Échoué'">
+                            {{ getExamCompletionStatus(exam.id) }}
+                          </span>
+                        </span>
+                      </small>
+                    </div>
+                  </div>
+                  <div class="exam-action">
+                    <i class="fas fa-check-circle text-success fs-4" 
+                       *ngIf="isExamCompleted(exam.id)"></i>
+                    <i class="fas fa-play-circle text-warning fs-4" 
+                       *ngIf="!isExamCompleted(exam.id) && isPurchased"></i>
+                    <i class="fas fa-lock text-muted fs-4" 
+                       *ngIf="!isPurchased"></i>
+                    <span *ngIf="isLoadingExam" class="spinner-border spinner-border-sm text-warning"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="!course.chapters?.length && !course.quizzes?.length && !course.exams?.length" 
+                 class="empty-content text-center py-5">
+              <i class="fas fa-book-open display-1 text-muted"></i>
+              <h5 class="mt-3 text-muted">Contenu en cours de préparation</h5>
+              <p class="text-muted">Le contenu de ce cours sera bientôt disponible.</p>
+            </div>
+          </div>
         </div>
         <!-- /Slider -->
-
 
       </div>
       <!-- /Hotel Details -->
@@ -193,22 +488,22 @@
             <div class="card-body">
               <div class="mb-3">
                 <p class="fs-13 fw-medium mb-1">Price</p>
-                <h5 class="text-primary mb-1">{{course.regular_price}} TND</h5>
+                <h5 class="text-primary mb-1">{{course?.regular_price || course?.price || 'Free'}} TND</h5>
               </div>
               <div class="banner-form">
                    <div class="form-info border-0">
                     <div class="form-item border rounded p-3 mb-3 w-100">
                       <label class="form-label fs-14 text-default mb-0">Published at</label>
-                      {{course.created_at}}
+                      {{course?.created_at || 'N/A'}}
                     </div>
                      <div class="form-item border rounded p-3 mb-3 w-100" *ngIf="enrollment?.id">
                       <label class="form-label fs-14 text-default mb-0">Check Out</label>
-                      {{enrollment?.created_at}}
+                      {{enrollment?.created_at || 'N/A'}}
                     </div>
                   </div>
                   <button type="submit" *ngIf="enrollment?.id == null"
                           (click)="purchaseFormation($event)"
-                          class="btn btn-primary btn-lg search-btn ms-0 mb-3 w-100 fs-14">{{course.is_free ? 'Get the course for free' : 'Purchase This Course'}}</button>
+                          class="btn btn-primary btn-lg search-btn ms-0 mb-3 w-100 fs-14">{{course?.is_free ? 'Get the course for free' : 'Purchase This Course'}}</button>
                </div>
               <div class="d-flex align-items-center justify-content-between mt-1">
                 <p class="fs-14 text-dark d-inline-flex align-items-center mb-0"><i class="isax isax-eye me-2"></i>4
@@ -228,7 +523,7 @@
                     <img src="assets/img/users/user-05.jpg" alt="img" class="rounded-circle">
                   </a>
                   <div class="ms-2 overflow-hidden">
-                    <h6 class="fw-medium text-truncate"><a href="javascript:void(0);">{{course.instructor?.name}}</a>
+                    <h6 class="fw-medium text-truncate"><a href="javascript:void(0);">{{course?.instructor?.name || 'Instructor'}}</a>
                     </h6>
                     <p class="fs-14">Member Since : 14 May 2024</p>
                   </div>
@@ -237,12 +532,12 @@
                   <div class="d-flex align-items-center border-bottom pb-3 mb-3">
                     <span class="avatar avatar-sm me-2 rounded-circle flex-shrink-0 bg-primary"><i
                       class="isax isax-call-outgoing5"></i></span>
-                    <p>Call Us : {{course.instructor?.name}} </p>
+                    <p>Call Us : {{course?.instructor?.name || 'Instructor'}} </p>
                   </div>
                   <div class="d-flex align-items-center">
                     <span class="avatar avatar-sm me-2 rounded-circle flex-shrink-0 bg-primary"><i
                       class="isax isax-message-search5"></i></span>
-                    <p>Email : {{course.instructor?.email}}</p>
+                    <p>Email : {{course?.instructor?.email || 'email@example.com'}}</p>
                   </div>
                 </div>
               </div>
@@ -254,6 +549,7 @@
                 </div>
                 <div class="col-sm-6">
                   <a [routerLink]="routes.chat"
+                     [queryParams]="{userId: course?.instructor?.id, userName: course?.instructor?.name}"
                      class="btn btn-primary d-flex align-items-center justify-content-center"><i
                     class="isax isax-message-notif5 me-2"></i>Chat Now</a>
                 </div>

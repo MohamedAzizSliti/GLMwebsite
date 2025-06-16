@@ -1,0 +1,39 @@
+// Language dropdown styles
+.flag-dropdown {
+  .dropdown-item {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: #f8f9fa;
+      transform: translateX(2px);
+    }
+    
+    &.active {
+      background-color: #007bff;
+      color: white;
+      
+      &:hover {
+        background-color: #0056b3;
+        color: white;
+      }
+    }
+  }
+  
+  .dropdown-toggle {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  }
+}
+
+// Language flag animation
+.flag-dropdown img {
+  transition: transform 0.3s ease;
+}
+
+.flag-dropdown:hover img {
+  transform: scale(1.1);
+}

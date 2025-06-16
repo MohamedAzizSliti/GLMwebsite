@@ -1,0 +1,1 @@
+import{ca as r,g as t}from"./chunk-AKKEK2YC.js";var i=class e{base=new t("");page=new t("");last=new t("");static \u0275fac=function(o){return new(o||e)};static \u0275prov=r({token:e,factory:e.\u0275fac,providedIn:"root"})};export{i as a};

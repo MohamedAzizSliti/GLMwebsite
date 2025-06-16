@@ -38,38 +38,84 @@ export class QuizService {
       const question = exam.questions.find(q => q.id === userAnswer.questionId);
       
       if (question) {
-        // Pour les questions à choix unique
-        if (question.question_type === 'single_choice') {
-          if (userAnswer.selectedOptions.length === 1 && 
-              userAnswer.selectedOptions[0] === question.correct_option) {
-            correctAnswers++;
+        console.log('🔍 QuizService - Checking answer for question:', question);
+        console.log('🔍 QuizService - User answer:', userAnswer);
+        console.log('🔍 QuizService - Correct answer:', question.correct_answer);
+        
+        // Parse options from JSON string - handle double-encoded format
+        let parsedOptions: any = {};
+        try {
+          if (question.options && typeof question.options === 'string') {
+            let optionsString = question.options;
+            
+            // Handle double-encoded format: "\"[\\\"o1\\\",\\\"o2\\\"]\""
+            if (optionsString.startsWith('"') && optionsString.endsWith('"')) {
+              // Remove outer quotes
+              optionsString = optionsString.slice(1, -1);
+              // Replace escaped quotes
+              optionsString = optionsString.replace(/\\"/g, '"');
+            }
+            
+            const optionsArray = JSON.parse(optionsString);
+            if (Array.isArray(optionsArray)) {
+              // Convert array to option_1, option_2, etc. format
+              optionsArray.forEach((option: string, index: number) => {
+                const key = `option_${index + 1}`;
+                parsedOptions[key] = {
+                  text: option,
+                  is_correct: (question.correct_answer === option)
+                };
+              });
+            }
           }
-        } 
-        // Pour les questions à choix multiples
-        else if (question.question_type === 'multiple_choice') {
-          // Vérifier que toutes les options correctes sont sélectionnées et aucune incorrecte
-          const correctOptions = Object.entries(question.options)
-            .filter(([_, option]) => option.is_correct)
-            .map(([key, _]) => key);
-          
-          const allCorrectSelected = correctOptions.every(opt => userAnswer.selectedOptions.includes(opt));
-          const noIncorrectSelected = userAnswer.selectedOptions.every(opt => correctOptions.includes(opt));
-          
-          if (allCorrectSelected && noIncorrectSelected) {
-            correctAnswers++;
+        } catch (e) {
+          console.error('Error parsing options:', e);
+        }
+        
+        console.log('🔍 QuizService - Parsed options:', parsedOptions);
+        
+        // Check if the user's answer is correct
+        let isCorrect = false;
+        
+        if (userAnswer.selectedOptions.length > 0) {
+          // For all question types, check if any selected option matches the correct answer
+          for (const selectedOptionKey of userAnswer.selectedOptions) {
+            const selectedOption = parsedOptions[selectedOptionKey];
+            if (selectedOption && selectedOption.text === question.correct_answer) {
+              isCorrect = true;
+              break;
+            }
           }
+        }
+        
+        if (isCorrect) {
+          correctAnswers++;
+          console.log('✅ QuizService - Answer is correct!');
+        } else {
+          console.log('❌ QuizService - Answer is incorrect');
+          console.log('❌ QuizService - Selected options:', userAnswer.selectedOptions);
+          console.log('❌ QuizService - Expected answer:', question.correct_answer);
         }
       }
     });
     
-    // Calcul du score total
-    const score = correctAnswers * exam.mark_per_question;
-    const passed = score >= exam.pass_marks;
+    // Calcul du score total - use percentage based on correct answers
+    const totalQuestions = exam.questions.length;
+    const scorePercentage = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
+    const passed = scorePercentage >= exam.pass_marks;
+    
+    console.log('🔍 QuizService - Final result:', {
+      totalQuestions: totalQuestions,
+      correctAnswers,
+      scorePercentage: Math.round(scorePercentage * 100) / 100, // Round to 2 decimals
+      passed,
+      passMarks: exam.pass_marks
+    });
     
     return {
-      totalQuestions: exam.nbr_question,
+      totalQuestions: totalQuestions,
       correctAnswers,
-      score,
+      score: Math.round(scorePercentage * 100) / 100, // Return percentage, not points
       passed,
       passMarks: exam.pass_marks
     };

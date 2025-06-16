@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { routes } from '../../../shared/routes/routes';
 import { SideBar2, SideBarMenu, SubMenu, SubMenu2, SubMenuTwo } from '../../../shared/models/models';
 import { CommonService } from '../../../shared/common/common.service';
@@ -30,22 +31,39 @@ export class UserDashboardComponent {
   constructor(
     private common: CommonService,
     public globalService:GlobalService,
-    private data: DataService
+    private data: DataService,
+    private router: Router
   ) {
     this.user = this.globalService.getCurrentUser();
-    
-    // Determine user role
-    if (this.user && this.user.roles && this.user.roles.length > 0) {
-      this.userRole = this.user.roles[0].name; // Get first role
+    this.loadSidebarBasedOnRole();
+    this.setupCommonSubscriptions();
+  }
+
+  private loadSidebarBasedOnRole(): void {
+    // Determine user role using GlobalService method for consistency
+    this.userRole = this.globalService.getRole() || 'student';
+    console.log('User role detected:', this.userRole);
+    console.log('Current user:', this.user);
+
+    // Set sidebar based on role and update dashboard route dynamically
+    if (this.userRole === 'teacher') {
+      this.sideBar2 = this.data.getTeacherSideBar();
+      console.log('Loading teacher sidebar');
+      console.log('Teacher sidebar data:', this.sideBar2);
     } else {
-      this.userRole = 'student'; // Default to student
+      this.sideBar2 = this.data.getStudentSideBar();
+      console.log('Loading student sidebar');
+      console.log('Student sidebar data:', this.sideBar2);
     }
 
-    // Load appropriate sidebar based on user role
+    // Also load through the observable for consistency
     this.data.getSideBarByRole(this.userRole).subscribe((res: SideBar2[]) => {
       this.side_bar_data = res;
+      console.log('Sidebar data from observable:', this.side_bar_data);
     });
+  }
 
+  private setupCommonSubscriptions(): void {
     this.common.base.subscribe((base: string) => {
       this.base = base;
     });
@@ -55,13 +73,6 @@ export class UserDashboardComponent {
     this.common.last.subscribe((last: string) => {
       this.last = last;
     });
-
-    // Set sidebar based on role
-    if (this.userRole === 'teacher') {
-      this.sideBar2 = this.data.teacherSideBar;
-    } else {
-      this.sideBar2 = this.data.sideBar2;
-    }
   }
 onOpen():void{
   this.isSubdrop=!this.isSubdrop;
@@ -116,8 +127,47 @@ public expandSubMenusActive(): void {
 }
 ngOnInit(): void {
   this.expandSubMenusActive();
+  // Force refresh of sidebar data to ensure it's current
+  this.refreshSidebar();
 }
+
 ngOnDestroy(): void {
   this.data.resetData2();
+}
+
+// Method to refresh sidebar based on current user role
+public refreshSidebar(): void {
+  const currentRole = this.globalService.getRole() || 'student';
+  if (currentRole !== this.userRole) {
+    console.log('Role changed from', this.userRole, 'to', currentRole);
+    this.userRole = currentRole;
+    this.loadSidebarBasedOnRole();
+  }
+}
+
+// Handle menu click - special handling for logout
+public handleMenuClick(menu: any, event?: Event): void {
+  if (menu.menuValue === 'Logout') {
+    if (event) {
+      event.preventDefault();
+    }
+    this.logout();
+  }
+}
+
+// Logout method
+public logout(): void {
+  // Clear user data from localStorage
+  localStorage.removeItem('user');
+  localStorage.removeItem('token');
+  localStorage.removeItem('auth_token');
+
+  // Navigate to login page
+  this.router.navigate([routes.login]);
+}
+
+// TrackBy function for ngFor performance
+public trackByFn(index: number, item: any): any {
+  return item.id || item.menuValue || index;
 }
 }

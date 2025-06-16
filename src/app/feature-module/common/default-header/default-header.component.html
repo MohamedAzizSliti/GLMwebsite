@@ -4,17 +4,22 @@
   <div [hidden]="base === 'index-2' || base === 'index-3' || base === 'index-4' || base === 'index-5' || base === 'index-6' || page==='index-rtl'" class="header-topbar text-center bg-transparent">
     <div class="container">
       <div class="d-flex align-items-center justify-content-between flex-wrap">
-        <p class="d-flex align-items-center fw-medium fs-14 mb-2"><i class="isax isax-call5 me-2"></i>Contactez-nous: +216 26 883 826</p>
+        <p class="d-flex align-items-center fw-medium fs-14 mb-2"><i class="isax isax-call5 me-2"></i>{{ 'header.contact_us' | translate }}: +216 26 883 826</p>
         <div class="d-flex align-items-center">
-          <p class="mb-2 me-3 d-flex align-items-center fw-medium fs-14"><i class="isax isax-message-text-15 me-2"></i>Email : contact&#64;localhost:8000</p>
+          <p class="mb-2 me-3 d-flex align-items-center fw-medium fs-14"><i class="isax isax-message-text-15 me-2"></i>{{ 'header.email' | translate }} : contact&#64;localhost:8000</p>
           <div class="dropdown flag-dropdown mb-2 me-3">
             <a href="javascript:void(0);" class="dropdown-toggle d-inline-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="assets/img/flags/france-flag.svg" class="me-2" alt="flag">FRE
+              <img [src]="currentLanguage === 'fr' ? 'assets/img/flags/france-flag.svg' : 'assets/img/flags/us-flag.svg'" class="me-2" alt="flag">
+              {{ currentLanguage === 'fr' ? 'FRE' : 'ENG' }}
             </a>
             <ul class="dropdown-menu p-2 mt-2">
-              <li>
-                <a class="dropdown-item rounded d-flex align-items-center" href="javascript:void(0);">
-                  <img src="assets/img/flags/france-flag.svg" class="me-2" alt="flag">FRE
+              <li *ngFor="let lang of availableLanguages">
+                <a class="dropdown-item rounded d-flex align-items-center" 
+                   href="javascript:void(0);"
+                   (click)="changeLanguage(lang.code)"
+                   [class.active]="currentLanguage === lang.code">
+                  <img [src]="lang.code === 'fr' ? 'assets/img/flags/france-flag.svg' : 'assets/img/flags/us-flag.svg'" class="me-2" alt="flag">
+                  {{ lang.code === 'fr' ? 'FRE' : 'ENG' }}
                 </a>
               </li>
             </ul>
@@ -120,22 +125,17 @@
                                     <div class="w-100">
                                         <div class="dropdown flag-dropdown mb-2">
                                             <a href="javascript:void(0);" class="dropdown-toggle bg-white border d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <img src="assets/img/flags/us-flag.svg" class="me-2" alt="flag">ENG
+                                                <img [src]="currentLanguage === 'fr' ? 'assets/img/flags/france-flag.svg' : 'assets/img/flags/us-flag.svg'" class="me-2" alt="flag">
+                                                {{ currentLanguage === 'fr' ? 'FRE' : 'ENG' }}
                                             </a>
                                             <ul class="dropdown-menu p-2">
-                                                <li>
-                                                    <a class="dropdown-item rounded d-flex align-items-center" href="javascript:void(0);">
-                                                        <img src="assets/img/flags/us-flag.svg" class="me-2" alt="flag">ENG
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item rounded d-flex align-items-center" href="javascript:void(0);">
-                                                        <img src="assets/img/flags/arab-flag.svg" class="me-2" alt="flag">ARA
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item rounded d-flex align-items-center" href="javascript:void(0);">
-                                                        <img src="assets/img/flags/france-flag.svg" class="me-2" alt="flag">FRE
+                                                <li *ngFor="let lang of availableLanguages">
+                                                    <a class="dropdown-item rounded d-flex align-items-center" 
+                                                       href="javascript:void(0);"
+                                                       (click)="changeLanguage(lang.code)"
+                                                       [class.active]="currentLanguage === lang.code">
+                                                        <img [src]="lang.code === 'fr' ? 'assets/img/flags/france-flag.svg' : 'assets/img/flags/us-flag.svg'" class="me-2" alt="flag">
+                                                        {{ lang.code === 'fr' ? 'FRE' : 'ENG' }}
                                                     </a>
                                                 </li>
                                             </ul>
@@ -236,8 +236,8 @@
                             </a>
                         </div>
                         <div><a href="javascript:void(0);" class="btn btn-white me-3" data-bs-toggle="modal" data-bs-target="#login-modal"  style="display: inline-block; width: 68px;">Log IN</a></div>
-                        <a [routerLink]="routes.becomeAnExpert" class="btn btn-primary me-0">Formateur</a> &nbsp;
-                       <a [routerLink]="routes.becomeAnStudent" class="btn btn-primary w-100">Etudiant</a>
+                        <a [routerLink]="routes.becomeAnExpert" class="btn btn-primary me-0">{{'register.become_teacher' | translate}}</a> &nbsp;
+                       <a [routerLink]="routes.becomeAnStudent" class="btn btn-primary w-100">{{'register.become_student' | translate}}</a>
                         <div class="header__hamburger d-xl-none my-auto">
                             <div class="sidebar-menu" (click)="addmenu()">
                                 <i class="isax isax-menu5"></i>
@@ -255,6 +255,22 @@
                                     <i class="isax isax-sun-1"></i>
                                 </a>
                             </div>
+                            <!-- Language Selector -->
+                            <div class="dropdown me-3">
+                                <a href="javascript:void(0);" class="theme-toggle" data-bs-toggle="dropdown">
+                                    <span class="fs-16">{{ currentLanguage === 'fr' ? '🇫🇷' : '🇺🇸' }}</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li *ngFor="let lang of availableLanguages">
+                                        <a class="dropdown-item"
+                                           href="javascript:void(0);"
+                                           (click)="changeLanguage(lang.code)"
+                                           [class.active]="currentLanguage === lang.code">
+                                            {{lang.flag}} {{lang.name}}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                             <div class="dropdown profile-dropdown">
                                 <a href="javascript:void(0);" class="d-flex align-items-center" data-bs-toggle="dropdown">
                                     <span class="avatar avatar-md">
@@ -262,27 +278,74 @@
                                 </span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end p-3">
+                                    <!-- Role-based Dashboard Link -->
                                     <li>
-                                        <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2" [routerLink]="routes.userDashboard">Dashboard</a>
+                                        <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2"
+                                           [routerLink]="globalService.getRole() === 'teacher' ? routes.teacherDashboard : routes.userDashboard">
+                                          <i class="isax isax-grid-55 me-2"></i>{{'nav.dashboard' | translate}}
+                                        </a>
                                     </li>
-                                    <li>
-                                        <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2" [routerLink]="routes.review">Mes cours</a>
-                                    </li>
-                                    <li>
 
-                                      <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2" [routerLink]="routes.myProfile">Mon Profile</a>
+                                    <!-- Teacher-specific menu items -->
+                                    <li *ngIf="globalService.getRole() === 'teacher'">
+                                        <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2" [routerLink]="routes.review">
+                                          <i class="isax isax-book-15 me-2"></i>{{'nav.my_courses' | translate}}
+                                        </a>
+                                    </li>
+                                    <li *ngIf="globalService.getRole() === 'teacher'">
+                                        <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2" [routerLink]="routes.review">
+                                          <i class="isax isax-people me-2"></i>{{'header.students' | translate}}
+                                        </a>
+                                    </li>
+                                    <li *ngIf="globalService.getRole() === 'teacher'">
+                                        <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2" [routerLink]="routes.certificationManagement">
+                                          <i class="isax isax-award me-2"></i>{{'header.certifications' | translate}}
+                                        </a>
+                                    </li>
+
+                                    <!-- Student-specific menu items -->
+                                    <li *ngIf="globalService.getRole() === 'student' || !globalService.getRole()">
+                                        <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2" [routerLink]="routes.chatAssistant">
+                                          <i class="isax isax-message-question me-2"></i>{{'nav.chat_assistant' | translate}}
+                                        </a>
+                                    </li>
+                                    <li *ngIf="globalService.getRole() === 'student' || !globalService.getRole()">
+                                        <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2" [routerLink]="routes.review">
+                                          <i class="isax isax-magic-star5 me-2"></i>{{'nav.my_courses' | translate}}
+                                        </a>
+                                    </li>
+
+                                    <!-- Common menu items -->
+                                    <li>
+                                        <hr class="dropdown-divider my-2">
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2" [routerLink]="routes.myProfile">
+                                          <i class="isax isax-profile-circle me-2"></i>{{'header.profile' | translate}}
+                                        </a>
                                     </li>
                                     <li>
                                         <hr class="dropdown-divider my-2">
                                     </li>
                                     <li>
-                                        <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2" [routerLink]="routes.login" href="javascript:void(0)" (click)="logout()" >Logout</a>
+                                        <a class="dropdown-item d-inline-flex align-items-center rounded fw-medium p-2" [routerLink]="routes.login" href="javascript:void(0)" (click)="logout()">
+                                          <i class="isax isax-logout me-2"></i>{{'nav.logout' | translate}}
+                                        </a>
                                     </li>
                                 </ul>
                             </div>
-                            <a  *ngIf="globalService.getRole() == 'teacher'"
-                            class="btn btn-primary me-0">
-                                 Ajouter un cours
+                            <!-- Teacher-specific action button -->
+                            <a *ngIf="globalService.getRole() === 'teacher'"
+                               [routerLink]="routes.addCourse"
+                               class="btn btn-primary me-2">
+                                <i class="isax isax-add-circle me-1"></i>{{'header.add_course' | translate}}
+                            </a>
+
+                            <!-- Student-specific action button -->
+                            <a *ngIf="globalService.getRole() === 'student' || !globalService.getRole()"
+                               [routerLink]="routes.hotelGrid"
+                               class="btn btn-outline-primary me-2">
+                                <i class="isax isax-search-normal me-1"></i>{{'header.browse_courses' | translate}}
                             </a>
                             <div class="header__hamburger d-xl-none my-auto">
                                 <div class="sidebar-menu">
@@ -308,20 +371,20 @@
                 <div class="modal-body p-4 pt-0">
 
                         <div class="text-center mb-3">
-                            <h5 class="mb-1">Connectez-vous</h5>
-                            <p>Connectez-vous pour commencer à gérer votre compte Gold LMS</p>
+                            <h5 class="mb-1">{{'login.title' | translate}}</h5>
+                            <p>{{'login.subtitle' | translate}}</p>
                         </div>
                         <div class="mb-2">
-                            <label class="form-label">Email</label>
+                            <label class="form-label">{{'form.email' | translate}}</label>
                             <div class="input-icon">
                                 <span class="input-icon-addon">
 									<i class="isax isax-message"></i>
                                 </span>
-                                <input type="email" class="form-control form-control-lg" placeholder="Saisir votre mail" [(ngModel)]="user.email">
+                                <input type="email" class="form-control form-control-lg" [placeholder]="'form.enter_email' | translate" [(ngModel)]="user.email">
                             </div>
                         </div>
                         <div class="mb-2">
-                            <label class="form-label">Mot de passe</label>
+                            <label class="form-label">{{'form.password' | translate}}</label>
                             <div class="pass-group input-icon">
                                 <span class="input-icon-addon">
                                     <i class="isax isax-lock"></i>
@@ -330,7 +393,7 @@
                                 [type]="password[0] ? 'text' : 'password'"
                                 class="pass-input form-control"
                                 [(ngModel)]="user.password"
-                                placeholder="Saisir votre mot de passe"
+                                [placeholder]="'form.enter_password' | translate"
                               />
                               <span
                                 class="isax toggle-password"
@@ -346,17 +409,17 @@
                                 <div class="form-check d-flex align-items-center mb-2">
                                     <input class="form-check-input mt-0" type="checkbox" value="" id="remembers_me">
                                     <label class="form-check-label ms-2 text-gray-9 fs-14" for="remembers_me">
-                                        Remember Me
+                                        {{'login.remember_me' | translate}}
                                     </label>
                                 </div>
                              </div>
                         </div>
                         <div class="mb-3">
-                            <button type="submit" (click)="login()" class="btn btn-xl btn-primary d-flex align-items-center justify-content-center w-100" data-bs-dismiss="modal">Login<i class="isax isax-arrow-right-3 ms-2"></i></button>
+                            <button type="submit" (click)="login()" class="btn btn-xl btn-primary d-flex align-items-center justify-content-center w-100" data-bs-dismiss="modal">{{'btn.login' | translate}}<i class="isax isax-arrow-right-3 ms-2"></i></button>
                         </div>
 
                         <div class="d-flex justify-content-center">
-                            <p class="fs-14">Vous n'avez pas un compte ?  <a href="javascript:void(0);" class="link-primary fw-medium" data-bs-toggle="modal" data-bs-target="#register-modal">Sign up</a></p>
+                            <p class="fs-14">{{'login.no_account' | translate}}  <a href="javascript:void(0);" class="link-primary fw-medium" data-bs-toggle="modal" data-bs-target="#register-modal">{{'login.sign_up' | translate}}</a></p>
                         </div>
 
                 </div>
@@ -378,38 +441,38 @@
                     <div class="modal-body p-4 pt-0">
 
                             <div class="text-center border-bottom mb-3">
-                                <h5 class="mb-1">Inscription</h5>
-                                <p class="mb-3">Créer votre compte</p>
+                                <h5 class="mb-1">{{'register.title' | translate}}</h5>
+                                <p class="mb-3">{{'register.subtitle' | translate}}</p>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">Nom</label>
+                                <label class="form-label">{{'form.name' | translate}}</label>
                                 <div class="input-icon">
                                     <span class="input-icon-addon">
                                         <i class="isax isax-user"></i>
                                     </span>
-                                    <input type="text" class="form-control form-control-lg" placeholder="Entrez votre nom" [(ngModel)]="user.name">
+                                    <input type="text" class="form-control form-control-lg" [placeholder]="'form.enter_name' | translate" [(ngModel)]="user.name">
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">Email</label>
+                                <label class="form-label">{{'form.email' | translate}}</label>
                                 <div class="input-icon">
                                     <span class="input-icon-addon">
                                         <i class="isax isax-message"></i>
                                     </span>
-                                    <input type="email" class="form-control form-control-lg" placeholder="Entrez votre Email" [(ngModel)]="user.email">
+                                    <input type="email" class="form-control form-control-lg" [placeholder]="'form.enter_email' | translate" [(ngModel)]="user.email">
                                 </div>
                             </div>
                       <div class="mb-2">
-                        <label class="form-label">Téléphone</label>
+                        <label class="form-label">{{'form.phone' | translate}}</label>
                         <div class="input-icon">
                                     <span class="input-icon-addon">
                                         <i class="isax isax-message"></i>
                                     </span>
-                          <input type="text" class="form-control form-control-lg" placeholder="Entrez votre téléphone" [(ngModel)]="user.phone">
+                          <input type="text" class="form-control form-control-lg" [placeholder]="'form.enter_phone' | translate" [(ngModel)]="user.phone">
                         </div>
                       </div>
                             <div class="mb-2">
-                                <label class="form-label">Mot de passe</label>
+                                <label class="form-label">{{'form.password' | translate}}</label>
                                 <div class="pass-group input-icon">
                                     <span class="input-icon-addon">
                                         <i class="isax isax-lock"></i>
@@ -430,7 +493,7 @@
                                   </div>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">Confirm Password</label>
+                                <label class="form-label">{{'form.confirm_password' | translate}}</label>
                                 <div class="pass-group input-icon">
                                     <span class="input-icon-addon">
                                         <i class="isax isax-lock"></i>
@@ -455,13 +518,13 @@
                                     <div class="form-check d-flex align-items-center mb-2">
                                         <input class="form-check-input mt-0" type="checkbox" value="" id="agree">
                                         <label class="form-check-label ms-2 text-gray-9 fs-14" for="agree">
-                                           J'accepte les  <a href="javascript:void(0);" class="link-primary fw-medium">Conditions d'utilisations.</a>
+                                           J'accepte les  <a href="javascript:void(0);" class="link-primary fw-medium">Conditions d'utilisations.</a>
                                         </label>
                                     </div>
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <button type="submit" (click)="register()" class="btn btn-xl btn-primary d-flex align-items-center justify-content-center w-100"  data-bs-dismiss="modal"  >S'inscrire<i class="isax isax-arrow-right-3 ms-2"></i></button>
+                                <button type="submit" (click)="register()" class="btn btn-xl btn-primary d-flex align-items-center justify-content-center w-100"  data-bs-dismiss="modal"  >{{'register.submit' | translate}}<i class="isax isax-arrow-right-3 ms-2"></i></button>
                             </div>
 <!--                            <div class="login-or mb-3">-->
 <!--                                <span class="span-or">Or</span>-->
@@ -475,7 +538,7 @@
 <!--                                </a>-->
 <!--                            </div>-->
                             <div class="d-flex justify-content-center">
-                                <p class="fs-14">Avez-vous déja un compte ? <a href="javascript:void(0);" class="link-primary fw-medium" data-bs-toggle="modal" data-bs-target="#login-modal">Sign In</a></p>
+                                <p class="fs-14">{{'register.login_link' | translate}} <a href="javascript:void(0);" class="link-primary fw-medium" data-bs-toggle="modal" data-bs-target="#login-modal">{{'register.sign_in' | translate}}</a></p>
                             </div>
 
                     </div>

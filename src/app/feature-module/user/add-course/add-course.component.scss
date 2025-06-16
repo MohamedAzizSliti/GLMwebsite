@@ -1,0 +1,454 @@
+// Step Indicator Styles
+.step-indicator {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  border: 2px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  transition: all 0.3s ease;
+  
+  .step-number {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 14px;
+  }
+  
+  &.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    
+    .step-number {
+      color: white;
+    }
+  }
+  
+  &.completed {
+    background-color: #198754;
+    border-color: #198754;
+    
+    .step-number {
+      color: white;
+    }
+    
+    &::before {
+      content: "✓";
+      font-weight: bold;
+      color: white;
+    }
+    
+    .step-number {
+      display: none;
+    }
+  }
+}
+
+// Step Content Animation
+.step-content {
+  animation: fadeInUp 0.3s ease-in-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Progress Bar Enhancement
+.progress {
+  background-color: #e9ecef;
+  border-radius: 10px;
+  
+  .progress-bar {
+    border-radius: 10px;
+    transition: width 0.3s ease;
+  }
+}
+
+// Card Enhancements
+.card {
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  
+  .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 12px 12px 0 0;
+    padding: 1.5rem;
+  }
+  
+  .card-body {
+    padding: 2rem;
+  }
+}
+
+// Form Enhancements
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 0.75rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  
+  &:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+}
+
+.form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+// Button Enhancements
+.btn {
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.15s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// Small text styling
+small.form-text {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+// Breadcrumb styling
+.breadcrumb-bar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 3rem 0;
+  
+  .breadcrumb-title {
+    color: white;
+    font-weight: 600;
+  }
+  
+  .breadcrumb {
+    .breadcrumb-item {
+      a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        
+        &:hover {
+          color: white;
+        }
+      }
+      
+      &.active {
+        color: rgba(255, 255, 255, 0.9);
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .step-indicator {
+    width: 35px;
+    height: 35px;
+    
+    .step-number {
+      font-size: 12px;
+    }
+  }
+  
+  .breadcrumb-bar {
+    padding: 2rem 0;
+    
+    .breadcrumb-title {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+// Content wrapper
+.content {
+  padding: 3rem 0;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 200px);
+}
+
+// Success/Error states
+.is-valid {
+  border-color: #198754;
+}
+
+.is-invalid {
+  border-color: #dc3545;
+}
+
+// Loading state
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+// Media Upload Styles
+.media-upload-section {
+  .upload-area {
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      border-color: #0d6efd;
+      background-color: #f0f4ff;
+    }
+
+    &.uploading {
+      border-color: #0d6efd;
+      background-color: #f0f4ff;
+    }
+
+    .upload-placeholder {
+      width: 100%;
+
+      .upload-icon {
+        margin-bottom: 1rem;
+      }
+
+      h6 {
+        color: #495057;
+        font-weight: 600;
+      }
+
+      p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+      }
+
+      .btn-upload {
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
+        
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+        }
+      }
+
+      small {
+        font-size: 0.85rem;
+        color: #6c757d;
+      }
+    }
+
+    .upload-loading {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      h6 {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        color: #6c757d;
+      }
+    }
+
+    .uploaded-image {
+      width: 100%;
+
+      .image-container {
+        position: relative;
+        display: inline-block;
+        max-width: 300px;
+
+        img {
+          max-height: 200px;
+          max-width: 100%;
+          object-fit: cover;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .image-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.7);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          border-radius: 8px;
+
+          .btn {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+          }
+        }
+
+        &:hover .image-overlay {
+          opacity: 1;
+        }
+      }
+
+      p.text-success {
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+// Step Indicator Styles
+.step-indicator {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  transition: all 0.3s ease;
+
+  &.active {
+    background-color: #0d6efd;
+    color: white;
+  }
+
+  &.completed {
+    background-color: #198754;
+    color: white;
+  }
+
+  .step-number {
+    font-weight: 600;
+    font-size: 14px;
+  }
+}
+
+// Form Styles
+.form-control, .form-select {
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  transition: all 0.3s ease;
+  padding: 0.75rem 1rem;
+
+  &:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+}
+
+.form-check-input {
+  &:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+}
+
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+// Button Styles
+.btn {
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+
+    &:hover {
+      background-color: #0b5ed7;
+      border-color: #0a58ca;
+    }
+  }
+
+  &.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+
+    &:hover {
+      background-color: #157347;
+      border-color: #146c43;
+    }
+  }
+}
+
+// Card Styles
+.card {
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 12px 12px 0 0 !important;
+  }
+}
+
+// Progress Bar
+.progress {
+  border-radius: 8px;
+  background-color: #e9ecef;
+
+  .progress-bar {
+    border-radius: 8px;
+    background-color: #0d6efd;
+  }
+}
+
+// Cover Preview in Review Step
+.cover-preview {
+  text-align: center;
+  
+  img {
+    border: 2px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}

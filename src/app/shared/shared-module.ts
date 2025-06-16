@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
@@ -21,15 +22,17 @@ import { DateRangePickerModule } from '../feature-module/common/date-range-picke
 import { FooterComponent } from '../feature-module/common/footer/footer.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { SlickCarouselModule } from 'ngx-slick-carousel';
-import { CommonCounterComponent } from '../feature-module/common/common-counter/common-counter.component';
+import { CommonCounterModule } from '../feature-module/common/common-counter/common-counter.module';
 import { DatePicker } from 'primeng/datepicker';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { UserDashboardComponent } from '../feature-module/common/user-dashboard/user-dashboard.component';
+import { TranslatePipe } from './pipes/translate.pipe';
 
 @NgModule({
-  declarations: [FooterComponent,CommonCounterComponent, UserDashboardComponent],
+  declarations: [FooterComponent, UserDashboardComponent],
   imports: [
     CommonModule,
+    RouterModule,
     NgScrollbarModule,
     MatTooltipModule,
     LightboxModule,
@@ -53,10 +56,13 @@ import { UserDashboardComponent } from '../feature-module/common/user-dashboard/
     FullCalendarModule,
     CalendarModule,
     DatePicker,
-     SlickCarouselModule
+    SlickCarouselModule,
+    CommonCounterModule,
+    TranslatePipe
   ],
   exports: [
     CommonModule,
+    RouterModule,
     NgScrollbarModule,
     MatTooltipModule,
     LightboxModule,
@@ -74,11 +80,12 @@ import { UserDashboardComponent } from '../feature-module/common/user-dashboard/
     ToastModule,
     NgxEditorModule,
     PopoverModule,
-    CommonCounterComponent,
     DateRangePickerModule,
     UserDashboardComponent,
     FooterComponent,
     FormsModule,
+    CommonCounterModule,
+    TranslatePipe,
     FullCalendarModule,
     DatePicker,
     CalendarModule,

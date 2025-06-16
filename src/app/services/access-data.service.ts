@@ -26,7 +26,7 @@ export class AccessDataService {
   constructor(
     private http: HttpClient,
    ) {
-    this.server = "https://localhost:8000/admin/api/";
+    this.server = "http://localhost:8000/admin/api/";
   }
 
   postData(body:any, file:any) {

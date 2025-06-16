@@ -1,0 +1,62 @@
+// Sidebar icon styles
+.user-sidebar-body {
+  ul {
+    li {
+      a {
+        i {
+          width: 20px;
+          height: 20px;
+          margin-right: 12px;
+          font-size: 18px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          color: #6c757d;
+          transition: all 0.3s ease;
+        }
+        
+        &:hover i,
+        &.active i {
+          color: #007bff;
+          transform: scale(1.1);
+        }
+        
+        &.active {
+          background-color: rgba(0, 123, 255, 0.1);
+          border-radius: 8px;
+          color: #007bff;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+// Icon animation
+.user-sidebar-body i {
+  transition: all 0.3s ease;
+}
+
+.user-sidebar-body a:hover i {
+  transform: translateX(2px);
+}
+
+// Menu item spacing
+.user-sidebar-body ul li {
+  margin-bottom: 8px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Section title styling
+.user-sidebar-body ul li span.fs-14 {
+  display: block;
+  margin-bottom: 12px;
+  margin-top: 20px;
+  
+  &:first-child {
+    margin-top: 0;
+  }
+}

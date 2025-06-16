@@ -1,0 +1,243 @@
+<!-- Breadcrumb -->
+<div class="breadcrumb-bar breadcrumb-bg-04 text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-12">
+                <h2 class="breadcrumb-title mb-2">Mes Inscriptions</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center mb-0">
+                        <li class="breadcrumb-item"><a [routerLink]="routes.index"><i class="isax isax-home5"></i></a></li>
+                        <li class="breadcrumb-item"><a [routerLink]="routes.userDashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Mes Inscriptions</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Breadcrumb -->
+
+<!-- Page Wrapper -->
+<div class="content content-two">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-xl-3 col-lg-4">
+                <app-user-dashboard/>
+            </div>
+            <!-- /Sidebar -->
+
+            <div class="col-xl-9 col-lg-8">
+                <!-- Loading indicator -->
+                <div *ngIf="isLoading" class="text-center py-5">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5>Chargement de vos inscriptions...</h5>
+                </div>
+
+                <!-- Error message -->
+                <div *ngIf="error && !isLoading" class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    {{ error }}
+                    <button class="btn btn-sm btn-outline-danger ms-3" (click)="refreshEnrollments()">
+                        <i class="fas fa-redo me-1"></i> Réessayer
+                    </button>
+                </div>
+
+                <!-- Main Content -->
+                <div *ngIf="!isLoading && !error">
+                    <!-- Test Certificate Button -->
+                    <div class="alert alert-info mb-3">
+                        <h6>🧪 Test du Certificat</h6>
+                        <button class="btn btn-primary btn-sm" (click)="testCertificate()">
+                            <i class="fas fa-certificate me-1"></i>
+                            Tester le certificat
+                        </button>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="row mb-4">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="card stats-card">
+                                <div class="card-body text-center">
+                                    <div class="stats-icon bg-primary">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                    <h3 class="stats-number">{{ stats.total }}</h3>
+                                    <p class="stats-label">Total Cours</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="card stats-card">
+                                <div class="card-body text-center">
+                                    <div class="stats-icon bg-success">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <h3 class="stats-number">{{ stats.completed }}</h3>
+                                    <p class="stats-label">Terminés</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="card stats-card">
+                                <div class="card-body text-center">
+                                    <div class="stats-icon bg-warning">
+                                        <i class="fas fa-play-circle"></i>
+                                    </div>
+                                    <h3 class="stats-number">{{ stats.inProgress }}</h3>
+                                    <p class="stats-label">En Cours</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="card stats-card">
+                                <div class="card-body text-center">
+                                    <div class="stats-icon bg-warning">
+                                        <i class="fas fa-certificate"></i>
+                                    </div>
+                                    <h3 class="stats-number">{{ stats.completed }}</h3>
+                                    <p class="stats-label">Certificats</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- No Results -->
+                    <div *ngIf="enrollments.length === 0" class="text-center py-5">
+                        <div class="empty-state">
+                            <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                            <h4>Aucune inscription trouvée</h4>
+                            <p class="text-muted">Vous n'êtes inscrit à aucun cours pour le moment.</p>
+                            <a [routerLink]="routes.course" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Découvrir des cours
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Enrollments Grid -->
+                    <div class="row" *ngIf="enrollments.length > 0">
+                        <div class="col-lg-6 col-xl-4 mb-4" *ngFor="let enrollment of enrollments">
+                            <div class="card enrollment-card h-100">
+                                <div class="position-relative">
+                                    <!-- Loading skeleton -->
+                                    <div *ngIf="!isImageCached(enrollment)" class="image-skeleton position-absolute w-100 h-100"></div>
+
+                                    <img [src]="getCourseImage(enrollment)"
+                                         class="card-img-top course-image"
+                                         [alt]="enrollment.course?.title"
+                                         loading="lazy"
+                                         [style.opacity]="isImageCached(enrollment) ? '1' : '0'"
+                                         (error)="onImageError($event)"
+                                         (load)="onImageLoad($event)">
+                                    
+                                    <!-- Status Badge -->
+                                    <span class="badge position-absolute top-0 end-0 m-2"
+                                          [ngClass]="getStatusBadgeClass(enrollment.progress)">
+                                        {{ getStatusText(enrollment.progress) }}
+                                    </span>
+                                    
+                                    <!-- Progress Overlay -->
+                                    <div class="progress-overlay position-absolute bottom-0 start-0 end-0">
+                                        <div class="progress" style="height: 4px;">
+                                            <div class="progress-bar" 
+                                                 [ngClass]="getProgressBarClass(enrollment.progress)"
+                                                 [style.width.%]="enrollment.progress"
+                                                 role="progressbar">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-body d-flex flex-column">
+                                    <!-- Category -->
+                                    <span class="badge badge-soft-primary badge-sm mb-2 align-self-start">
+                                        {{ enrollment.course?.category?.name || 'Sans catégorie' }}
+                                    </span>
+                                    
+                                    <!-- Title -->
+                                    <h6 class="card-title mb-2">
+                                        {{ enrollment.course?.title || 'Titre non disponible' }}
+                                    </h6>
+                                    
+                                    <!-- Instructor -->
+                                    <p class="text-muted small mb-2">
+                                        <i class="fas fa-user me-1"></i>
+                                        {{ enrollment.course?.instructor?.name || 'Instructeur inconnu' }}
+                                    </p>
+                                    
+                                    <!-- Progress -->
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <small class="text-muted">Progression</small>
+                                            <small class="fw-bold">{{ enrollment.progress }}%</small>
+                                        </div>
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar" 
+                                                 [ngClass]="getProgressBarClass(enrollment.progress)"
+                                                 [style.width.%]="enrollment.progress"
+                                                 role="progressbar">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Course Info -->
+                                    <div class="course-info mb-3">
+                                        <div class="row text-center">
+                                            <div class="col-4">
+                                                <small class="text-muted d-block">Durée</small>
+                                                <small class="fw-bold">{{ enrollment.course?.duration || 0 }}h</small>
+                                            </div>
+                                            <div class="col-4">
+                                                <small class="text-muted d-block">Niveau</small>
+                                                <small class="fw-bold">{{ enrollment.course?.level || 'N/A' }}</small>
+                                            </div>
+                                            <div class="col-4">
+                                                <small class="text-muted d-block">Prix</small>
+                                                <small class="fw-bold">{{ enrollment.price_paid || enrollment.course?.price || 0 }} DT</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Actions -->
+                                    <div class="mt-auto">
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-primary btn-sm" (click)="continueCourse(enrollment)">
+                                                <i class="fas fa-play me-1"></i>
+                                                {{ enrollment.progress > 0 ? 'Continuer' : 'Commencer' }}
+                                            </button>
+                                            
+                                            <div class="btn-group" role="group">
+                                                <!-- Certificate Button - Always visible but different states -->
+                                                <button class="btn btn-sm"
+                                                        [ngClass]="canViewCertificate(enrollment) ? 'btn-success' : 'btn-outline-secondary'"
+                                                        [disabled]="!canViewCertificate(enrollment)"
+                                                        (click)="viewCertificate(enrollment)"
+                                                        [title]="canViewCertificate(enrollment) ? 'Voir votre certificat' : 'Terminez le cours pour obtenir le certificat'">
+                                                    <i class="fas fa-certificate me-1"></i>
+                                                    {{ getCertificateButtonText(enrollment) }}
+                                                </button>
+                                                <button class="btn btn-outline-danger btn-sm"
+                                                        (click)="unenrollFromCourse(enrollment)">
+                                                    <i class="fas fa-times me-1"></i>Se désinscrire
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Enrollment Date -->
+                                <div class="card-footer text-muted small">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Inscrit le {{ enrollment.enrollment_date | date:'dd/MM/yyyy' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Wrapper -->

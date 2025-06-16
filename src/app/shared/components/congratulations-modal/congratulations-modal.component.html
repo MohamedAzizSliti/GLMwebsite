@@ -1,0 +1,143 @@
+<!-- Congratulations Modal -->
+<div class="modal fade show" [class.d-block]="isVisible" [class.d-none]="!isVisible" tabindex="-1" role="dialog" 
+     style="background-color: rgba(0,0,0,0.5);" *ngIf="congratulationsData">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content congratulations-modal">
+      <!-- Close Button -->
+      <button type="button" class="btn-close position-absolute top-0 end-0 m-3" (click)="closeModal()" style="z-index: 1050;"></button>
+      
+      <!-- Header Section -->
+      <div class="modal-header text-center border-0 bg-success text-white position-relative">
+        <div class="w-100">
+          <div class="celebration-icons mb-3">
+            🎉 <span class="mx-2">Félicitations ! Vous avez réussi !</span> 🎉
+          </div>
+          
+          <!-- Achievement Icons -->
+          <div class="achievement-icons d-flex justify-content-center mb-3">
+            <div class="achievement-icon mx-2">🏆</div>
+            <div class="achievement-icon mx-2">🎓</div>
+            <div class="achievement-icon mx-2">⭐</div>
+            <div class="achievement-icon mx-2">💡</div>
+            <div class="achievement-icon mx-2">🎯</div>
+          </div>
+          
+          <!-- Mission Accomplished -->
+          <div class="mission-accomplished">
+            <h3 class="mb-0">🎯 Mission Accomplie ! 🎯</h3>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Success Message -->
+      <div class="modal-body text-center">
+        <div class="success-message bg-light p-4 rounded mb-4">
+          <div class="d-flex align-items-center justify-content-center mb-3">
+            <i class="isax isax-tick-circle text-success me-2 fs-24"></i>
+            <span class="fw-bold">Votre certification a été validée avec succès !</span>
+          </div>
+          <p class="text-muted mb-0">
+            🚀 Vous faites maintenant partie de l'élite des apprenants certifiés ! Votre dévouement et votre persévérance ont porté leurs fruits. 👏
+          </p>
+        </div>
+        
+        <!-- Achievement Stats - Updated to match first image -->
+        <div class="row achievement-stats mb-4">
+          <div class="col-md-4">
+            <div class="stat-card text-center p-3 bg-warning text-dark rounded">
+              <div class="stat-icon mb-2">📚</div>
+              <h6 class="mb-1">Cours Complété</h6>
+              <p class="mb-0 small">{{ congratulationsData.course.title }}</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-card text-center p-3 bg-success text-white rounded">
+              <div class="stat-icon mb-2">🏅</div>
+              <h6 class="mb-1">Score Excellent</h6>
+              <p class="mb-0">{{ congratulationsData.average_score }}% - {{ getScoreLabel() }}</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-card text-center p-3 bg-warning text-dark rounded">
+              <div class="stat-icon mb-2">🏆</div>
+              <h6 class="mb-1">Certifié Officiel</h6>
+              <p class="mb-0 small">Quiz: {{ congratulationsData.quizzes_completed }}/{{ congratulationsData.total_quizzes }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Feedback Section - Updated to match first image -->
+        <div class="feedback-section" [class.show]="showFeedbackSection">
+          <div class="feedback-header text-center mb-4">
+            <h5 class="text-warning">🌟 Partagez Votre Expérience ! 🌟</h5>
+            <p class="text-muted">🌈 Votre avis nous aide à améliorer l'expérience d'apprentissage pour tous !</p>
+          </div>
+          
+          <!-- Rating Stars -->
+          <div class="rating-section text-center mb-4">
+            <p class="mb-2">⭐ Évaluez votre expérience :</p>
+            <div class="star-rating">
+              <span *ngFor="let star of [1,2,3,4,5]; let i = index" 
+                    class="star fs-24 mx-1" 
+                    [class.text-warning]="rating >= star"
+                    [class.text-muted]="rating < star"
+                    (click)="setRating(star)"
+                    style="cursor: pointer;">
+                ⭐
+              </span>
+            </div>
+          </div>
+          
+          <!-- Reaction Buttons - Updated to match first image -->
+          <div class="reaction-section text-center mb-4">
+            <p class="mb-3">🎭 Réaction rapide :</p>
+            <div class="reaction-buttons d-flex justify-content-center flex-wrap">
+              <button *ngFor="let reaction of reactions" 
+                      type="button"
+                      class="btn btn-outline-primary reaction-btn me-2 mb-2"
+                      [class.btn-primary]="selectedReaction === reaction.id"
+                      [class.btn-outline-primary]="selectedReaction !== reaction.id"
+                      (click)="selectReaction(reaction.id)">
+                <span class="reaction-emoji me-1">{{ reaction.icon }}</span>
+                <span class="reaction-label">{{ reaction.label }}</span>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Feedback Text -->
+          <div class="feedback-text mb-4">
+            <div class="form-group">
+              <label class="form-label">💬 Vos commentaires (optionnel) :</label>
+              <textarea class="form-control" 
+                        rows="3" 
+                        placeholder="Partagez ce que vous avez le plus apprécié, vos suggestions d'amélioration, ou tout autre commentaire..."
+                        [(ngModel)]="feedbackText"
+                        maxlength="1000"></textarea>
+              <small class="text-muted">{{ feedbackText?.length || 0 }}/1000 caractères</small>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Action Buttons - Updated to match first image -->
+        <div class="action-buttons d-flex justify-content-center flex-wrap">
+          <button type="button" 
+                  class="btn btn-outline-primary me-3 mb-2"
+                  (click)="downloadCertificate()">
+            <i class="isax isax-document-download me-2"></i>
+            📜 Imprimer mon certificat
+          </button>
+          
+          <button type="button" 
+                  class="btn btn-success mb-2"
+                  [disabled]="isSubmittingFeedback || rating === 0"
+                  (click)="submitFeedback()"
+                  *ngIf="showFeedbackSection">
+            <i *ngIf="!isSubmittingFeedback" class="isax isax-send-2 me-2"></i>
+            <i *ngIf="isSubmittingFeedback" class="fa fa-spinner fa-spin me-2"></i>
+            ✉️ Envoyer mon feedback
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

@@ -13,6 +13,7 @@ import {NotificationService} from "../../../services/notification.service";
 import {ToastrService} from "ngx-toastr";
 import {BsModalRef, BsModalService} from 'ngx-bootstrap/modal';
 import {GlobalService} from "../../../services/global.service";
+import {TranslationService} from "../../../services/translation.service";
 
 
 @Component({
@@ -58,7 +59,9 @@ export class DefaultHeaderComponent {
   openDropdownIndex: number | null = null;
   user : any = {email:null,password:null,password_confirmation:null,country_code:'+216',phone:null,role:'student'}
   currentUser : any = null;
-   modalRef?: BsModalRef;
+  modalRef?: BsModalRef;
+  availableLanguages: any[] = [];
+  currentLanguage: string = 'fr';
   constructor(
     private data: DataService,
     private sideBar: SideBarService,
@@ -71,7 +74,8 @@ export class DefaultHeaderComponent {
     private modalService: BsModalService,
     private breakpointObserver: BreakpointObserver,
     public settings:SettingService,
-    public globalService:GlobalService
+    public globalService:GlobalService,
+    public translationService: TranslationService
   )
   {
     this.common.base.subscribe((res: string) => {
@@ -88,7 +92,16 @@ export class DefaultHeaderComponent {
       this.themeColor = res;
     });
 
-    this.currentUser = this.globalService.getCurrentUser();
+    // Subscribe to user changes for reactive header
+    this.globalService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
+
+    // Initialize language settings
+    this.availableLanguages = this.translationService.getAvailableLanguages();
+    this.translationService.currentLanguage$.subscribe(lang => {
+      this.currentLanguage = lang;
+    });
   }
   openRegisterModal() {
   }
@@ -179,7 +192,7 @@ export class DefaultHeaderComponent {
     }
 
   logout(){
-      localStorage.removeItem('user');
+    this.globalService.logout();
     this.router.navigateByUrl('/index')
   }
 
@@ -210,9 +223,14 @@ export class DefaultHeaderComponent {
         }, 2000);
         if (response.success){
           this.go = true
-          this.notificationService.showSuccess('Votre compte a été créé avec succès');
-          localStorage.setItem('user',JSON.stringify(response.user));
-          this.user = {email:null,password:null,password_confirmation:null,country_code:'+216',phone:null};
+          this.notificationService.showSuccess(this.translationService.translate('auth.register_success'));
+          // Store user data with access token using the new service
+          const userData = {
+            ...response.user,
+            access_token: response.access_token
+          };
+          this.globalService.setCurrentUser(userData);
+          this.user = {email:null,password:null,password_confirmation:null,country_code:'+216',phone:null,role:'student'};
           this.onSubmit0();
         }
       },
@@ -237,9 +255,14 @@ export class DefaultHeaderComponent {
           this.spinner.hide();
         }, 2000);
         if (response.success){
-           this.notificationService.showSuccess('`Bienvenu à Gold LMS');
-           localStorage.setItem('user',JSON.stringify(response.user));
-          this.user = {email:null,password:null,password_confirmation:null,country_code:'+216',phone:null};
+           this.notificationService.showSuccess(this.translationService.translate('auth.welcome'));
+           // Store user data with access token using the new service
+           const userData = {
+             ...response.user,
+             access_token: response.access_token
+           };
+           this.globalService.setCurrentUser(userData);
+          this.user = {email:null,password:null,password_confirmation:null,country_code:'+216',phone:null,role:'student'};
           this.onSubmit0();
         }
       },
@@ -254,5 +277,9 @@ export class DefaultHeaderComponent {
       () => {
       }
     )
+  }
+
+  changeLanguage(langCode: string) {
+    this.translationService.setLanguage(langCode);
   }
 }

@@ -1,0 +1,276 @@
+<div class="certificate-container">
+  <!-- Certificate Content -->
+  <div id="certificate-content" class="certificate">
+    <!-- Background decorative elements -->
+    <div class="certificate-bg">
+      <div class="decorative-lines top-left"></div>
+      <div class="decorative-lines top-right"></div>
+      <div class="decorative-lines bottom-left"></div>
+      <div class="decorative-lines bottom-right"></div>
+      <div class="decorative-pattern left"></div>
+      <div class="decorative-pattern right"></div>
+      
+      <!-- Additional luxury decorative elements -->
+      <div class="luxury-ornaments">
+        <!-- Top center ornament -->
+        <div class="ornament top-center">
+          <svg width="100" height="40" viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 20 Q25 5 50 20 Q75 5 90 20 Q75 35 50 20 Q25 35 10 20 Z" fill="url(#goldOrnament)" opacity="0.6"/>
+            <defs>
+              <linearGradient id="goldOrnament" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#D4AF37"/>
+                <stop offset="50%" style="stop-color:#FFD700"/>
+                <stop offset="100%" style="stop-color:#B8860B"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        
+        <!-- Bottom center ornament -->
+        <div class="ornament bottom-center">
+          <svg width="120" height="50" viewBox="0 0 120 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 25 Q30 10 60 25 Q90 10 105 25 Q90 40 60 25 Q30 40 15 25 Z" fill="url(#goldOrnament2)" opacity="0.5"/>
+            <circle cx="60" cy="25" r="8" fill="#D4AF37" opacity="0.7"/>
+            <defs>
+              <linearGradient id="goldOrnament2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#B8860B"/>
+                <stop offset="50%" style="stop-color:#FFD700"/>
+                <stop offset="100%" style="stop-color:#D4AF37"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        
+        <!-- Side flourishes -->
+        <div class="flourish left-flourish">
+          <svg width="60" height="200" viewBox="0 0 60 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M30 20 Q45 40 30 60 Q15 80 30 100 Q45 120 30 140 Q15 160 30 180" 
+                  stroke="url(#goldStroke)" stroke-width="3" fill="none" opacity="0.4"/>
+            <defs>
+              <linearGradient id="goldStroke" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#D4AF37"/>
+                <stop offset="50%" style="stop-color:#FFD700"/>
+                <stop offset="100%" style="stop-color:#B8860B"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        
+        <div class="flourish right-flourish">
+          <svg width="60" height="200" viewBox="0 0 60 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M30 20 Q15 40 30 60 Q45 80 30 100 Q15 120 30 140 Q45 160 30 180" 
+                  stroke="url(#goldStroke2)" stroke-width="3" fill="none" opacity="0.4"/>
+            <defs>
+              <linearGradient id="goldStroke2" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#B8860B"/>
+                <stop offset="50%" style="stop-color:#FFD700"/>
+                <stop offset="100%" style="stop-color:#D4AF37"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Certificate Border -->
+    <div class="certificate-border">
+      <!-- Header Section -->
+      <div class="certificate-header">
+        <div class="logo-section">
+          <div class="logo-icon">
+            <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="35" cy="35" r="32" fill="url(#logoGradient)" stroke="#B8860B" stroke-width="3"/>
+              <rect x="15" y="20" width="40" height="30" rx="3" fill="#D4AF37" stroke="#B8860B" stroke-width="2"/>
+              <rect x="20" y="25" width="30" height="20" rx="2" fill="#F4E4BC"/>
+              <path d="M30 15 L35 8 L40 15 L35 20 Z" fill="#D4AF37"/>
+              <circle cx="35" cy="12" r="3" fill="#B8860B"/>
+              <text x="35" y="38" text-anchor="middle" fill="#B8860B" font-size="8" font-weight="bold">GOLD</text>
+              <defs>
+                <radialGradient id="logoGradient" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" style="stop-color:#FFF8DC"/>
+                  <stop offset="100%" style="stop-color:#F4E4BC"/>
+                </radialGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="organization-name">{{ certificateData.organizationName || 'GOLD LMS' }}</div>
+        </div>
+        <div class="direction-section">
+          <div class="direction-text">DIRECTION ESSECT</div>
+          <div class="academic-year">{{ getCurrentAcademicYear() }}</div>
+        </div>
+      </div>
+
+      <!-- Title Section with enhanced styling -->
+      <div class="certificate-title">
+        <div class="title-ornament top">
+          <svg width="200" height="20" viewBox="0 0 200 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 10 Q60 2 100 10 Q140 2 180 10 Q140 18 100 10 Q60 18 20 10 Z" fill="#D4AF37" opacity="0.6"/>
+          </svg>
+        </div>
+        <h1>CERTIFICAT</h1>
+        <h2>DE RÉUSSITE</h2>
+        <div class="title-ornament bottom">
+          <svg width="150" height="15" viewBox="0 0 150 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 7.5 Q45 2 75 7.5 Q105 2 135 7.5 Q105 13 75 7.5 Q45 13 15 7.5 Z" fill="#FFD700" opacity="0.5"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Certification Text -->
+      <div class="certification-text">
+        <p>NOUS CERTIFIONS QUE :</p>
+      </div>
+
+      <!-- Student Name with enhanced decoration -->
+      <div class="student-name">
+        <div class="name-decoration left">
+          <svg width="80" height="30" viewBox="0 0 80 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 15 Q25 5 40 15 Q55 5 70 15" stroke="#D4AF37" stroke-width="2" fill="none"/>
+            <circle cx="15" cy="15" r="3" fill="#FFD700"/>
+            <circle cx="65" cy="15" r="3" fill="#FFD700"/>
+          </svg>
+        </div>
+        <span>{{ certificateData.studentName }}</span>
+        <div class="name-decoration right">
+          <svg width="80" height="30" viewBox="0 0 80 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 15 Q25 25 40 15 Q55 25 70 15" stroke="#D4AF37" stroke-width="2" fill="none"/>
+            <circle cx="15" cy="15" r="3" fill="#FFD700"/>
+            <circle cx="65" cy="15" r="3" fill="#FFD700"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Course Information -->
+      <div class="course-info">
+        <p>A terminé avec succès la formation <strong>"{{ certificateData.courseName }}"</strong>.</p>
+        <p class="achievement-text">Cet accomplissement n'est que le premier pas vers un avenir encore plus prometteur.</p>
+        <div class="motivational-quote">
+          <svg width="30" height="20" viewBox="0 0 30 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 5 Q2 2 5 0 Q8 2 5 5 Q8 8 5 10 Q2 8 5 5 Z" fill="#D4AF37" opacity="0.6"/>
+            <path d="M20 5 Q17 2 20 0 Q23 2 20 5 Q23 8 20 10 Q17 8 20 5 Z" fill="#D4AF37" opacity="0.6"/>
+          </svg>
+          <em>"L'excellence n'est pas un acte, mais une habitude."</em>
+          <svg width="30" height="20" viewBox="0 0 30 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 15 Q13 18 10 20 Q7 18 10 15 Q7 12 10 10 Q13 12 10 15 Z" fill="#D4AF37" opacity="0.6"/>
+            <path d="M25 15 Q28 18 25 20 Q22 18 25 15 Q22 12 25 10 Q28 12 25 15 Z" fill="#D4AF37" opacity="0.6"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Results and Certification Section -->
+      <div class="results-section">
+        <div class="results-left">
+          <div class="results-title">résultats obtenus :</div>
+          <div class="score-info">
+            <div><strong>Score final :</strong> {{ certificateData.score }}</div>
+            <div><strong>Évaluation :</strong> {{ certificateData.evaluation }}</div>
+            <div class="grade-badge">
+              <span class="grade-text">MENTION</span>
+              <span class="grade-value">EXCELLENT</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="medal-section">
+          <div class="medal">
+            <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Outer ring -->
+              <circle cx="50" cy="50" r="45" fill="url(#medalGradient)" stroke="#B8860B" stroke-width="4"/>
+              <!-- Inner circle -->
+              <circle cx="50" cy="50" r="32" fill="url(#innerMedalGradient)"/>
+              <!-- Star -->
+              <path d="M50 25 L55 40 L70 40 L58 50 L63 65 L50 55 L37 65 L42 50 L30 40 L45 40 Z" fill="#D4AF37"/>
+              <!-- Center circle -->
+              <circle cx="50" cy="50" r="12" fill="url(#centerGradient)"/>
+              <!-- Text -->
+              <text x="50" y="54" text-anchor="middle" fill="#B8860B" font-size="8" font-weight="bold">GOLD</text>
+              <defs>
+                <radialGradient id="medalGradient" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" style="stop-color:#FFF8DC"/>
+                  <stop offset="70%" style="stop-color:#F4E4BC"/>
+                  <stop offset="100%" style="stop-color:#D4AF37"/>
+                </radialGradient>
+                <radialGradient id="innerMedalGradient" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" style="stop-color:#FFFACD"/>
+                  <stop offset="100%" style="stop-color:#F4E4BC"/>
+                </radialGradient>
+                <radialGradient id="centerGradient" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" style="stop-color:#FFD700"/>
+                  <stop offset="100%" style="stop-color:#D4AF37"/>
+                </radialGradient>
+              </defs>
+            </svg>
+          </div>
+        </div>
+
+        <div class="results-right">
+          <div class="certification-title">certification :</div>
+          <div class="cert-info">
+            <div><strong>Date :</strong> {{ certificateData.completionDate || certificateData.certificationDate }}</div>
+            <div><strong>ID :</strong> {{ certificateData.certificateId || generateCertificateId() }}</div>
+            <div class="verification-code">
+              <span class="code-label">Code de vérification :</span>
+              <span class="code-value">{{ generateVerificationCode() }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enhanced decorative flowers -->
+      <div class="decorative-flowers">
+        <svg width="150" height="180" viewBox="0 0 150 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g opacity="0.7">
+            <!-- Main flowers -->
+            <path d="M110 140 Q115 135 120 140 Q115 145 110 140" fill="#D4AF37"/>
+            <path d="M115 130 Q120 125 125 130 Q120 135 115 130" fill="#FFD700"/>
+            <path d="M105 150 Q110 145 115 150 Q110 155 105 150" fill="#D4AF37"/>
+            <path d="M120 145 Q125 140 130 145 Q125 150 120 145" fill="#B8860B"/>
+            
+            <!-- Smaller accent flowers -->
+            <circle cx="108" cy="138" r="2" fill="#FFD700"/>
+            <circle cx="122" cy="132" r="2" fill="#D4AF37"/>
+            <circle cx="112" cy="148" r="2" fill="#B8860B"/>
+            
+            <!-- Stems and leaves -->
+            <line x1="115" y1="140" x2="115" y2="170" stroke="#228B22" stroke-width="3"/>
+            <line x1="120" y1="135" x2="120" y2="165" stroke="#228B22" stroke-width="2"/>
+            <path d="M110 155 Q105 150 110 145" stroke="#228B22" stroke-width="2" fill="none"/>
+            <path d="M125 160 Q130 155 125 150" stroke="#228B22" stroke-width="2" fill="none"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Signature section -->
+      <div class="signature-section">
+        <div class="signature-line">
+          <div class="signature-title">Directeur Académique</div>
+          <div class="signature-name">Prof. Ahmed ESSECT</div>
+          <div class="signature-decoration">
+            <svg width="100" height="20" viewBox="0 0 100 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 10 Q30 5 50 10 Q70 5 90 10" stroke="#D4AF37" stroke-width="1" fill="none" opacity="0.6"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="certificate-actions" *ngIf="showPrintButton || showDownloadButton">
+    <button 
+      *ngIf="showPrintButton" 
+      class="btn btn-primary me-2" 
+      (click)="printCertificate()">
+      <i class="fas fa-print me-1"></i>
+      Imprimer
+    </button>
+    <button 
+      *ngIf="showDownloadButton" 
+      class="btn btn-success" 
+      (click)="downloadCertificate()">
+      <i class="fas fa-download me-1"></i>
+      Télécharger PDF
+    </button>
+  </div>
+</div>

@@ -4,6 +4,7 @@ import { SharedModule } from '../../../shared/shared-module';
 import {QuizModalModule} from "../../quiz-modal-component/quiz-modal.module";
 import {CourseDetailsComponent} from "./course-details.component";
 import {CourseDetailsRoutingModule} from "./course-details-routing.module";
+import { AuthDebugComponent } from '../../../shared/components/auth-debug/auth-debug.component';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import {CourseDetailsRoutingModule} from "./course-details-routing.module";
     CommonModule,
     CourseDetailsRoutingModule,
     SharedModule,
-    QuizModalModule
+    QuizModalModule,
+    AuthDebugComponent
   ]
 })
 export class CourseDetailsModule { }

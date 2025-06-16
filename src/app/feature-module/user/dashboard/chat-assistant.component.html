@@ -3,7 +3,8 @@
     <div class="header-content">
       <i class="fas fa-robot"></i>
       <h3>Assistant d'Apprentissage</h3>
-      <span class="status-indicator"></span>
+      <span class="status-indicator" [ngClass]="{'ai-mode': isAIChatMode}"></span>
+      <div *ngIf="isAIChatMode" class="ai-mode-badge">IA</div>
     </div>
   </div>
 
@@ -19,9 +20,25 @@
         <div *ngIf="message.options && message.questionType === 'question-list'" 
              class="question-list">
           <button *ngFor="let question of message.options" 
+                  type="button"
                   class="question-btn"
+                  [ngClass]="{'ai-option': question.includes('🤖')}"
                   (click)="selectQuestion(question)">
             {{ question }}
+          </button>
+        </div>
+        
+        <!-- AI Chat Options -->
+        <div *ngIf="message.options && message.questionType === 'ai-chat'" 
+             class="ai-chat-options">
+          <button *ngFor="let option of message.options" 
+                  type="button"
+                  class="ai-option-btn"
+                  (click)="toggleAITuning()">
+            {{ option }}
+          </button>
+          <button type="button" class="exit-ai-btn" (click)="exitAIChat()">
+            🔙 Retour aux questions
           </button>
         </div>
         
@@ -29,6 +46,7 @@
         <div *ngIf="message.options && message.questionType === 'multiple-choice' && !message.isRecommendation" 
              class="message-options">
           <button *ngFor="let option of message.options" 
+                  type="button"
                   class="option-btn"
                   (click)="selectOption(option, message.questionIndex!)">
             {{ option }}
@@ -39,6 +57,7 @@
         <div *ngIf="message.options && message.questionType === 'yes-no' && message.questionIndex !== -1" 
              class="message-options">
           <button *ngFor="let option of message.options" 
+                  type="button"
                   class="option-btn"
                   [ngClass]="option === 'Oui' ? 'btn-success' : 'btn-danger'"
                   (click)="selectOption(option, message.questionIndex!)">
@@ -50,6 +69,7 @@
         <div *ngIf="message.options && message.questionType === 'yes-no' && message.questionIndex === -1" 
              class="message-options">
           <button *ngFor="let option of message.options" 
+                  type="button"
                   class="option-btn"
                   [ngClass]="option.includes('Oui') ? 'btn-success' : 'btn-danger'"
                   (click)="handleMoreQuestions(option)">
@@ -61,6 +81,7 @@
         <div *ngIf="message.options && message.isRecommendation && message.recommendationType === 'final'" 
              class="final-actions">
           <button *ngFor="let action of message.options" 
+                  type="button"
                   class="action-btn"
                   (click)="handleFinalAction(action)">
             {{ action }}
@@ -79,7 +100,51 @@
           <span></span>
           <span></span>
         </div>
+        <div class="typing-text">L'IA réfléchit...</div>
       </div>
+    </div>
+  </div>
+
+  <!-- AI Tuning Panel -->
+  <div *ngIf="showAITuning && isAIChatMode" class="ai-tuning-panel">
+    <div class="tuning-header">
+      <h4>⚙️ Réglages de l'IA</h4>
+      <button type="button" class="close-tuning" (click)="toggleAITuning()">×</button>
+    </div>
+    
+    <div class="tuning-options">
+      <div class="tuning-group">
+        <label>Personnalité :</label>
+        <select [(ngModel)]="aiPersonality" class="tuning-select" name="personality">
+          <option value="helpful">Serviable</option>
+          <option value="professional">Professionnel</option>
+          <option value="friendly">Amical</option>
+        </select>
+      </div>
+      
+      <div class="tuning-group">
+        <label>Longueur des réponses :</label>
+        <select [(ngModel)]="aiResponseLength" class="tuning-select" name="responseLength">
+          <option value="short">Courtes</option>
+          <option value="medium">Moyennes</option>
+          <option value="detailed">Détaillées</option>
+        </select>
+      </div>
+      
+      <div class="tuning-group">
+        <label>Niveau d'expertise :</label>
+        <select [(ngModel)]="aiExpertise" class="tuning-select" name="expertise">
+          <option value="beginner">Débutant</option>
+          <option value="intermediate">Intermédiaire</option>
+          <option value="advanced">Avancé</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="tuning-footer">
+      <button type="button" class="apply-tuning-btn" (click)="toggleAITuning()">
+        ✅ Appliquer
+      </button>
     </div>
   </div>
 
@@ -89,13 +154,16 @@
       <input type="text" 
              class="text-input" 
              [(ngModel)]="userInput"
-             (keyup.enter)="sendTextInput()"
-             placeholder="Tapez votre réponse...">
+             (keydown)="onKeyDown($event)"
+             [placeholder]="isAIChatMode ? 'Posez votre question à l\'IA...' : 'Tapez votre réponse...'"
+             [disabled]="isTyping"
+             autocomplete="off">
       <button class="send-btn" 
-              type="button" 
-              (click)="sendTextInput()"
-              [disabled]="!userInput.trim()">
-        <i class="fas fa-paper-plane"></i>
+              type="button"
+              (click)="onSendButtonClick()"
+              [disabled]="!userInput?.trim() || isTyping">
+        <i class="fas fa-paper-plane" *ngIf="!isTyping"></i>
+        <i class="fas fa-spinner fa-spin" *ngIf="isTyping"></i>
       </button>
     </div>
   </div>

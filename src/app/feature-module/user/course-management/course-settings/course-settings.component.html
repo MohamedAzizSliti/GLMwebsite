@@ -1,0 +1,232 @@
+<div class="course-settings">
+  <div class="row">
+    <!-- Basic Information -->
+    <div class="col-md-8">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h6 class="mb-0">Informations Générales</h6>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="courseForm" (ngSubmit)="saveCourse()" *ngIf="courseForm">
+            <div class="row">
+              <div class="col-md-8">
+                <div class="mb-3">
+                  <label class="form-label">Titre du Cours *</label>
+                  <input type="text" class="form-control" formControlName="title">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label class="form-label">Prix (€)</label>
+                  <input type="number" class="form-control" formControlName="price" min="0" step="0.01">
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              <textarea class="form-control" formControlName="description" rows="4"></textarea>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label class="form-label">Niveau</label>
+                  <select class="form-select" formControlName="level">
+                    <option value="beginner">Débutant</option>
+                    <option value="intermediate">Intermédiaire</option>
+                    <option value="advanced">Avancé</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label class="form-label">Langue</label>
+                  <select class="form-select" formControlName="language">
+                    <option value="fr">Français</option>
+                    <option value="en">Anglais</option>
+                    <option value="es">Espagnol</option>
+                    <option value="de">Allemand</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label class="form-label">Catégorie</label>
+                  <select class="form-select" formControlName="category_id">
+                    <option value="">Sélectionner une catégorie</option>
+                    <option *ngFor="let category of categories || []" [value]="category.id">
+                      {{category.name}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" formControlName="is_published" id="coursePublished">
+                  <label class="form-check-label" for="coursePublished">
+                    Cours publié
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" formControlName="is_featured" id="courseFeatured">
+                  <label class="form-check-label" for="courseFeatured">
+                    Cours en vedette
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary" [disabled]="courseForm.invalid || isSaving">
+                <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2"></span>
+                Sauvegarder les Modifications
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Course Statistics -->
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h6 class="mb-0">Statistiques du Cours</h6>
+        </div>
+        <div class="card-body">
+          <div class="stat-item">
+            <div class="stat-icon bg-primary">
+              <i class="isax isax-people"></i>
+            </div>
+            <div class="stat-info">
+              <h5>{{course?.enrollments?.length || 0}}</h5>
+              <p>Étudiants Inscrits</p>
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-icon bg-success">
+              <i class="isax isax-star"></i>
+            </div>
+            <div class="stat-info">
+              <h5>{{course?.average_rating || 0}}/5</h5>
+              <p>Note Moyenne</p>
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-icon bg-info">
+              <i class="isax isax-eye"></i>
+            </div>
+            <div class="stat-info">
+              <h5>{{course?.views || 0}}</h5>
+              <p>Vues</p>
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-icon bg-warning">
+              <i class="isax isax-calendar"></i>
+            </div>
+            <div class="stat-info">
+              <h5>{{getFormattedDate(course?.created_at)}}</h5>
+              <p>Date de Création</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course Actions -->
+      <div class="card">
+        <div class="card-header">
+          <h6 class="mb-0">Actions du Cours</h6>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-2">
+            <button class="btn btn-outline-primary" (click)="previewCourse()">
+              <i class="isax isax-eye me-2"></i>Prévisualiser le Cours
+            </button>
+            
+            <button class="btn btn-outline-success" (click)="duplicateCourse()">
+              <i class="isax isax-copy me-2"></i>Dupliquer le Cours
+            </button>
+            
+            <button class="btn btn-outline-info" (click)="exportCourse()">
+              <i class="isax isax-export me-2"></i>Exporter les Données
+            </button>
+            
+            <hr>
+            
+            <button class="btn btn-outline-danger" (click)="deleteCourse()">
+              <i class="isax isax-trash me-2"></i>Supprimer le Cours
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Course Media -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h6 class="mb-0">Média du Cours</h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="media-upload-section">
+                <label class="form-label">Image de Couverture</label>
+                <div class="upload-area" (click)="triggerFileInput('cover')">
+                  <div *ngIf="!course?.cover_image" class="upload-placeholder">
+                    <i class="isax isax-gallery display-4 text-muted"></i>
+                    <p class="text-muted">Cliquez pour télécharger une image</p>
+                    <small class="text-muted">Formats acceptés: JPG, PNG (Max: 2MB)</small>
+                  </div>
+                  <div *ngIf="course?.cover_image" class="uploaded-image">
+                    <img [src]="course.cover_image" alt="Course Cover" class="img-fluid rounded">
+                    <div class="image-overlay">
+                      <i class="isax isax-edit text-white"></i>
+                    </div>
+                  </div>
+                </div>
+                <input type="file" #coverFileInput (change)="onFileSelected($event, 'cover')" 
+                       accept="image/*" style="display: none;">
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="media-upload-section">
+                <label class="form-label">Vidéo de Présentation</label>
+                <div class="upload-area" (click)="triggerFileInput('video')">
+                  <div *ngIf="!course?.preview_video" class="upload-placeholder">
+                    <i class="isax isax-video-play display-4 text-muted"></i>
+                    <p class="text-muted">Cliquez pour télécharger une vidéo</p>
+                    <small class="text-muted">Formats acceptés: MP4, AVI (Max: 50MB)</small>
+                  </div>
+                  <div *ngIf="course?.preview_video" class="uploaded-video">
+                    <video controls class="w-100 rounded">
+                      <source [src]="course.preview_video" type="video/mp4">
+                    </video>
+                    <div class="video-overlay">
+                      <i class="isax isax-edit text-white"></i>
+                    </div>
+                  </div>
+                </div>
+                <input type="file" #videoFileInput (change)="onFileSelected($event, 'video')" 
+                       accept="video/*" style="display: none;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

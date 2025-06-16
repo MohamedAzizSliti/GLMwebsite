@@ -3,6 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { UserComponent } from './user.component';
 import { TeacherDashboardComponent } from './teacher-dashboard/teacher-dashboard.component';
 import { CertificationManagementComponent } from './certification-management/certification-management.component';
+import { AddCourseComponent } from './add-course/add-course.component';
+import { MyEnrollmentsComponent } from './my-enrollments.component';
+import { CertificatePageComponent } from './certificate-page/certificate-page.component';
 
 const routes: Routes = [
   {
@@ -17,6 +20,13 @@ const routes: Routes = [
       { path: 'customer-cruise-booking', loadChildren: () => import('./customer-cruise-booking/customer-cruise-booking.module').then(m => m.CustomerCruiseBookingModule) },
       { path: 'customer-tour-booking', loadChildren: () => import('./customer-tour-booking/customer-tour-booking.module').then(m => m.CustomerTourBookingModule) },
       { path: 'review', loadChildren: () => import('./review/review.module').then(m => m.ReviewModule) },
+      { path: 'add-course', component: AddCourseComponent },
+      { path: 'my-enrollments', component: MyEnrollmentsComponent },
+      { path: 'certificate', component: CertificatePageComponent },
+      {
+        path: 'course-management',
+        loadComponent: () => import('./course-management/course-management.component').then(m => m.CourseManagementComponent)
+      },
       { path: 'chat', loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule) },
       { path: 'wishlist', loadChildren: () => import('./wishlist/wishlist.module').then(m => m.WishlistModule) },
       { path: 'wallet', loadChildren: () => import('./wallet/wallet.module').then(m => m.WalletModule) },

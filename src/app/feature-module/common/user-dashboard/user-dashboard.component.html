@@ -21,43 +21,56 @@
             </div>
             <div class="card-body user-sidebar-body">
                 <ul>
-                    @for (mainTittle of sideBar2; track mainTittle) {
+                    <ng-container *ngFor="let mainTittle of sideBar2; trackBy: trackByFn">
                         <li>
-                            <span class="fs-14 text-gray-3 fw-medium mb-2">{{mainTittle.tittle}}</span>
+                            <span class="fs-14 text-gray-3 fw-medium mb-2">{{mainTittle.tittle | translate}}</span>
                         </li>
-                        @for (menu of mainTittle.menu; track menu) {
-                            @if (menu.hasSubRoute === false) {
-                                <li>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <a [href]="menu.route" class="d-flex align-items-center" [class.active]="page===menu.base || page===menu.base2 || page===menu.base3 || page===menu.base4 || page===menu.base5"  [ngClass]="{ 'subdrop': menu.showSubRoute === false }" (click)="expandSubMenus(menu)">
-                                            <i class="isax" [class]="menu.icon"></i> {{menu.menuValue}}
-                                        </a>
-                                        <div class="message-content">
-                                            <span *ngIf="menu.count==='1'" class="msg-count rounded-circle">02</span>
-                                            <span *ngIf="menu.count==='2'" class="msg-count bg-purple rounded-circle">05</span>
-                                        </div>
-                                    </div>
-                                </li>
-                            }
-                            @if (menu.hasSubRoute === true) {
-                                <li class="submenu" >
-                                    <a href="javascript:void(0);" class="d-block" [class.active]="page===menu.base || page===menu.base2 || page===menu.base3 || page===menu.base4 || page===menu.base5"   [ngClass]="{ 'subdrop': menu.showSubRoute === true }" (click)="expandSubMenus(menu)">
-                                        <i class="isax" [class]="menu.icon"></i>
-                                        <span>{{menu.menuValue}}</span><span class="menu-arrow" ></span>
+                        <ng-container *ngFor="let menu of mainTittle.menu; trackBy: trackByFn">
+                            <li *ngIf="menu.hasSubRoute === false">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a *ngIf="menu.menuValue === 'Logout'; else normalLink"
+                                       href="javascript:void(0)"
+                                       class="d-flex align-items-center"
+                                       [class.active]="page===menu.base || page===menu.base2 || page===menu.base3 || page===menu.base4 || page===menu.base5"
+                                       [ngClass]="{ 'subdrop': menu.showSubRoute === false }"
+                                       (click)="handleMenuClick(menu, $event)">
+                                        <i [class]="menu.icon"></i> {{menu.menuValue | translate}}
                                     </a>
-                                    <ul [ngClass]="menu.showSubRoute === true ? 'show-sub-menu' : 'hide-sub-menu'">
-                                        @for (subMenus of menu.subMenus; track subMenus) {
-                                            <li >
-                                                <a [href]="subMenus.route" class="fs-14 d-inline-flex align-items-center" [class.active]="page===subMenus.base" >{{subMenus.menuValue}}</a>
-                                            </li>
-                                        }
-                                    </ul>
-                                </li>
-                            }
-                        }
-                    }
-
-                    </ul>
+                                    <ng-template #normalLink>
+                                        <a [routerLink]="menu.route"
+                                           class="d-flex align-items-center"
+                                           [class.active]="page===menu.base || page===menu.base2 || page===menu.base3 || page===menu.base4 || page===menu.base5"
+                                           [ngClass]="{ 'subdrop': menu.showSubRoute === false }"
+                                           (click)="expandSubMenus(menu)">
+                                            <i [class]="menu.icon"></i> {{menu.menuValue | translate}}
+                                        </a>
+                                    </ng-template>
+                                    <div class="message-content">
+                                        <span *ngIf="menu.count==='1'" class="msg-count rounded-circle">02</span>
+                                        <span *ngIf="menu.count==='2'" class="msg-count bg-purple rounded-circle">05</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li *ngIf="menu.hasSubRoute === true" class="submenu">
+                                <a href="javascript:void(0);"
+                                   class="d-block"
+                                   [class.active]="page===menu.base || page===menu.base2 || page===menu.base3 || page===menu.base4 || page===menu.base5"
+                                   [ngClass]="{ 'subdrop': menu.showSubRoute === true }"
+                                   (click)="expandSubMenus(menu)">
+                                    <i [class]="menu.icon"></i>
+                                    <span>{{menu.menuValue | translate}}</span><span class="menu-arrow"></span>
+                                </a>
+                                <ul [ngClass]="menu.showSubRoute === true ? 'show-sub-menu' : 'hide-sub-menu'">
+                                    <li *ngFor="let subMenus of menu.subMenus; trackBy: trackByFn">
+                                        <a [routerLink]="subMenus.route"
+                                           class="fs-14 d-inline-flex align-items-center"
+                                           [class.active]="page===subMenus.base">{{subMenus.menuValue | translate}}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ng-container>
+                    </ng-container>
+                </ul>
             </div>
         </div>
 

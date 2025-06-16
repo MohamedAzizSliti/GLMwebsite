@@ -1,0 +1,106 @@
+<div class="question-container" *ngIf="question">
+  <!-- Question Header -->
+  <div class="question-header">
+    <h3 class="question-title">{{ question?.question || question?.question_text || 'Question non disponible' }}</h3>
+    <div class="question-meta">
+      <span class="question-type">{{ getQuestionTypeLabel() }}</span>
+      <span class="question-points" *ngIf="question?.points">{{ question.points }} points</span>
+    </div>
+  </div>
+
+  <!-- Question Options -->
+  <div class="options-container" *ngIf="formattedOptions && Object.keys(formattedOptions).length > 0">
+    
+    <!-- Binary Questions (True/False) -->
+    <div *ngIf="question?.type === 'binary'" class="binary-options">
+      <div class="option-item" 
+           *ngFor="let option of getOptionsArray()" 
+           [class.selected]="selectedAnswers.includes(option.key)"
+           (click)="selectOption(option.key)">
+        <input type="radio" 
+               [id]="'option_' + option.key" 
+               [name]="'question_' + question.id"
+               [value]="option.key"
+               [checked]="selectedAnswers.includes(option.key)"
+               (change)="selectOption(option.key)">
+        <label [for]="'option_' + option.key" class="option-label">
+          <span class="option-text">{{ getOptionText(option.value) }}</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Single Choice Questions -->
+    <div *ngIf="question?.type === 'single_choice'" class="single-choice-options">
+      <div class="option-item" 
+           *ngFor="let option of getOptionsArray()" 
+           [class.selected]="selectedAnswers.includes(option.key)"
+           (click)="selectOption(option.key)">
+        <input type="radio" 
+               [id]="'option_' + option.key" 
+               [name]="'question_' + question.id"
+               [value]="option.key"
+               [checked]="selectedAnswers.includes(option.key)"
+               (change)="selectOption(option.key)">
+        <label [for]="'option_' + option.key" class="option-label">
+          <span class="option-letter">{{ getOptionLetter(option.key) }}</span>
+          <span class="option-text">{{ getOptionText(option.value) }}</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Multiple Choice Questions -->
+    <div *ngIf="question?.type === 'multiple_choice'" class="multiple-choice-options">
+      <div class="option-item" 
+           *ngFor="let option of getOptionsArray()" 
+           [class.selected]="selectedAnswers.includes(option.key)"
+           (click)="toggleMultipleOption(option.key)">
+        <input type="checkbox" 
+               [id]="'option_' + option.key" 
+               [value]="option.key"
+               [checked]="selectedAnswers.includes(option.key)"
+               (change)="toggleMultipleOption(option.key)">
+        <label [for]="'option_' + option.key" class="option-label">
+          <span class="option-letter">{{ getOptionLetter(option.key) }}</span>
+          <span class="option-text">{{ getOptionText(option.value) }}</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Fallback for unknown question types -->
+    <div *ngIf="!['binary', 'single_choice', 'multiple_choice'].includes(question?.type)" class="fallback-options">
+      <div class="option-item" 
+           *ngFor="let option of getOptionsArray()" 
+           [class.selected]="selectedAnswers.includes(option.key)"
+           (click)="selectOption(option.key)">
+        <input type="radio" 
+               [id]="'option_' + option.key" 
+               [name]="'question_' + question.id"
+               [value]="option.key"
+               [checked]="selectedAnswers.includes(option.key)"
+               (change)="selectOption(option.key)">
+        <label [for]="'option_' + option.key" class="option-label">
+          <span class="option-text">{{ getOptionText(option.value) }}</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Options Available -->
+  <div *ngIf="!formattedOptions || Object.keys(formattedOptions).length === 0" class="no-options">
+    <p>Aucune option disponible pour cette question.</p>
+  </div>
+
+  <!-- Debug Information (remove in production) -->
+  <div class="debug-info" *ngIf="showDebug">
+    <h4>Debug Information:</h4>
+    <p><strong>Question Type:</strong> {{ question?.type }}</p>
+    <p><strong>Raw Options:</strong> {{ question?.options }}</p>
+    <p><strong>Formatted Options:</strong> {{ formattedOptions | json }}</p>
+    <p><strong>Selected Answers:</strong> {{ selectedAnswers | json }}</p>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="!question" class="loading-state">
+  <p>Chargement de la question...</p>
+</div> 

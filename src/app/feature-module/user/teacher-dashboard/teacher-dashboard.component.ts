@@ -87,35 +87,52 @@ export class TeacherDashboardComponent implements OnInit {
       this.setFallbackData();
       return;
     }
-    
+
     this.isLoading = true;
-    
-    // Load teacher courses
+
+    // Load teacher dashboard data directly from new endpoint
+    this.apiService.getTeacherDashboardData(this.user.id).subscribe({
+      next: (dashboardData: any) => {
+        console.log('Teacher dashboard data:', dashboardData);
+
+        if (dashboardData) {
+          this.teacherData = {
+            totalStudents: dashboardData.totalStudents || 0,
+            activeCourses: dashboardData.activeCourses || 0,
+            completedCourses: dashboardData.completedCourses || 0,
+            totalRevenue: dashboardData.totalRevenue || 0,
+            studentProgress: dashboardData.studentProgress || [],
+            courseProgress: dashboardData.courseProgress || [],
+            recentCourses: []
+          };
+
+          // Also load teacher courses for additional details
+          this.loadTeacherCourses();
+        } else {
+          this.setFallbackData();
+        }
+      },
+      error: (err) => {
+        console.error('Error loading teacher dashboard data:', err);
+        this.error = 'Failed to load dashboard data. Using demo data instead.';
+        this.setFallbackData();
+        this.isLoading = false;
+      }
+    });
+  }
+
+  loadTeacherCourses() {
+    // Load teacher courses for additional course details
     this.apiService.getTeacherCourses(this.user.id).subscribe({
       next: (courses: CourseData[]) => {
         this.courses = courses;
-        
-        // Calculate dashboard metrics from courses data
+        console.log('Teacher courses:', courses);
+
+        // Process courses for recent courses display
         if (courses && courses.length) {
-          this.teacherData.activeCourses = courses.length;
-          
-          // Calculate total students across all courses
-          let totalStudents = 0;
-          let totalRevenue = 0;
-          
           const recentCourses: RecentCourse[] = [];
-          
+
           courses.forEach((course: CourseData) => {
-            if (course.enrollments) {
-              totalStudents += course.enrollments.length;
-              
-              // Calculate revenue from enrollments
-              course.enrollments.forEach((enrollment: EnrollmentData) => {
-                totalRevenue += enrollment.course_price || 0;
-              });
-            }
-            
-            // Add to recent courses list
             recentCourses.push({
               title: course.title,
               students: course.enrollments ? course.enrollments.length : 0,
@@ -125,62 +142,20 @@ export class TeacherDashboardComponent implements OnInit {
               createdAt: new Date(course.created_at || new Date())
             });
           });
-          
-          this.teacherData.totalStudents = totalStudents;
-          this.teacherData.totalRevenue = totalRevenue;
+
           this.teacherData.recentCourses = recentCourses;
-          
-          // Load more detailed dashboard data
-          this.loadDashboardDetails();
-        } else {
-          this.setFallbackData();
         }
+
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Error loading teacher courses:', err);
-        this.error = 'Failed to load courses data. Using demo data instead.';
-        this.setFallbackData();
         this.isLoading = false;
       }
     });
   }
   
-  loadDashboardDetails() {
-    // Get additional dashboard data
-    this.apiService.getDashboardUserData(this.user.id).subscribe({
-      next: (data: any) => {
-        if (data) {
-          // Update dashboard with any additional data
-          this.teacherData.completedCourses = data.completedCoursesCount || 0;
-          
-          // Process student progress data if available
-          if (data.enrollments && data.enrollments.length) {
-            const studentProgress: StudentProgress[] = [];
-            
-            // Process the first 5 enrollments to show student progress
-            data.enrollments.slice(0, 5).forEach((enrollment: EnrollmentData) => {
-              if (enrollment.course && enrollment.user) {
-                studentProgress.push({
-                  name: enrollment.user.name || 'Student',
-                  course: enrollment.course.title || 'Course',
-                  progress: enrollment.progress || 0,
-                  avatar: enrollment.user.avatar || 'https://randomuser.me/api/portraits/men/1.jpg'
-                });
-              }
-            });
-            
-            this.teacherData.studentProgress = studentProgress.length ? studentProgress : this.teacherData.studentProgress;
-          }
-        }
-        
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading dashboard details:', err);
-        this.isLoading = false;
-      }
-    });
-  }
+
   
   calculateAverageCompletion(enrollments: EnrollmentData[]): number {
     if (!enrollments || enrollments.length === 0) return 0;

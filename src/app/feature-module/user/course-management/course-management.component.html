@@ -1,0 +1,270 @@
+<!-- Course Management Dashboard -->
+<div class="breadcrumb-bar breadcrumb-bg-01 text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-12">
+                <h2 class="breadcrumb-title mb-2">Gestion des Cours</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center mb-0">
+                        <li class="breadcrumb-item"><a [routerLink]="routes.index"><i class="isax isax-home5"></i></a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Gestion des Cours</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="content">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-xl-3 col-lg-4">
+                <div class="card user-sidebar mb-4 mb-lg-0">
+                    <div class="card-header user-sidebar-header">
+                        <div class="profile-content rounded-pill">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <img src="assets/img/users/user-05.jpg" alt="image" class="img-fluid avatar avatar-lg rounded-circle me-1">
+                                    <div>
+                                        <h6 class="fs-16">{{user?.name || 'Enseignant'}}</h6>
+                                        <span class="fs-14 text-gray-6">Enseignant</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <a [routerLink]="routes.myProfile" class="p-1 rounded-circle btn btn-light d-flex align-items-center justify-content-center">
+                                        <i class="isax isax-edit-2 fs-14"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body user-sidebar-body">
+                        <ul class="sidebar-menu">
+                            <li class="menu-header">
+                                <span class="fs-12 text-uppercase text-muted fw-bold">Main</span>
+                            </li>
+                            <li class="menu-item">
+                                <a href="/user/teacher-dashboard" class="menu-link">
+                                    <i class="isax isax-grid-55 menu-icon"></i>
+                                    <span class="menu-text">Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="/user/review" class="menu-link">
+                                    <i class="isax isax-book-15 menu-icon"></i>
+                                    <span class="menu-text">Mes cours</span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="/user/course-management" class="menu-link active">
+                                    <i class="isax isax-setting-2 menu-icon"></i>
+                                    <span class="menu-text">Gestion des Cours</span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="/user/add-course" class="menu-link">
+                                    <i class="isax isax-add-circle menu-icon"></i>
+                                    <span class="menu-text">Ajouter un Cours</span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="/user/certification-management" class="menu-link">
+                                    <i class="isax isax-award menu-icon"></i>
+                                    <span class="menu-text">Étudiants</span>
+                                </a>
+                            </li>
+                            <li class="menu-header">
+                                <span class="fs-12 text-uppercase text-muted fw-bold">Account</span>
+                            </li>
+                            <li class="menu-item">
+                                <a href="/user/my-profile" class="menu-link">
+                                    <i class="isax isax-profile-circle menu-icon"></i>
+                                    <span class="menu-text">Mon Profil</span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="javascript:void(0)" (click)="logout()" class="menu-link">
+                                    <i class="isax isax-logout menu-icon"></i>
+                                    <span class="menu-text">Logout</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-xl-9 col-lg-8">
+                
+                <!-- Course Selection -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Sélectionner un Cours</h5>
+                        <a [routerLink]="[routes.addCourse]" class="btn btn-primary btn-sm">
+                            <i class="isax isax-add me-2"></i>Nouveau Cours
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <select class="form-select" [(ngModel)]="selectedCourseId" (change)="onCourseSelect()">
+                                    <option value="">Choisir un cours...</option>
+                                    <option *ngFor="let course of courses" [value]="course.id">
+                                        {{course.title}} ({{course.chapters?.length || 0}} chapitres)
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-outline-primary w-100" (click)="loadCourses()">
+                                    <i class="isax isax-refresh me-2"></i>Actualiser
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course Details & Management -->
+                <div *ngIf="selectedCourse" class="course-management-container">
+                    
+                    <!-- Course Overview -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">{{selectedCourse.title}}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="stat-card text-center">
+                                        <div class="stat-icon bg-primary">
+                                            <i class="isax isax-book"></i>
+                                        </div>
+                                        <h4>{{selectedCourse.chapters?.length || 0}}</h4>
+                                        <p class="text-muted">Chapitres</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-card text-center">
+                                        <div class="stat-icon bg-success">
+                                            <i class="isax isax-task-square"></i>
+                                        </div>
+                                        <h4>{{selectedCourse.quizzes?.length || 0}}</h4>
+                                        <p class="text-muted">Quiz</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-card text-center">
+                                        <div class="stat-icon bg-warning">
+                                            <i class="isax isax-clipboard-text"></i>
+                                        </div>
+                                        <h4>{{selectedCourse.exams?.length || 0}}</h4>
+                                        <p class="text-muted">Examens</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-card text-center">
+                                        <div class="stat-icon bg-info">
+                                            <i class="isax isax-clock"></i>
+                                        </div>
+                                        <h4>{{selectedCourse.total_duration || 0}}</h4>
+                                        <p class="text-muted">Minutes</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Management Tabs -->
+                    <div class="card">
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#chapters" role="tab">
+                                        <i class="isax isax-book me-2"></i>Chapitres
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#quizzes" role="tab">
+                                        <i class="isax isax-task-square me-2"></i>Quiz
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#exams" role="tab">
+                                        <i class="isax isax-clipboard-text me-2"></i>Examens
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#settings" role="tab">
+                                        <i class="isax isax-setting-2 me-2"></i>Paramètres
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content">
+                                
+                                <!-- Chapters Tab -->
+                                <div class="tab-pane fade show active" id="chapters" role="tabpanel">
+                                    <app-chapter-management 
+                                        [courseId]="selectedCourse.id"
+                                        [chapters]="selectedCourse.chapters"
+                                        (chaptersUpdated)="onChaptersUpdated($event)">
+                                    </app-chapter-management>
+                                </div>
+
+                                <!-- Quizzes Tab -->
+                                <div class="tab-pane fade" id="quizzes" role="tabpanel">
+                                    <app-quiz-management 
+                                        [courseId]="selectedCourse.id"
+                                        [quizzes]="selectedCourse.quizzes"
+                                        (quizzesUpdated)="onQuizzesUpdated($event)">
+                                    </app-quiz-management>
+                                </div>
+
+                                <!-- Exams Tab -->
+                                <div class="tab-pane fade" id="exams" role="tabpanel">
+                                    <app-exam-management 
+                                        [courseId]="selectedCourse.id"
+                                        [exams]="selectedCourse.exams"
+                                        (examsUpdated)="onExamsUpdated($event)">
+                                    </app-exam-management>
+                                </div>
+
+                                <!-- Settings Tab -->
+                                <div class="tab-pane fade" id="settings" role="tabpanel">
+                                    <app-course-settings 
+                                        [course]="selectedCourse"
+                                        (courseUpdated)="onCourseUpdated($event)">
+                                    </app-course-settings>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Empty State -->
+                <div *ngIf="!selectedCourse" class="text-center py-5">
+                    <div class="empty-state">
+                        <i class="isax isax-book-1 display-1 text-muted"></i>
+                        <h4 class="mt-3">Sélectionnez un cours</h4>
+                        <p class="text-muted">Choisissez un cours dans la liste ci-dessus pour commencer à gérer son contenu.</p>
+                        <a [routerLink]="[routes.addCourse]" class="btn btn-primary">
+                            <i class="isax isax-add me-2"></i>Créer votre premier cours
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-overlay">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+    </div>
+</div>

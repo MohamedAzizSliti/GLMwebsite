@@ -31,7 +31,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-12 mx-auto aos" data-aos="fade-up" data-aos-duration="2000" style="margin-top: 100px">
                         <div class="banner-content mx-auto">
-                            <h1 class="text-white display-5 mb-2">Approchez-vous du succès : <span>votre parcours</span> d’apprentissage commence ici</h1>
+                            <h1 class="text-white display-5 mb-2">Approchez-vous du succès : <span>votre parcours</span> d'apprentissage commence ici</h1>
                             <h6 class="text-light mx-auto">La destination idéale pour apprendre, progresser et atteindre vos objectifs.</h6>
                         </div>
                     </div>
@@ -57,20 +57,21 @@
             <owl-carousel-o class=" destination-slider nav-center" [options]="destinationSlider">
               <ng-container *ngFor="let cat of categories;let i = index">
                 <ng-template carouselSlide>
-                  <!-- Destination Item-->
+                  <!-- Beautiful Category Container without images -->
+                  <div class="category-card mb-4 aos" data-aos="fade-up" data-aos-duration="2000">
+                    <!-- Gradient Background with Icon -->
+                    <div class="category-header" [ngClass]="'gradient-' + (i % 6 + 1)">
+                      <div class="category-icon">
+                        <i class="isax" [ngClass]="getCategoryIcon(cat.name, i)"></i>
+                      </div>
+                      <div class="category-overlay"></div>
+                    </div>
 
-                  <div class="destination-item mb-4 aos" data-aos="fade-up" data-aos-duration="2000">
-                    <ng-container *ngIf="cat.category_image;else inv">
-                      <img src="{{cat.category_image?.original_url}}" alt="img">
-                    </ng-container>
-                    <ng-template #inv>
-                      <img src="{{cat.category_image?.original_url}}" alt="img">
-                    </ng-template>
-
-                    <div class="destination-info text-center">
-                      <div class="destination-content">
-                        <h5 class="mb-1 text-white">{{cat.name}}</h5>
-                        <div class="d-flex align-items-center justify-content-center">
+                    <!-- Category Content -->
+                    <div class="category-content">
+                      <div class="category-title">
+                        <h5 class="mb-2 text-dark fw-bold">{{cat.name}}</h5>
+                        <div class="d-flex align-items-center justify-content-center mb-3">
                           <div class="rating d-flex align-items-center me-2">
                             <i class="fa-solid fa-star filled me-1"></i>
                             <i class="fa-solid fa-star filled me-1"></i>
@@ -78,46 +79,55 @@
                             <i class="fa-solid fa-star filled me-1"></i>
                             <i class="fa-solid fa-star filled"></i>
                           </div>
-                          <p class="fs-14 text-white"></p>
+                          <span class="badge bg-success-light text-success">Populaire</span>
                         </div>
                       </div>
-                      <div class="destination-overlay bg-white mt-2">
-                        <div class="d-flex">
-                          <div class="col border-end">
-                            <div class="count-info text-center">
-                                             <span class="d-block mb-1 text-indigo">
-                                                 <i class="isax isax-airplane"></i>
-                                             </span>
-                              <h6 class="fs-13 fw-medium">{{cat.products_count}} Cours</h6>
+                      
+                      <!-- Stats Section -->
+                      <div class="category-stats">
+                        <div class="row g-0">
+                          <div class="col-4 text-center">
+                            <div class="stat-item">
+                              <div class="stat-icon text-primary mb-1">
+                                <i class="isax isax-book-1"></i>
+                              </div>
+                              <h6 class="fs-12 fw-medium text-muted mb-0">{{cat.products_count || 0}}</h6>
+                              <small class="text-muted">Cours</small>
                             </div>
                           </div>
-                          <div class="col border-end">
-                            <div class="count-info text-center">
-                                             <span class="d-block mb-1 text-cyan">
-                                                 <i class="isax isax-buildings"></i>
-                                             </span>
-                              <h6 class="fs-13 fw-medium">1 Enseignants</h6>
+                          <div class="col-4 text-center border-start border-end">
+                            <div class="stat-item">
+                              <div class="stat-icon text-success mb-1">
+                                <i class="isax isax-teacher"></i>
+                              </div>
+                              <h6 class="fs-12 fw-medium text-muted mb-0">{{randomTeachers}}</h6>
+                              <small class="text-muted">Profs</small>
                             </div>
                           </div>
-                          <div class="col">
-                            <div class="count-info text-center">
-                                             <span class="d-block mb-1 text-success">
-                                                 <i class="isax isax-ship"></i>
-                                             </span>
-                              <h6 class="fs-13 fw-medium">3 Inscrits</h6>
+                          <div class="col-4 text-center">
+                            <div class="stat-item">
+                              <div class="stat-icon text-warning mb-1">
+                                <i class="isax isax-profile-2user"></i>
+                              </div>
+                              <h6 class="fs-12 fw-medium text-muted mb-0">{{randomStudents}}</h6>
+                              <small class="text-muted">Étudiants</small>
                             </div>
                           </div>
                         </div>
+                      </div>
+
+                      <!-- Action Button -->
+                      <div class="category-action mt-3">
+                        <a [routerLink]="routes.destination" class="btn btn-outline-primary btn-sm w-100 d-flex align-items-center justify-content-center">
+                          <i class="isax isax-arrow-right-1 me-2"></i>
+                          Explorer les cours
+                        </a>
                       </div>
                     </div>
-                    <a [routerLink]="routes.destination" class="overlay-circle-link"><i class="isax isax-arrow-right-1"></i></a>
                   </div>
-                  <!-- /Destination Item-->
+                  <!-- /Beautiful Category Container -->
                 </ng-template>
               </ng-container>
-
-
-
             </owl-carousel-o>
 <!--            <div class="text-center view-all aos">-->
 <!--                <a [routerLink]="routes.destination" class="btn btn-dark d-inline-flex align-items-center">View All Locations<i class="isax isax-arrow-right-3 ms-2"></i></a>-->
@@ -170,7 +180,7 @@
                                 <i class="isax isax-receipt-add"></i>
                             </div>
                             <h5 class="mb-2">Un apprentissage clair, progressif et motivant.</h5>
-                            <p class="mb-0">Chaque cours est accompagné de quiz et d’examens pour évaluer vos connaissances et suivre votre progression pas à pas.</p>
+                            <p class="mb-0">Chaque cours est accompagné de quiz et d'examens pour évaluer vos connaissances et suivre votre progression pas à pas.</p>
                             <span class="icon-view text-purple"><i class="isax isax-receipt-add"></i></span>
                         </div>
                     </div>
@@ -227,8 +237,11 @@
                               <owl-carousel-o class="img-slider image-slide nav-center" [options]="imageSlider">
                                 <ng-template carouselSlide>
                                   <div class="slide-images">
-                                    <a [routerLink]="routes.hotelDetails">
-                                      <img src="{{course.media_path?.original_url}}" class="img-fluid" alt="img">
+                                    <a [routerLink]="['/course/course-details', course.id]">
+                                      <img [src]="getCourseImageUrl(course)" 
+                                           [alt]="course.title"
+                                           class="img-fluid" 
+                                           (error)="onImageError($event)">
                                     </a>
                                   </div>
                                 </ng-template>
@@ -259,7 +272,7 @@
                                 <span class="badge badge-warning badge-xs text-gray-9 fs-13 fw-medium me-2">5.0</span>
                                 <p class="fs-14">(0 Reviews)</p>
                               </div>
-                              <h5 class="mb-1"><a [routerLink]="routes.hotelDetails+'/'+course.id">{{course.title}}</a></h5>
+                              <h5 class="mb-1"><a [routerLink]="['/course/course-details', course.id]">{{course.title}}</a></h5>
                               <p class="d-flex align-items-center mb-2">Catégorie : {{course.category?.name}}</p>
                               <div class="border-top pt-2 mb-2">
                                 <h6 class="d-flex align-items-center">Accés :<i class="isax isax-wifi ms-2 me-2 text-primary"></i><i class="isax isax-scissor me-2 text-primary"></i><i class="isax isax-profile-2user me-2 text-primary"></i><i class="isax isax-wind-2 me-2 text-primary"></i><a href="javascript:void(0);" class="fs-14 fw-normal text-default d-inline-block">+2</a></h6>
@@ -283,7 +296,7 @@
                 <!-- /Hotels List -->
             </div>
             <div class="text-center view-all aos">
-                <a [routerLink]="routes.hotelGrid" class="btn btn-dark d-inline-flex align-items-center">Voir tous les cours<i class="isax isax-arrow-right-3 ms-2"></i></a>
+                <a [routerLink]="'/course/course-grid'" class="btn btn-dark d-inline-flex align-items-center">Voir tous les cours<i class="isax isax-arrow-right-3 ms-2"></i></a>
             </div>
         </div>
     </section>
@@ -311,7 +324,7 @@
                             <div class="about-progress d-inline-flex align-items-center">
                                 <img src="assets/img/icons/progress-icon.svg" alt="icon">
                                 <div class="ms-2">
-                                    <p class="fs-10 mb-1">Today’s Earnings</p>
+                                    <p class="fs-10 mb-1">Today's Earnings</p>
                                     <h6 class="fs-13">$2500</h6>
                                 </div>
                                 <a [routerLink]="routes.wallet" class="btn btn-teal btn-sm fw-normal ms-4">Withdraw</a>
@@ -633,7 +646,7 @@
                 <div class="col-xl-6 col-lg-10 text-center aos" data-aos="fade-up" data-aos-duration="2000">
                     <div class="section-header text-center">
                         <h2 class="mb-2">Ce que disent nos <span class="text-primary  text-decoration-underline">utilisateurs</span></h2>
-                        <p class="sub-title">Gold LMS, une plateforme d’apprentissage en ligne spécialisée dans l’éducation moderne, offre une variété d’avantages pour les apprenants.</p>
+                        <p class="sub-title">Gold LMS, une plateforme d'apprentissage en ligne spécialisée dans l'éducation moderne, offre une variété d'avantages pour les apprenants.</p>
                     </div>
                 </div>
             </div>
@@ -706,7 +719,7 @@
                 <div class="card border-white aos" data-aos="fade-up" data-aos-duration="2000">
                     <div class="card-body">
                         <h6 class="mb-4">Great Service</h6>
-                        <p class="mb-4">We had a fantastic time as a family. There were activities for every age group, and the kids loved the kids’ club, fun activities, good customer service.</p>
+                        <p class="mb-4">We had a fantastic time as a family. There were activities for every age group, and the kids loved the kids' club, fun activities, good customer service.</p>
                         <div class="border-top pt-4 d-flex align-items-center justify-content-between">
                             <div class="d-flex align-items-center">
                                 <span class="avatar avatar-md  flex-shrink-0">
@@ -766,7 +779,7 @@
                         <div class="section-header text-center">
                             <h2 class="mb-2">Questions fréquemment  <span class="text-primary  text-decoration-underline">posées</span></h2>
                             <p class="sub-title">
-                              Gold LMS, une plateforme d’apprentissage spécialisée dans l’éducation en ligne, propose une variété d’avantages pour les apprenants.
+                              Gold LMS, une plateforme d'apprentissage spécialisée dans l'éducation en ligne, propose une variété d'avantages pour les apprenants.
 
                             </p>
                         </div>
@@ -784,7 +797,7 @@
                       <div id="faq-collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionFaq">
                         <div class="accordion-body">
                           <p class="mb-0">Nous proposons une large gamme de formations, incluant des cours interactifs, des quiz, des examens en ligne et des parcours personnalisés.</p>
-                          <p>Parmi les thématiques populaires figurent l’informatique, le management, les langues, et bien plus encore.</p>
+                          <p>Parmi les thématiques populaires figurent l'informatique, le management, les langues, et bien plus encore.</p>
                         </div>
                       </div>
                     </div>
@@ -808,7 +821,7 @@
                       </h2>
                       <div id="faq-collapsthree" class="accordion-collapse collapse" data-bs-parent="#accordionFaq">
                         <div class="accordion-body">
-                          <p>Gold LMS utilise des systèmes de surveillance, des minuteries et des contrôles aléatoires pour garantir l’intégrité des examens en ligne.</p>
+                          <p>Gold LMS utilise des systèmes de surveillance, des minuteries et des contrôles aléatoires pour garantir l'intégrité des examens en ligne.</p>
                         </div>
                       </div>
                     </div>
@@ -820,14 +833,14 @@
                       </h2>
                       <div id="faq-collapsefour" class="accordion-collapse collapse" data-bs-parent="#accordionFaq">
                         <div class="accordion-body">
-                          <p>Les formations sont disponibles à tout moment. Vous pouvez vous inscrire et commencer dès aujourd’hui, selon votre propre rythme.</p>
+                          <p>Les formations sont disponibles à tout moment. Vous pouvez vous inscrire et commencer dès aujourd'hui, selon votre propre rythme.</p>
                         </div>
                       </div>
                     </div>
                     <div class="accordion-item aos" data-aos="fade-up" data-aos-duration="2000">
                       <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-collapsefive" aria-expanded="false" aria-controls="faq-collapsefive">
-                          Quelle est votre politique d’annulation ?
+                          Quelle est votre politique d'annulation ?
                         </button>
                       </h2>
                       <div id="faq-collapsefive" class="accordion-collapse collapse" data-bs-parent="#accordionFaq">
@@ -853,7 +866,7 @@
                 <div class="col-xl-6 col-lg-10 text-center aos" data-aos="fade-up" data-aos-duration="2000">
                     <div class="section-header text-center">
                         <h2 class="mb-2">Articles <span class="text-primary text-decoration-underline">Récents</span></h2>
-                        <p class="sub-title">Gold LMS propose des articles de blog axés sur l’apprentissage, les outils numériques et des conseils pour réussir vos examens</p>
+                        <p class="sub-title">Gold LMS propose des articles de blog axés sur l'apprentissage, les outils numériques et des conseils pour réussir vos examens</p>
                     </div>
                 </div>
             </div>

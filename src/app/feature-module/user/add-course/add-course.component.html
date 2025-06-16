@@ -1,0 +1,324 @@
+<!-- Breadcrumb -->
+<div class="breadcrumb-bar breadcrumb-bg-01 text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-12">
+                <h2 class="breadcrumb-title mb-2">Créer un nouveau cours</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center mb-0">
+                        <li class="breadcrumb-item"><a [routerLink]="routes.index"><i class="isax isax-home5"></i></a></li>
+                        <li class="breadcrumb-item"><a [routerLink]="routes.review">Mes cours</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Créer un cours</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Breadcrumb -->
+
+<!-- Page Wrapper -->
+<div class="content">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-xl-3 col-lg-4">
+                <app-user-dashboard/>
+            </div>
+            <!-- /Sidebar -->
+
+            <div class="col-xl-9 col-lg-8">
+                <!-- Course Creation Card -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            Créer un nouveau cours - Étape {{currentStep}} sur {{totalSteps}}
+                        </h5>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="goBack()">
+                            <i class="isax isax-arrow-left-2 me-1"></i>Retour
+                        </button>
+                    </div>
+                    
+                    <div class="card-body">
+                        <!-- Progress Bar -->
+                        <div class="mb-4">
+                            <div class="progress mb-3" style="height: 8px;">
+                                <div class="progress-bar bg-primary" role="progressbar" 
+                                     [style.width.%]="(currentStep / totalSteps) * 100"
+                                     [attr.aria-valuenow]="currentStep" 
+                                     aria-valuemin="0" [attr.aria-valuemax]="totalSteps">
+                                </div>
+                            </div>
+                            
+                            <!-- Step Indicators -->
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="text-center" *ngFor="let step of steps; let i = index">
+                                    <div class="step-indicator" 
+                                         [class.active]="i + 1 <= currentStep"
+                                         [class.completed]="i + 1 < currentStep">
+                                        <span class="step-number">{{i + 1}}</span>
+                                    </div>
+                                    <small class="d-block mt-1">{{step.title}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form #courseForm="ngForm">
+                            <!-- Step 1: Informations de base -->
+                            <div *ngIf="currentStep === 1" class="step-content">
+                                <h6 class="mb-3">Informations de base du cours</h6>
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="courseTitle" class="form-label">Titre du cours <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="courseTitle"
+                                               [(ngModel)]="newCourse.title" name="title" required
+                                               placeholder="Entrez le titre du cours">
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label for="courseDescription" class="form-label">Description courte</label>
+                                        <textarea class="form-control" id="courseDescription" rows="3"
+                                                  [(ngModel)]="newCourse.description" name="description"
+                                                  placeholder="Décrivez brièvement votre cours"></textarea>
+                                    </div>
+                                    
+                                    <!-- Course Cover Image Upload -->
+                                    <div class="col-md-12 mb-4">
+                                        <label class="form-label"><strong>📸 Image de couverture du cours</strong></label>
+                                        
+                                        <!-- Simple Upload Button -->
+                                        <div class="border rounded p-4 text-center" style="background-color: #f8f9fa; border: 2px dashed #007bff !important; min-height: 200px;">
+                                            
+                                            <!-- No Image State -->
+                                            <div *ngIf="!coverImagePreview && !isUploadingCover" class="d-flex flex-column justify-content-center align-items-center h-100">
+                                                <div class="mb-3">
+                                                    <span style="font-size: 4rem;">📤</span>
+                                                </div>
+                                                <h4 class="mb-3 text-primary">Ajouter une image de couverture</h4>
+                                                <p class="text-muted mb-4">Sélectionnez une belle image pour représenter votre cours</p>
+                                                <button type="button" class="btn btn-primary btn-lg px-5 py-3" (click)="coverFileInput.click()">
+                                                    📁 Choisir une image
+                                                </button>
+                                                <small class="text-muted mt-3 d-block">Formats acceptés: JPG, PNG, GIF • Taille max: 5MB</small>
+                                            </div>
+                                            
+                                            <!-- Loading State -->
+                                            <div *ngIf="isUploadingCover" class="d-flex flex-column justify-content-center align-items-center h-100 py-5">
+                                                <div class="spinner-border text-primary mb-3" style="width: 4rem; height: 4rem;"></div>
+                                                <h4 class="text-primary mb-2">⏳ Téléchargement en cours...</h4>
+                                                <p class="text-muted">Veuillez patienter, votre image est en cours d'upload</p>
+                                            </div>
+                                            
+                                            <!-- Image Uploaded State -->
+                                            <div *ngIf="coverImagePreview && !isUploadingCover" class="py-4">
+                                                <div class="mb-4">
+                                                    <img [src]="coverImagePreview" alt="Course Cover" 
+                                                         class="img-thumbnail shadow" style="max-height: 250px; max-width: 400px;">
+                                                </div>
+                                                <div class="alert alert-success mb-4">
+                                                    <strong>✅ Parfait!</strong> Votre image de couverture a été téléchargée avec succès
+                                                    <span *ngIf="usingImageFallback" class="d-block mt-1">
+                                                        <small class="text-info">
+                                                            <i class="isax isax-info-circle"></i> 
+                                                            Utilisation de l'aperçu local (problème de CORS résolu automatiquement)
+                                                        </small>
+                                                    </span>
+                                                </div>
+                                                <div class="d-flex gap-2 justify-content-center">
+                                                    <button type="button" class="btn btn-outline-primary btn-lg" (click)="coverFileInput.click()">
+                                                        ✏️ Modifier l'image
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-danger btn-lg" (click)="removeCoverImage()">
+                                                        🗑️ Supprimer
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                        
+                                        <!-- Hidden File Input -->
+                                        <input type="file" #coverFileInput (change)="onCoverImageSelected($event)" 
+                                               accept="image/*" style="display: none;">
+                                        
+                                        <div class="mt-3 p-3 bg-light rounded">
+                                            <small class="text-muted">
+                                                <strong>💡 Conseil:</strong> Cette image sera la première chose que verront vos étudiants. 
+                                                Choisissez une image attrayante et professionnelle qui représente bien le contenu de votre cours.
+                                            </small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="courseCategory" class="form-label">Catégorie <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="courseCategory"
+                                                [(ngModel)]="newCourse.category_id" name="category_id" required>
+                                            <option value="">Sélectionner une catégorie</option>
+                                            <option *ngFor="let category of categories" [value]="category.id">
+                                                {{category.name}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="courseLevel" class="form-label">Niveau</label>
+                                        <select class="form-select" id="courseLevel"
+                                                [(ngModel)]="newCourse.level" name="level">
+                                            <option value="beginner">Débutant</option>
+                                            <option value="intermediate">Intermédiaire</option>
+                                            <option value="advanced">Avancé</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: Contenu et objectifs -->
+                            <div *ngIf="currentStep === 2" class="step-content">
+                                <h6 class="mb-3">Contenu et objectifs d'apprentissage</h6>
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="courseWhatYouWillLearn" class="form-label">Ce que vous apprendrez</label>
+                                        <textarea class="form-control" id="courseWhatYouWillLearn" rows="4"
+                                                  [(ngModel)]="newCourse.what_you_will_learn" name="what_you_will_learn"
+                                                  placeholder="Listez les objectifs d'apprentissage de ce cours"></textarea>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label for="courseRequirements" class="form-label">Prérequis</label>
+                                        <textarea class="form-control" id="courseRequirements" rows="3"
+                                                  [(ngModel)]="newCourse.requirements" name="requirements"
+                                                  placeholder="Quels sont les prérequis pour suivre ce cours?"></textarea>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="courseLanguage" class="form-label">Langue du cours</label>
+                                        <select class="form-select" id="courseLanguage"
+                                                [(ngModel)]="newCourse.language" name="language">
+                                            <option value="fr">Français</option>
+                                            <option value="en">Anglais</option>
+                                            <option value="ar">Arabe</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="courseDuration" class="form-label">Durée estimée (heures)</label>
+                                        <input type="number" class="form-control" id="courseDuration"
+                                               [(ngModel)]="newCourse.estimated_duration" name="estimated_duration"
+                                               min="1" placeholder="Ex: 10">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Prix et publication -->
+                            <div *ngIf="currentStep === 3" class="step-content">
+                                <h6 class="mb-3">Prix et paramètres de publication</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="coursePrice" class="form-label">Prix du cours (DT)</label>
+                                        <input type="number" class="form-control" id="coursePrice"
+                                               [(ngModel)]="newCourse.price" name="price" min="0" step="0.01"
+                                               placeholder="0.00">
+                                        <small class="form-text text-muted">Laissez vide ou 0 pour un cours gratuit</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="courseMaxStudents" class="form-label">Nombre maximum d'étudiants</label>
+                                        <input type="number" class="form-control" id="courseMaxStudents"
+                                               [(ngModel)]="newCourse.max_students" name="max_students"
+                                               min="1" placeholder="Illimité">
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Options de publication</h6>
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="courseFeatured"
+                                                           [(ngModel)]="newCourse.is_featured" name="is_featured">
+                                                    <label class="form-check-label" for="courseFeatured">
+                                                        <strong>Cours en vedette</strong>
+                                                        <small class="d-block text-muted">Afficher ce cours dans la section des cours populaires</small>
+                                                    </label>
+                                                </div>
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="coursePublished"
+                                                           [(ngModel)]="newCourse.is_published" name="is_published">
+                                                    <label class="form-check-label" for="coursePublished">
+                                                        <strong>Publier immédiatement</strong>
+                                                        <small class="d-block text-muted">Le cours sera visible par les étudiants dès sa création</small>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 4: Révision et confirmation -->
+                            <div *ngIf="currentStep === 4" class="step-content">
+                                <h6 class="mb-3">Révision et confirmation</h6>
+                                
+                                <!-- Cover Image Preview -->
+                                <div *ngIf="coverImagePreview" class="card mb-3">
+                                    <div class="card-body">
+                                        <h6>Image de couverture</h6>
+                                        <div class="cover-preview">
+                                            <img [src]="coverImagePreview" alt="Course Cover Preview" 
+                                                 class="img-fluid rounded" style="max-height: 200px; object-fit: cover;">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h6>Informations de base</h6>
+                                                <p><strong>Titre:</strong> {{newCourse.title || 'Non défini'}}</p>
+                                                <p><strong>Catégorie:</strong> {{getCategoryName(newCourse.category_id) || 'Non définie'}}</p>
+                                                <p><strong>Niveau:</strong> {{getLevelLabel(newCourse.level)}}</p>
+                                                <p><strong>Langue:</strong> {{getLanguageLabel(newCourse.language)}}</p>
+                                                <p><strong>Image de couverture:</strong> {{coverImagePreview ? 'Téléchargée' : 'Aucune'}}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h6>Paramètres</h6>
+                                                <p><strong>Prix:</strong> {{newCourse.price || 0}} DT</p>
+                                                <p><strong>Durée estimée:</strong> {{newCourse.estimated_duration || 'Non définie'}} heures</p>
+                                                <p><strong>Cours en vedette:</strong> {{newCourse.is_featured ? 'Oui' : 'Non'}}</p>
+                                                <p><strong>Publication:</strong> {{newCourse.is_published ? 'Immédiate' : 'Brouillon'}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <h6>Description</h6>
+                                            <p>{{newCourse.description || 'Aucune description'}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Navigation Buttons -->
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-outline-secondary" 
+                                        *ngIf="currentStep > 1" 
+                                        (click)="previousStep()">
+                                    <i class="isax isax-arrow-left-2 me-1"></i>Précédent
+                                </button>
+                                
+                                <div class="ms-auto">
+                                    <button type="button" class="btn btn-primary" 
+                                            *ngIf="currentStep < totalSteps" 
+                                            (click)="nextStep()"
+                                            [disabled]="!canProceedToNextStep()">
+                                        Suivant<i class="isax isax-arrow-right-2 ms-1"></i>
+                                    </button>
+                                    
+                                    <button type="button" class="btn btn-success" 
+                                            *ngIf="currentStep === totalSteps" 
+                                            (click)="createCourse()"
+                                            [disabled]="isCreatingCourse">
+                                        <span *ngIf="isCreatingCourse" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                        <i class="isax isax-tick-circle me-1" *ngIf="!isCreatingCourse"></i>
+                                        {{isCreatingCourse ? 'Création en cours...' : 'Créer le cours'}}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Wrapper -->

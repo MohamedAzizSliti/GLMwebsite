@@ -3,11 +3,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12 col-12">
-                    <h2 class="breadcrumb-title mb-2">Devenir un étudiant</h2>
+                    <h2 class="breadcrumb-title mb-2">{{'register.become_student' | translate}}</h2>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center mb-0">
                             <li class="breadcrumb-item"><a [routerLink]="routes.index"><i class="isax isax-home5"></i></a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Devenir un étudiant</li>
+                            <li class="breadcrumb-item active" aria-current="page">{{'register.become_student' | translate}}</li>
                         </ol>
                     </nav>
                 </div>
@@ -22,8 +22,8 @@
         <div class="row">
           <div class="col-lg-6 mx-auto">
             <div class="section-header text-center wow fadeInUp" data-wow-delay="0.1s">
-              <h2 class="mb-2">Comment ça fonctionne</h2>
-              <p>Suivez ces étapes simples pour découvrir, acheter et suivre des cours en ligne selon votre rythme.</p>
+              <h2 class="mb-2">{{'student.how_it_works' | translate}}</h2>
+              <p>{{'student.how_it_works_desc' | translate}}</p>
             </div>
           </div>
         </div>
@@ -38,8 +38,8 @@
                   <h3 class="display-3">01</h3>
                 </div>
                 <div class="card-content">
-                  <h5 class="mb-2">Créez votre compte</h5>
-                  <p>Inscrivez-vous en tant qu'étudiant pour accéder à l'ensemble des cours disponibles sur la plateforme.</p>
+                  <h5 class="mb-2">{{'register.step1.title' | translate}}</h5>
+                  <p>{{'register.step1.desc' | translate}}</p>
                 </div>
               </div>
             </div>
@@ -54,8 +54,8 @@
                   <h3 class="display-3">02</h3>
                 </div>
                 <div class="card-content">
-                  <h5 class="mb-2">Explorez les cours</h5>
-                  <p>Parcourez les catégories, consultez les descriptions, lisez les avis, et choisissez les cours qui correspondent à vos objectifs.</p>
+                  <h5 class="mb-2">{{'register.step2.title' | translate}}</h5>
+                  <p>{{'register.step2.desc' | translate}}</p>
                 </div>
               </div>
             </div>
@@ -70,8 +70,8 @@
                   <h3 class="display-3">03</h3>
                 </div>
                 <div class="card-content">
-                  <h5 class="mb-2">Apprenez à votre rythme</h5>
-                  <p>Accédez aux vidéos, quiz, examens et suivez votre progression depuis votre espace personnel sécurisé.</p>
+                  <h5 class="mb-2">{{'register.step3.title' | translate}}</h5>
+                  <p>{{'register.step3.desc' | translate}}</p>
                 </div>
               </div>
             </div>
@@ -94,42 +94,42 @@
                 <div class="card authentication-card">
                   <div class="card-header">
                     <div class="text-center">
-                      <h5 class="mb-1">Créer un compte</h5>
-                      <p>Pour commencer à lire des cours</p>
+                      <h5 class="mb-1">{{'register.title' | translate}}</h5>
+                      <p>{{'register.subtitle' | translate}}</p>
                     </div>
                   </div>
 
                   <div class="card-body">
 
                       <div class="mb-3">
-                        <label class="form-label">Nom</label>
+                        <label class="form-label">{{'form.name' | translate}}</label>
                         <div class="input-icon">
                                         <span class="input-icon-addon">
                                             <i class="isax isax-user"></i>
                                         </span>
-                          <input type="text" class="form-control form-control-lg" [(ngModel)]="user.name" placeholder="Veuillez entrez votre nom complet">
+                          <input type="text" class="form-control form-control-lg" [(ngModel)]="user.name" [placeholder]="'form.enter_name' | translate">
                         </div>
                       </div>
                     <div class="mb-3">
-                      <label class="form-label">Tél</label>
+                      <label class="form-label">{{'form.phone' | translate}}</label>
                       <div class="input-icon">
                                         <span class="input-icon-addon">
                                             <i class="isax isax-call-calling"></i>
                                         </span>
-                        <input type="text" class="form-control form-control-lg" [(ngModel)]="user.phone" placeholder="Veuillez entrez votre numéro de téléphone">
+                        <input type="text" class="form-control form-control-lg" [(ngModel)]="user.phone" [placeholder]="'form.enter_phone' | translate">
                       </div>
                     </div>
                       <div class="mb-3">
-                        <label class="form-label">Email</label>
+                        <label class="form-label">{{'form.email' | translate}}</label>
                         <div class="input-icon">
                                         <span class="input-icon-addon">
                                             <i class="isax isax-message"></i>
                                         </span>
-                          <input type="email" class="form-control form-control-lg"  [(ngModel)]="user.email" placeholder="Veuillez entrez votre mail">
+                          <input type="email" class="form-control form-control-lg"  [(ngModel)]="user.email" [placeholder]="'form.enter_email' | translate">
                         </div>
                       </div>
                       <div class="mb-3">
-                        <label class="form-label">Password</label>
+                        <label class="form-label">{{'form.password' | translate}}</label>
                         <div class="pass-group input-icon">
                                         <span class="input-icon-addon">
                                             <i class="isax isax-lock"></i>
@@ -138,7 +138,7 @@
                             [type]="password[0] ? 'text' : 'password'"
                             class="pass-input form-control"
                             [(ngModel)]="user.password"
-                            placeholder="Veuillez entrez votre mot de passe"
+                            [placeholder]="'form.enter_password' | translate"
                           />
                           <span
                             class="isax toggle-password"
@@ -151,7 +151,7 @@
                         </div>
                       </div>
                       <div class="mb-3">
-                        <label class="form-label">Confirmation Mot de passe</label>
+                        <label class="form-label">{{'form.confirm_password' | translate}}</label>
                         <div class="pass-group input-icon">
                                         <span class="input-icon-addon">
                                             <i class="isax isax-lock"></i>
@@ -160,7 +160,7 @@
                             [type]="password[1] ? 'text' : 'password'"
                             [(ngModel)]="user.password_confirmation"
                             class="pass-input form-control"
-                            placeholder="Confirmez le mot de passe"
+                            [placeholder]="'form.confirm_password' | translate"
                           />
                           <span
                             class="isax toggle-password"
@@ -183,7 +183,7 @@
                       </div>
                       <div class="mb-3">
 <!--                        <a [routerLink]="routes.login" class="btn btn-xl btn-primary d-flex align-items-center justify-content-center w-100">Inscrire<i class="isax isax-arrow-right-3 ms-2"></i></a>-->
-                        <a  (click)="signup()" class="btn btn-xl btn-primary d-flex align-items-center justify-content-center w-100">Inscrire<i class="isax isax-arrow-right-3 ms-2"></i></a>
+                        <a  (click)="signup()" class="btn btn-xl btn-primary d-flex align-items-center justify-content-center w-100">{{'register.submit' | translate}}<i class="isax isax-arrow-right-3 ms-2"></i></a>
                       </div>
 <!--                      <div class="login-or mb-3">-->
 <!--                        <span class="span-or">Or</span>-->
@@ -197,7 +197,7 @@
 <!--                        </a>-->
 <!--                      </div>-->
                       <div class="d-flex justify-content-center">
-                        <p class="fs-14">Vous avez déjà un compte ? <a [routerLink]="routes.login" class="link-primary fw-medium">Se connecter</a></p>
+                        <p class="fs-14">{{'register.login_link' | translate}} <a [routerLink]="routes.login" class="link-primary fw-medium">{{'register.sign_in' | translate}}</a></p>
                       </div>
                   </div>
                 </div>

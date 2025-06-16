@@ -1,0 +1,275 @@
+/* Udemy-like Course Content Styles */
+.course-content-section {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 20px;
+}
+
+.course-stats .badge {
+  font-size: 0.75rem;
+  padding: 0.4em 0.6em;
+}
+
+.course-progress .progress {
+  background-color: #e9ecef;
+  border-radius: 10px;
+}
+
+.course-progress .progress-bar {
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+/* Chapter Styles */
+.chapter-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.chapter-item:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.chapter-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s ease;
+}
+
+.chapter-header:hover {
+  background: #e9ecef;
+}
+
+.chapter-header.cursor-pointer {
+  cursor: pointer;
+}
+
+.chapter-content {
+  background: #fff;
+}
+
+/* Content Item Styles */
+.content-item {
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.content-item:hover {
+  background-color: #f8f9fa !important;
+  border-left-color: #007bff;
+}
+
+.content-item.completed {
+  background-color: #f0f8f0;
+  border-left-color: #28a745;
+}
+
+.content-item.completed:hover {
+  background-color: #e8f5e8 !important;
+}
+
+.content-icon i {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+}
+
+.content-details h6 {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.content-details small {
+  font-size: 0.8rem;
+}
+
+.content-status i {
+  font-size: 1.1rem;
+}
+
+/* Quiz Item Styles */
+.quiz-item {
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+  background-color: #f8f9ff;
+}
+
+.quiz-item:hover {
+  background-color: #f0f4ff !important;
+  border-left-color: #007bff;
+  transform: translateX(2px);
+}
+
+.quiz-item.completed {
+  background-color: #f0f8f0;
+  border-left-color: #28a745;
+}
+
+.quiz-item.completed:hover {
+  background-color: #e8f5e8 !important;
+}
+
+.bg-light-blue {
+  background-color: #f8f9ff !important;
+}
+
+/* Exam Item Styles */
+.exam-item {
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+  background-color: #fffbf0;
+}
+
+.exam-item:hover {
+  background-color: #fff8e1 !important;
+  border-left-color: #ffc107;
+  transform: translateX(2px);
+}
+
+.exam-item.completed {
+  background-color: #f0f8f0;
+  border-left-color: #28a745;
+}
+
+.exam-item.completed:hover {
+  background-color: #e8f5e8 !important;
+}
+
+.bg-light-warning {
+  background-color: #fffbf0 !important;
+}
+
+/* Course Level Quiz/Exam Styles */
+.course-quizzes .quiz-item,
+.course-exams .exam-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.course-quizzes .quiz-item:hover,
+.course-exams .exam-item:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+/* Hover Effects */
+.hover-bg-light:hover {
+  background-color: #f8f9fa !important;
+}
+
+.hover-shadow:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Status Icons */
+.quiz-status i,
+.exam-status i,
+.content-status i {
+  transition: all 0.2s ease;
+}
+
+.quiz-status i:hover,
+.exam-status i:hover {
+  transform: scale(1.1);
+}
+
+/* Loading Spinner */
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Badge Styles */
+.badge {
+  font-size: 0.7rem;
+  padding: 0.3em 0.6em;
+  border-radius: 12px;
+}
+
+.badge.bg-success {
+  background-color: #28a745 !important;
+}
+
+.badge.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+/* Empty State */
+.empty-content {
+  color: #6c757d;
+}
+
+.empty-content i {
+  opacity: 0.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .course-stats {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .course-stats .badge {
+    margin-bottom: 0.25rem;
+  }
+  
+  .content-info,
+  .quiz-info,
+  .exam-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .content-icon,
+  .quiz-icon,
+  .exam-icon {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Animation for chapter toggle */
+.chapter-content {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.chapter-toggle i {
+  transition: transform 0.3s ease;
+}
+
+/* Progress indicator */
+.progress-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.progress-indicator.completed {
+  background-color: #28a745;
+  color: white;
+}
+
+.progress-indicator.in-progress {
+  background-color: #ffc107;
+  color: white;
+}
+
+.progress-indicator.not-started {
+  background-color: #e9ecef;
+  color: #6c757d;
+} 

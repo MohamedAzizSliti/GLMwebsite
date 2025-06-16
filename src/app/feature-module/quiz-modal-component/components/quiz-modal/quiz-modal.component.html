@@ -16,6 +16,16 @@
         </app-question>
       </div>
 
+      <!-- Debug: Show when no question is available -->
+      <div *ngIf="!quizCompleted && !currentQuestion" class="debug-no-question">
+        <h3>🔍 Debug: No Question Available</h3>
+        <p><strong>Current Question Index:</strong> {{ currentQuestionIndex }}</p>
+        <p><strong>Total Questions:</strong> {{ exam?.questions?.length || 0 }}</p>
+        <p><strong>Exam Title:</strong> {{ exam?.title }}</p>
+        <p><strong>Exam Questions:</strong></p>
+        <pre>{{ exam?.questions | json }}</pre>
+      </div>
+
       <!-- Affichage du résultat -->
       <div *ngIf="quizCompleted && quizResult">
         <app-quiz-result [result]="quizResult"></app-quiz-result>

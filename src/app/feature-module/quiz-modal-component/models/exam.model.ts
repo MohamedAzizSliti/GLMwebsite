@@ -9,6 +9,8 @@ export interface Exam {
   updated_at: string;
   nbr_question: number;
   questions: Question[];
+  session_id?: number;
+  is_quiz?: boolean;
 }
 
 export interface Question {
@@ -16,21 +18,19 @@ export interface Question {
   course_id: number;
   exam_id: number;
   quiz_id: number | null;
-  question_text: string;
-  question_type: 'multiple_choice' | 'single_choice';
-  options: {
-    option_1: Option;
-    option_2: Option;
-    option_3: Option;
-    option_4: Option;
-  };
+  question: string;
+  question_text?: string;
+  type: 'multiple_choice' | 'single_choice' | 'binary';
+  question_type?: 'multiple_choice' | 'single_choice' | 'binary';
+  options: string; // JSON string like "[\"Oui\",\"Non\"]"
+  correct_answer: string; // String like "Oui"
   created_at: string;
   updated_at: string;
-  option_1: Option;
-  option_2: Option;
-  option_3: Option;
-  option_4: Option;
-  correct_option: string;
+  explanation?: string;
+  marks?: number;
+  order?: number;
+  is_active?: boolean;
+  [key: string]: any;
 }
 
 export interface Option {

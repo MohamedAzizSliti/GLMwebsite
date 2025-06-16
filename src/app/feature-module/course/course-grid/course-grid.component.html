@@ -543,7 +543,7 @@
                                                     <input class="form-check-input ms-0 mt-0" name="recommend" type="checkbox" id="recommend5">
                                                     <label class="form-check-label ms-2" for="recommend5">Ratings</label>
                                                 </div>
-                                                <div class="form-check d-flex align-items-center ps-0 mb-0">
+                                                <div class="form-check d-flex align-items-center ps-0 mb-2">
                                                     <input class="form-check-input ms-0 mt-0" name="recommend" type="checkbox" id="recommend6">
                                                     <label class="form-check-label ms-2" for="recommend6">Reviews</label>
                                                 </div>
@@ -572,8 +572,11 @@
                                       <owl-carousel-o class="img-slider image-slide nav-center" [options]="imageSlider">
                                         <ng-template carouselSlide>
                                           <div class="slide-images">
-                                            <a [routerLink]="routes.hotelDetails">
-                                              <img src="{{cour.media_path?.original_url}}" class="img-fluid" alt="img">
+                                            <a [routerLink]="['/course/course-details', cour.id]">
+                                              <img [src]="getCourseImageUrl(cour)" 
+                                                   [alt]="cour.title"
+                                                   class="img-fluid" 
+                                                   (error)="onImageError($event)">
                                             </a>
                                           </div>
                                         </ng-template>
@@ -604,7 +607,7 @@
                                         <span class="badge badge-warning badge-xs text-gray-9 fs-13 fw-medium me-2">0.0</span>
                                         <p class="fs-14">(0 Reviews)</p>
                                       </div>
-                                      <h5 class="mb-1 text-truncate"><a [routerLink]="routes.hotelDetails+'/'+cour.id">{{cour.title}}</a></h5>
+                                      <h5 class="mb-1 text-truncate"><a [routerLink]="['/course/course-details', cour.id]">{{cour.title}}</a></h5>
                                       <p class="d-flex align-items-center mb-2"><i class="isax isax-location5 me-2"></i>Catégorie : {{cour.category?.name}}</p>
                                       <div class="border-top pt-2 mb-2">
                                         <h6 class="d-flex align-items-center">Facillities :<i class="isax isax-home-wifi ms-2 me-2 text-primary"></i><i class="isax isax-scissor me-2 text-primary"></i><i class="isax isax-profile-2user me-2 text-primary"></i><i class="isax isax-wind-2 me-2 text-primary"></i><a href="javascript:void(0);" class="fs-14 fw-normal text-default d-inline-block">+2</a></h6>
